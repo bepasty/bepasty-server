@@ -1,10 +1,13 @@
+from flask import current_app, request
 from flask.views import MethodView
 
+from ..utils.name import ItemName
 from . import blueprint
 
 
 class DisplayView(MethodView):
-    def get(self):
+    def get(self, name):
+        n = ItemName.parse(name)
         raise NotImplementedError
 
 
