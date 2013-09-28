@@ -27,7 +27,7 @@ class Upload(object):
                 item.data.write(buf, offset)
                 offset += len(buf)
 
-            # Save filename
+            # Save meta-data
             item.meta['filename'] = f.filename
             item.meta['size'] = offset
 
@@ -40,11 +40,32 @@ class UploadView(MethodView):
         return redirect(url_for('bepasty.display', name=n))
 
 
-class UploadViewJson(MethodView):
+class UploadNewView(MethodView):
     def post(self):
-        n, info = Upload.upload()
-        return jsonify({'files': [info]})
+        data = request.get_json()
+        data_filename = data['filename']
+        data_size = data['size']
+#        #data_type = data['type']
+
+        n = ItemName.create()
+
+        with current_app.storage.create(n) as item:
+            # Save meta-data
+            item.meta['filename'] = data_filename
+            item.meta['size'] = data_size
+#            item.meta['type'] = data_type
+
+            return jsonify({'url': url_for('bepasty.upload_continue', name=n)})
+
+
+class UploadContinueView(MethodView):
+    def post(self, name):
+        n = ItemName.parse(name)
+
+        with current_app.storage.openwrite(n) as item:
+            raise RuntimeError
 
 
 blueprint.add_url_rule('/+upload', view_func=UploadView.as_view('upload'))
-blueprint.add_url_rule('/+upload/json', view_func=UploadViewJson.as_view('upload_json'))
+blueprint.add_url_rule('/+upload/new', view_func=UploadNewView.as_view('upload_new'))
+blueprint.add_url_rule('/+upload/<name>', view_func=UploadContinueView.as_view('upload_continue'))
