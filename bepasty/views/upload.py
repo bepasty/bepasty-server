@@ -83,12 +83,16 @@ class UploadNewView(MethodView):
 
 class UploadContinueView(MethodView):
     def post(self, name):
-        name = ItemName.parse(name)
+        f = request.files['file']
+        if not f:
+            raise NotImplementedError
 
         try:
             content_range = ContentRange.from_request()
         except RuntimeError:
             abort(400)
+
+        name = ItemName.parse(name)
 
         with current_app.storage.openwrite(name) as item:
             if content_range:
