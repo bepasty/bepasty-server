@@ -26,6 +26,9 @@ class UploadView(MethodView):
                 item.data.write(buf, offset)
                 offset += len(buf)
 
+            # Save filename
+            item.meta['filename'] = f.filename
+
         return redirect(url_for('bepasty.display', name=n))
 
 
