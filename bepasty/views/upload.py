@@ -10,34 +10,35 @@ from . import blueprint
 
 class Upload(object):
     @staticmethod
-    def upload():
-        f = request.files['file']
-        if not f:
-            raise NotImplementedError
+    def upload(item, f, offset=0):
+        # Copy data from temp file into storage
+        while True:
+            buf = f.read(16*1024)
+            if not buf:
+                break
+            item.data.write(buf, offset)
+            offset += len(buf)
 
-        n = ItemName.create()
-
-        with current_app.storage.create(n) as item:
-            # Copy data from temp file into storage
-            offset = 0
-            while True:
-                buf = f.read(16*1024)
-                if not buf:
-                    break
-                item.data.write(buf, offset)
-                offset += len(buf)
-
-            # Save meta-data
-            item.meta['filename'] = f.filename
-            item.meta['size'] = offset
-
-            return n, {'filename': f.filename, 'size': offset, 'url': '/' + n}
+        return offset
 
 
 class UploadView(MethodView):
     def post(self):
-        n, info = Upload.upload()
-        return redirect(url_for('bepasty.display', name=n))
+        f = request.files['file']
+        if not f:
+            raise NotImplementedError
+
+        name = ItemName.create()
+
+        with current_app.storage.create(name) as item:
+            size = Upload.upload(item, f)
+
+            # Save meta-data
+            item.meta['filename'] = f.filename
+            item.meta['size'] = size
+#            item.meta['type'] = data_type
+
+        return redirect(url_for('bepasty.display', name=name))
 
 
 class UploadNewView(MethodView):
@@ -47,22 +48,22 @@ class UploadNewView(MethodView):
         data_size = data['size']
 #        #data_type = data['type']
 
-        n = ItemName.create()
+        name = ItemName.create()
 
-        with current_app.storage.create(n) as item:
+        with current_app.storage.create(name) as item:
             # Save meta-data
             item.meta['filename'] = data_filename
             item.meta['size'] = data_size
 #            item.meta['type'] = data_type
 
-            return jsonify({'url': url_for('bepasty.upload_continue', name=n)})
+            return jsonify({'url': url_for('bepasty.upload_continue', name=name)})
 
 
 class UploadContinueView(MethodView):
     def post(self, name):
-        n = ItemName.parse(name)
+        name = ItemName.parse(name)
 
-        with current_app.storage.openwrite(n) as item:
+        with current_app.storage.openwrite(name) as item:
             raise RuntimeError
 
 
