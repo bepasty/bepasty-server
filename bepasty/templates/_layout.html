@@ -26,6 +26,38 @@
 </head>
 <body>
 
+<div id="wrapper">
+
+    <!-- Begin header -->
+    <div id="header">
+        <div class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">bepasty</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.header -->
+
+    <!-- Begin page content -->
+    <div class="container">
+        {% block content %}
+        {% endblock content %}
+    </div>
+    <!-- /.container -->
+</div>
+<!-- /.wrapper -->
+
+<!-- Begin footer -->
+<div id="footer">
+    <div class="container">
+        <div class="credit">
+            Footer content
+        </div>
+    </div>
+</div>
+<!-- /.footer -->
 
 <!-- jQuery -->
 <script src="//code.jquery.com/jquery.js"type="text/javascript"
