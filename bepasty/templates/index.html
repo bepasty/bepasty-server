@@ -6,22 +6,43 @@
     <p>
         This is a simple file uploader with a ceph storage backend. Written und Python with jQuery File Upload.
     </p>
-    <p>
-        Click on
-        <span class="btn btn-default fileinput-button">
-            <i class="glyphicon glyphicon-upload"></i>
-            <span>Add files</span>
-            <!-- Input for file upload widget -->
-            <input id="fileupload" type="file" name="file" multiple>
-        </span>
-        or drop your file directly into the browser.
-    </p>
+
+    <div id="hasJS" style="display: none">
+        <p>
+            Click on
+            <span class="btn btn-default fileinput-button">
+                <i class="glyphicon glyphicon-upload"></i>
+                <span>Add files</span>
+                <!-- Input for file upload widget -->
+                <input id="fileupload" type="file" name="file">
+            </span>
+            or drop your file directly into the browser.
+        </p>
+    </div>
+
+    <noscript>
+        <p>
+            Choose your file and click the Upload Button.
+        </p>
+        <!-- Input for file upload widget -->
+        <form id="fileupload" action="/+upload" method="POST" enctype="multipart/form-data" class="">
+            <span class="btn btn-default fileinput-button">
+                <i class="glyphicon glyphicon-upload"></i>
+                <span>Choose file</span>
+                <input type="file" name="file">
+            </span>
+            <button class="btn btn-success">Upload</button>
+        </form>
+    </noscript>
+
 </blockquote>
 
 <br>
 <!-- The progress bar -->
-<div id="progress" class="progress progress-striped active">
-    <div class="progress-bar"></div>
+<div id="hasJS" style="display: none">
+    <div id="progress" class="progress progress-striped active">
+        <div class="progress-bar"></div>
+    </div>
 </div>
 <!-- Uploaded files -->
 <div id="files" class="files"></div>
@@ -47,4 +68,10 @@
 <!-- fileuploader -->
 <script src="../static/app/js/fileuploader.js" type="text/javascript"
         charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function () {
+        document.getElementById("hasJS").style.display = 'block';
+    });
+</script>
+
 {% endblock js_fileupload %}
