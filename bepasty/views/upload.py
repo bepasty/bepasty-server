@@ -9,6 +9,34 @@ from . import blueprint
 
 
 class Upload(object):
+    @classmethod
+    def range(cls):
+        """
+        Parse Content-Range header.
+        Format is "bytes 0-524287/2000000".
+        """
+        content_range = request.headers.ge('Content-Range')
+        if content_range is not None:
+            return cls._range(content_range)
+
+    @classmethod
+    def _range(cls, content_range):
+        range_type, range_count = content_range.split(' ', 1)
+        # There are no other types then "bytes"
+        if range_type != 'bytes':
+            raise RuntimeError
+
+        range_count, range_complete = range_count.split('/', 1)
+        range_begin, range_end = range_count.split('-', 1)
+
+        range_begin = int(range_begin)
+        range_end = int(range_end)
+        range_complete = int(range_complete)
+
+        if range_begin < range_end and range_end < range_complete:
+            return range_begin, range_end, range_complete
+        raise RuntimeError
+
     @staticmethod
     def upload(item, f, offset=0):
         # Copy data from temp file into storage
