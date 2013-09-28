@@ -76,9 +76,12 @@ class _RbdImage(object):
 
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, *exc):
         self._image_context.destroy()
         self._image_context = None
+
+    open = __enter__
+    close = __exit__
 
     @property
     def size(self):
