@@ -4,4 +4,19 @@ index.html
 {% endblock content %}
 
 {% block js_fileupload %}
+<!-- jquery ui widget -->
+<script src="../static/jquery.fileupload/js/vendor/jquery.ui.widget.js" type="text/javascript"
+        charset="utf-8"></script>
+<!-- iframe transport for browser without XHR support -->
+<script src="../static/jquery.fileupload/js/jquery.iframe-transport.js" type="text/javascript"
+        charset="utf-8"></script>
+<!-- basic file upload -->
+<script src="../static/jquery.fileupload/js/jquery.fileupload.js" type="text/javascript"
+        charset="utf-8"></script>
+<!-- file upload progress bar -->
+<script src="../static/jquery.fileupload/js/jquery.fileupload-process.js" type="text/javascript"
+        charset="utf-8"></script>
+<!-- file upload validation -->
+<script src="../static/jquery.fileupload/js/jquery.fileupload-validate.js" type="text/javascript"
+        charset="utf-8"></script>
 {% endblock js_fileupload %}
