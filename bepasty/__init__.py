@@ -1,4 +1,5 @@
 from flask import Flask
+from .views import blueprint
 
 def create_app():
     app = Flask(__name__)
@@ -10,5 +11,7 @@ def create_app():
 
     app.config.from_object('bepasty.config.Config')
     app.config.from_envvar('BEPASTY_CONFIG')
+
+    app.register_blueprint(blueprint)
 
     return app
