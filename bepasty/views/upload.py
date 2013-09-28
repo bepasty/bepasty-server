@@ -45,7 +45,7 @@ class UploadView(MethodView):
             raise NotImplementedError
 
         try:
-            if Upload.range():
+            if ContentRange.from_request():
                 abort(416)
         except RuntimeError:
             abort(400)
@@ -86,7 +86,7 @@ class UploadContinueView(MethodView):
         name = ItemName.parse(name)
 
         try:
-            content_range = Upload.range()
+            content_range = ContentRange.from_request()
         except RuntimeError:
             abort(400)
 

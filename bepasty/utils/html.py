@@ -3,6 +3,8 @@
 
 import collections
 
+from flask import request
+
 
 class ContentRange(collections.namedtuple('ContentRange', ('begin', 'end', 'complete'))):
     __slots__ = ()
