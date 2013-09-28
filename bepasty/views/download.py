@@ -1,3 +1,6 @@
+# Copyright: 2013 Bastian Blank <bastian@waldi.eu.org>
+# License: BSD 2-clause, see LICENSE for details.
+
 from flask import Response, current_app, stream_with_context
 from flask.views import MethodView
 
