@@ -1,6 +1,31 @@
 {% extends "_layout.html" %}
 {% block content %}
-index.html
+<h1>Binary File Uploader</h1>
+<br>
+<blockquote>
+    <p>
+        This is a simple file uploader with a ceph storage backend. Written und Python with jQuery File Upload.
+    </p>
+    <p>
+        Click on
+        <span class="btn btn-default fileinput-button">
+            <i class="glyphicon glyphicon-upload"></i>
+            <span>Add files</span>
+            <!-- Input for file upload widget -->
+            <input id="fileupload" type="file" name="file" multiple>
+        </span>
+        or drop your file directly into the browser.
+    </p>
+</blockquote>
+
+<br>
+<!-- The progress bar -->
+<div id="progress" class="progress progress-striped active">
+    <div class="progress-bar"></div>
+</div>
+<!-- Uploaded files -->
+<div id="files" class="files"></div>
+<br>
 {% endblock content %}
 
 {% block js_fileupload %}
