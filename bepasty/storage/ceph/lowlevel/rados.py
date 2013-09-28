@@ -72,16 +72,14 @@ class Rados(object):
 
         self._context = ContextWrapper(_rados_shutdown, context)
 
-        return _RadosManager(self._context)
+        return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, *exc):
         self._context.destroy()
         self._context = None
 
-
-class _RadosManager(object):
-    def __init__(self, context):
-        self._context = context
+    open = __enter__
+    close = __exit__
 
     def __getitem__(self, key):
         return RadosIoctx(self, key)
@@ -109,13 +107,12 @@ class RadosIoctx(object):
 
         self._io_context = ContextWrapper(_rados_ioctx_destroy, context, self._context)
 
-        return _RadosIoctxManager(self._io_context)
+        return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, *exc):
         self._io_context.destroy()
         self._io_context = None
 
+    open = __enter__
+    close = __exit__
 
-class _RadosIoctxManager(object):
-    def __init__(self, io_context):
-        self._io_context = io_context

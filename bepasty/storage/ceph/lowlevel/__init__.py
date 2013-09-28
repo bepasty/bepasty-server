@@ -25,11 +25,13 @@ class ContextWrapper(object):
         self.__pointer = pointer
         self.__extra = extra
 
-    def destroy(self):
+    def __del__(self):
         print "destroy", self.__destroy.__name__, self.__pointer
-        self.__destroy(self.__pointer)
-        self.__pointer = None
-        del self.__extra
+        if self.__pointer is not None:
+            self.__destroy(self.__pointer)
+        self.__pointer = self.__extra = None
+
+    destroy = __del__
 
     @property
     def pointer(self):

@@ -54,7 +54,7 @@ class Rbd(object):
     def create(self, name, size, features=0,
                order=0, stripe_unit=0, stripe_count=0):
         order_c = c_int(order)
-        _rbd_create3(self.pool._io_context, name, size, features, order_c, stripe_unit, stripe_count)
+        _rbd_create3(self.pool._io_context.pointer, name, size, features, order_c, stripe_unit, stripe_count)
         return self[name]
 
 
@@ -74,16 +74,11 @@ class _RbdImage(object):
 
         self._image_context = ContextWrapper(_rbd_close, context, self._io_context)
 
-        return _RbdImageManager(self._image_context)
+        return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self._image_context.destroy()
         self._image_context = None
-
-
-class _RbdImageManager(object):
-    def __init__(self, image_context):
-        self._image_context = image_context
 
     @property
     def size(self):
