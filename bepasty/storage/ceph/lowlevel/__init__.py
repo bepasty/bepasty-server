@@ -1,7 +1,9 @@
 import os
 
 def errcheck(result, func, *arguments):
-    if result < 0:
+    if result is None:
+        pass
+    elif result < 0:
         try:
             mesg = os.strerror(-result)
         except ValueError:
