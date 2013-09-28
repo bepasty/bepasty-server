@@ -7,11 +7,12 @@ def test():
 
     m = Meta(f)
     assert len(m) == 0
+    m.write()
 
+    m = Meta(f)
     m['flag'] = True
     assert len(m) == 1
-
-    m.flush()
+    m.write()
 
     m = Meta(f)
     assert len(m) == 1

@@ -89,8 +89,10 @@ class Meta(collections.MutableMapping):
         data = file_meta.read()
         if data:
             self._data = pickle.loads(data)
+            self._changed = False
         else:
             self._data = {}
+            self._changed = True
 
     def __iter__(self):
         return iter(self._data)
@@ -103,16 +105,20 @@ class Meta(collections.MutableMapping):
 
     def __setitem__(self, key, value):
         self._data[key] = value
+        self._changed = True
 
     def __delitem__(self, key):
         del self._data[key]
+        self._changed = True
 
     def close(self):
+        self.write()
         self._file.close()
 
-    def flush(self):
-        self._write()
-        self._file.flush()
+    def write(self):
+        if self._changed:
+            self._write()
+            self._changed = False
 
     def _write(self):
         self._file.seek(0)
