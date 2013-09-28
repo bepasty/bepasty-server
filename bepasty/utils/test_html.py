@@ -1,6 +1,6 @@
 import pytest
 
-from .upload import ContentRange
+from .html import ContentRange
 
 def test_ContentRange_parse():
     r = ContentRange.parse('bytes 0-1/2')
