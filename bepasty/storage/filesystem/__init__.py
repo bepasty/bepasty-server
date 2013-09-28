@@ -1,4 +1,6 @@
+import collections
 import os
+import pickle
 
 
 class Storage(object):
@@ -77,12 +79,43 @@ class Data(object):
         return self._file.write(data)
 
 
-class Meta(object):
+class Meta(collections.MutableMapping):
     """
     Meta-data of item.
     """
     def __init__(self, file_meta):
         self._file = file_meta
 
+        data = file_meta.read()
+        if data:
+            self._data = pickle.loads(data)
+        else:
+            self._data = {}
+
+    def __iter__(self):
+        return iter(self._data)
+
+    def __len__(self):
+        return len(self._data)
+
+    def __getitem__(self, key):
+        return self._data[key]
+
+    def __setitem__(self, key, value):
+        self._data[key] = value
+
+    def __delitem__(self, key):
+        del self._data[key]
+
     def close(self):
         self._file.close()
+
+    def flush(self):
+        self._write()
+        self._file.flush()
+
+    def _write(self):
+        self._file.seek(0)
+        pickle.dump(self._data, self._file)
+        self._file.seek(0)
+
