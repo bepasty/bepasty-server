@@ -6,6 +6,6 @@ def test():
     f1 = tempfile.TemporaryFile()
     f2 = tempfile.TemporaryFile()
 
-    i = Item(f1, f2)
-    assert i.data is not None
-    assert i.meta is not None
+    with Item(f1, f2) as i:
+        assert i.data is not None
+        assert i.meta is not None

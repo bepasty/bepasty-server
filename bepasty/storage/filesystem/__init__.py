@@ -44,9 +44,12 @@ class Item(object):
         self.data = Data(file_data)
         self.meta = Meta(file_meta)
 
-    def flush(self):
-        self.data.flush()
-        self.meta.flush()
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.data.close()
+        self.meta.close()
 
 
 class Data(object):
