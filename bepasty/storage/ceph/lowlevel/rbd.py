@@ -70,7 +70,7 @@ class _RbdImage(object):
 
         context = c_void_p()
 
-        _rbd_open(self._io_context._pointer, self.image_name, context, None)
+        _rbd_open(self._io_context.pointer, self.image_name, context, None)
 
         self._image_context = ContextWrapper(_rbd_close, context, self._io_context)
 
@@ -88,7 +88,7 @@ class _RbdImageManager(object):
     @property
     def size(self):
         size = c_uint64()
-        _rbd_get_size(self._image_context._pointer, size)
+        _rbd_get_size(self._image_context.pointer, size)
         return size.value
 
 

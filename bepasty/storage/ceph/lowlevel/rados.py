@@ -105,7 +105,7 @@ class RadosIoctx(object):
 
         context = c_void_p()
 
-        _rados_ioctx_create(self._context._pointer, self.pool_name, context)
+        _rados_ioctx_create(self._context.pointer, self.pool_name, context)
 
         self._io_context = ContextWrapper(_rados_ioctx_destroy, context, self._context)
 

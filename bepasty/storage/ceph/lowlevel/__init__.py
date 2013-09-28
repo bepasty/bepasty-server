@@ -21,13 +21,20 @@ class ContextWrapper(object):
     """
 
     def __init__(self, destroy, pointer, *extra):
-        self._destroy = destroy
-        self._pointer = pointer
-        self._extra = extra
+        self.__destroy = destroy
+        self.__pointer = pointer
+        self.__extra = extra
 
     def destroy(self):
-        print "destroy", self._destroy.__name__, self._pointer
-        self._destroy(self._pointer)
-        del self._pointer
-        del self._extra
+        print "destroy", self.__destroy.__name__, self.__pointer
+        self.__destroy(self.__pointer)
+        self.__pointer = None
+        del self.__extra
+
+    @property
+    def pointer(self):
+        p = self.__pointer
+        if p is None:
+            raise RuntimeError
+        return p
 
