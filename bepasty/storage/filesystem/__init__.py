@@ -1,3 +1,6 @@
+import os
+
+
 class Storage(object):
     def __init__(self, directory):
         self.directory = directory
@@ -56,16 +59,19 @@ class Data(object):
 
     @property
     def size(self):
-        raise NotImplementedError
+        self._file.seek(0, os.SEEK_END)
+        return self._file.tell()
 
-    def flush(self):
-        self._file.flush()
+    def close(self):
+        self._file.close()
 
-    def read(self):
-        raise NotImplementedError
+    def read(self, offset, length):
+        self._file.seek(offset)
+        return self._file.read(length)
 
-    def write(self):
-        raise NotImplementedError
+    def write(self, data, offset):
+        self._file.seek(offset)
+        return self._file.write(data)
 
 
 class Meta(object):
@@ -75,5 +81,5 @@ class Meta(object):
     def __init__(self, file_meta):
         self._file = file_meta
 
-    def flush(self):
-        raise NotImplementedError
+    def close(self):
+        self._file.close()
