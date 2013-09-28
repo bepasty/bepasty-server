@@ -13,3 +13,21 @@ def errcheck(result, func, *arguments):
             mesg = 'Unknown error'
         raise OSError(-result, mesg)
 
+
+class ContextWrapper(object):
+    """
+    Wrap pointer and corresponding destroy function.
+    Used as reference counting for native pointer.
+    """
+
+    def __init__(self, destroy, pointer, *extra):
+        self._destroy = destroy
+        self._pointer = pointer
+        self._extra = extra
+
+    def destroy(self):
+        print "destroy", self._destroy.__name__, self._pointer
+        self._destroy(self._pointer)
+        del self._pointer
+        del self._extra
+

@@ -9,7 +9,7 @@ from ctypes import (
         POINTER,
         )
 
-from . import errcheck
+from . import errcheck, ContextWrapper
 
 _librados = CDLL('librados.so.2')
 
@@ -33,7 +33,7 @@ _rados_connect.errcheck = errcheck
 _rados_connect.argtypes = c_void_p,
 
 # void rados_shutdown(rados_t cluster);
-_rados_shutdown = _librados.rados_conf_read_file
+_rados_shutdown = _librados.rados_shutdown
 _rados_shutdown.restype = None
 _rados_shutdown.argtypes = c_void_p,
 
@@ -55,28 +55,28 @@ class Rados(object):
         self.client_name = client_name or 'client.admin'
         self.config_file = config_file
 
-        self._context = c_void_p()
+        self._context = None
 
     def __enter__(self):
         if self._context:
             raise RuntimeError
 
-        _rados_create2(self._context, self.cluster_name, self.client_name, 0)
+        context = c_void_p()
+
+        _rados_create2(context, self.cluster_name, self.client_name, 0)
 
         if self.config_file:
-            _rados_conf_read_file(self._context, self.config_file)
+            _rados_conf_read_file(context, self.config_file)
 
-        _rados_connect(self._context)
+        _rados_connect(context)
+
+        self._context = ContextWrapper(_rados_shutdown, context)
 
         return _RadosManager(self._context)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if not self._context:
-            raise RuntimeError
-
-        _rados_shutdown(self._context)
-
-        self._context = c_void_p()
+        self._context.destroy()
+        self._context = None
 
 
 class _RadosManager(object):
@@ -97,23 +97,23 @@ class RadosIoctx(object):
     def __init__(self, rados, pool_name):
         self._context, self.pool_name = rados._context, pool_name
 
-        self._io_context = c_void_p()
+        self._io_context = None
 
     def __enter__(self):
         if self._io_context:
             raise RuntimeError
 
-        _rados_ioctx_create(self._context, self.pool_name, self._io_context)
+        context = c_void_p()
+
+        _rados_ioctx_create(self._context._pointer, self.pool_name, context)
+
+        self._io_context = ContextWrapper(_rados_ioctx_destroy, context, self._context)
 
         return _RadosIoctxManager(self._io_context)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if not self._io_context:
-            raise RuntimeError
-
-        _rados_ioctx_destroy(self._io_context)
-
-        self._io_context = c_void_p()
+        self._io_context.destroy()
+        self._io_context = None
 
 
 class _RadosIoctxManager(object):

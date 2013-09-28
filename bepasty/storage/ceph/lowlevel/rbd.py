@@ -9,7 +9,7 @@ from ctypes import (
         POINTER,
         )
 
-from . import errcheck
+from . import errcheck, ContextWrapper
 
 _librbd = CDLL('librbd.so.1')
 
@@ -62,33 +62,33 @@ class _RbdImage(object):
     def __init__(self, io_context, image_name):
         self._io_context, self.image_name = io_context, image_name
 
-        self._image = c_void_p()
+        self._image_context = None
 
     def __enter__(self):
-        if self._image:
+        if self._image_context:
             raise RuntimeError
 
-        _rbd_open(self._io_context, self.image_name, self._image, None)
+        context = c_void_p()
 
-        return _RbdImageManager(self._image)
+        _rbd_open(self._io_context._pointer, self.image_name, context, None)
+
+        self._image_context = ContextWrapper(_rbd_close, context, self._io_context)
+
+        return _RbdImageManager(self._image_context)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if not self._image:
-            raise RuntimeError
-
-        _rbd_close(self._image)
-
-        self._image = c_void_p()
+        self._image_context.destroy()
+        self._image_context = None
 
 
 class _RbdImageManager(object):
-    def __init__(self, image):
-        self._image = image
+    def __init__(self, image_context):
+        self._image_context = image_context
 
     @property
     def size(self):
         size = c_uint64()
-        _rbd_get_size(self._image, size)
+        _rbd_get_size(self._image_context._pointer, size)
         return size.value
 
 
