@@ -27,3 +27,7 @@ body {
 #wrapper > .container {
     padding: 80px 15px 60px;
 }
+
+.alert {
+    padding: 5px 35px 5px 15px;
+}
