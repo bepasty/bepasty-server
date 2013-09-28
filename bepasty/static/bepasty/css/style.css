@@ -1,0 +1,29 @@
+/* base styles
+-------------------------------------------------- */
+
+html,
+body {
+    height: 100%;
+    max-width: 100%;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    font-size: 12px;
+    background-color: #fff;
+}
+
+#footer {
+    height: 30px;
+    position: relative;
+}
+
+#wrapper {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin: 0 auto -30px;
+    padding: 0 0 60px;
+}
+
+#wrapper > .container {
+    padding: 80px 15px 60px;
+}
