@@ -1,26 +1,24 @@
 # Copyright: 2013 Bastian Blank <bastian@waldi.eu.org>
 # License: BSD 2-clause, see LICENSE for details.
 
-from flask import current_app, jsonify, redirect, request, url_for
+import collections
+
+from flask import abort, current_app, jsonify, redirect, request, url_for
 from flask.views import MethodView
 
 from ..utils.name import ItemName
 from . import blueprint
 
 
-class Upload(object):
+class ContentRange(collections.namedtuple('ContentRange', ('begin', 'end', 'complete'))):
+    __slots__ = ()
+
     @classmethod
-    def range(cls):
+    def parse(cls, content_range):
         """
         Parse Content-Range header.
         Format is "bytes 0-524287/2000000".
         """
-        content_range = request.headers.ge('Content-Range')
-        if content_range is not None:
-            return cls._range(content_range)
-
-    @classmethod
-    def _range(cls, content_range):
         range_type, range_count = content_range.split(' ', 1)
         # There are no other types then "bytes"
         if range_type != 'bytes':
@@ -33,10 +31,22 @@ class Upload(object):
         range_end = int(range_end)
         range_complete = int(range_complete)
 
-        if range_begin < range_end and range_end < range_complete:
-            return range_begin, range_end, range_complete
+        if range_begin <= range_end and range_end < range_complete:
+            return ContentRange(range_begin, range_end, range_complete)
         raise RuntimeError
 
+    @classmethod
+    def from_request(cls):
+        content_range = request.headers.get('Content-Range')
+        if content_range is not None:
+            return cls.parse(content_range)
+
+    @property
+    def size(self):
+        return self.end - self.begin + 1
+
+
+class Upload(object):
     @staticmethod
     def upload(item, f, offset=0):
         # Copy data from temp file into storage
