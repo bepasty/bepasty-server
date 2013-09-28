@@ -48,16 +48,31 @@ class ContentRange(collections.namedtuple('ContentRange', ('begin', 'end', 'comp
 
 class Upload(object):
     @staticmethod
-    def upload(item, f, offset=0):
-        # Copy data from temp file into storage
+    def upload(item, f, offset=0, size_input=None):
+        """
+        Copy data from temp file into storage.
+        """
+        read_length = 16*1024
+        size_written = 0
+
         while True:
-            buf = f.read(16*1024)
+            if size_input is not None:
+                read_length = min(read_length, size_input)
+            if size_input == 0:
+                break
+
+            buf = f.read(read_length)
             if not buf:
                 break
-            item.data.write(buf, offset)
-            offset += len(buf)
 
-        return offset
+            item.data.write(buf, offset + size_written)
+
+            len_buf = len(buf)
+            size_written += len_buf
+            if size_input is not None:
+                size_input -= len_buf
+
+        return size_written
 
 
 class UploadView(MethodView):
@@ -65,6 +80,12 @@ class UploadView(MethodView):
         f = request.files['file']
         if not f:
             raise NotImplementedError
+
+        try:
+            if Upload.range():
+                abort(416)
+        except RuntimeError:
+            abort(400)
 
         name = ItemName.create()
 
@@ -101,8 +122,22 @@ class UploadContinueView(MethodView):
     def post(self, name):
         name = ItemName.parse(name)
 
+        try:
+            content_range = Upload.range()
+        except RuntimeError:
+            abort(400)
+
         with current_app.storage.openwrite(name) as item:
-            raise RuntimeError
+            if content_range:
+                Upload.upload(item, f, content_range.begin, content_range.size)
+            else:
+                Upload.upload(item, f)
+
+            return jsonify({'files': [{
+                    'filename': item.meta['filename'],
+                    'size': item.meta['size'],
+                    'url': url_for('bepasty.display', name=name),
+            }]})
 
 
 blueprint.add_url_rule('/+upload', view_func=UploadView.as_view('upload'))
