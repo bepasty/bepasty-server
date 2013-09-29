@@ -21,8 +21,7 @@ class Upload(object):
         size_written = 0
 
         while True:
-            if size_input is not None:
-                read_length = min(read_length, size_input)
+            read_length = min(read_length, size_input)
             if size_input == 0:
                 break
 
@@ -34,8 +33,7 @@ class Upload(object):
 
             len_buf = len(buf)
             size_written += len_buf
-            if size_input is not None:
-                size_input -= len_buf
+            size_input -= len_buf
 
         return size_written
 
@@ -46,18 +44,23 @@ class UploadView(MethodView):
         if not f:
             raise NotImplementedError
 
+        # Check Content-Range, disallow its usage
         try:
             if ContentRange.from_request():
                 abort(416)
         except RuntimeError:
             abort(400)
 
-        name = ItemName.create()
+        # Check Content-Type, default to application/octet-stream
+        content_type = request.headers.get('Content-Type') or 'application/octet-stream'
 
         # Get size of temporary file
         f.seek(0, os.SEEK_END)
         size = f.tell()
         f.seek(0)
+
+        # Create new name
+        name = ItemName.create()
 
         with current_app.storage.create(name, size) as item:
             Upload.upload(item, f, size)
@@ -65,7 +68,7 @@ class UploadView(MethodView):
             # Save meta-data
             item.meta['filename'] = f.filename
             item.meta['size'] = size
-#            item.meta['type'] = data_type
+            item.meta['type'] = content_type
 
         return redirect(url_for('bepasty.display', name=name))
 
@@ -75,15 +78,16 @@ class UploadNewView(MethodView):
         data = request.get_json()
         data_filename = data['filename']
         data_size = data['size']
-#        #data_type = data['type']
+        data_type = data['type']
 
+        # Create new name
         name = ItemName.create()
 
         with current_app.storage.create(name, data_size) as item:
             # Save meta-data
             item.meta['filename'] = data_filename
             item.meta['size'] = data_size
-#            item.meta['type'] = data_type
+            item.meta['type'] = data_type
 
             return jsonify({'url': url_for('bepasty.upload_continue', name=name)})
 
@@ -94,11 +98,13 @@ class UploadContinueView(MethodView):
         if not f:
             raise NotImplementedError
 
+        # Check Content-Range
         try:
             content_range = ContentRange.from_request()
         except RuntimeError:
             abort(400)
 
+        # Parse name
         name = ItemName.parse(name)
 
         with current_app.storage.openwrite(name) as item:
