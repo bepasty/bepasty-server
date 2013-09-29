@@ -73,9 +73,9 @@ class Data(object):
     def close(self):
         self._file.close()
 
-    def read(self, offset, length):
+    def read(self, size, offset):
         self._file.seek(offset)
-        return self._file.read(length)
+        return self._file.read(size)
 
     def write(self, data, offset):
         self._file.seek(offset)
