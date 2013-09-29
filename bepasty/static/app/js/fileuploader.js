@@ -9,25 +9,6 @@ $(function () {
             maxFileSize: 100000000, // 1000MB
         })
 
-        .on('fileuploadsubmit', function (e, data) {
-            var $this = $(this);
-            $.ajax({
-                type: 'POST',
-                url: '/+upload/new',
-                data: JSON.stringify({
-                    filename: data.files[0].name,
-                size: data.files[0].size,
-                type: data.files[0].type
-                }),
-                contentType: 'application/json',
-                success: function (result) {
-                    data.url = result.url;
-                    $this.fileupload('send', data);
-                }
-            });
-            return false;
-        })
-
         .on('fileuploadadd', function (e, data) {
             data.context = $('<div class="alert alert-processing"/>')
                 .appendTo('#files');
@@ -50,6 +31,25 @@ $(function () {
                     .text(file.name + " (" + humansize(file.size) + ")");
                 node.appendTo(data.context);
             });
+        })
+
+        .on('fileuploadsubmit', function (e, data) {
+            var $this = $(this);
+            $.ajax({
+                type: 'POST',
+                url: '/+upload/new',
+                data: JSON.stringify({
+                    filename: data.files[0].name,
+                size: data.files[0].size,
+                type: data.files[0].type
+                }),
+                contentType: 'application/json',
+                success: function (result) {
+                    data.url = result.url;
+                    $this.fileupload('send', data);
+                }
+            });
+            return false;
         })
 
         .on('fileuploaddone', function (e, data) {
