@@ -26,6 +26,7 @@ $(function () {
                 return Math.round(size * 10) / 10 + " " + suffix[tier];
             }
 
+            // Add one paragraph per file
             $.each(data.files, function (index, file) {
                 var node = $('<p/>')
                     .text(file.name + " (" + humansize(file.size) + ")");
@@ -35,13 +36,14 @@ $(function () {
 
         .on('fileuploadsubmit', function (e, data) {
             var $this = $(this);
+            // Create new item
             $.ajax({
                 type: 'POST',
                 url: '/+upload/new',
                 data: JSON.stringify({
                     filename: data.files[0].name,
-                size: data.files[0].size,
-                type: data.files[0].type
+                    size: data.files[0].size,
+                    type: data.files[0].type,
                 }),
                 contentType: 'application/json',
                 success: function (result) {
@@ -89,5 +91,5 @@ $(function () {
             $(data.context.children()[index])
                 .append('<br>')
                 .append('<strong>' + file.error + '</strong>');
-	});
+        });
 });

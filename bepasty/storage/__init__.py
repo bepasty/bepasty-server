@@ -5,5 +5,8 @@ import importlib
 
 
 def create_storage(app):
+    """
+    Load specified storage and return the object.
+    """
     storage = importlib.import_module('.' + app.config['STORAGE'], __name__)
     return storage.Storage(app)
