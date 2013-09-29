@@ -2,6 +2,7 @@
 # License: BSD 2-clause, see LICENSE for details.
 
 import collections
+import errno
 
 from ctypes import (
     CDLL,
@@ -20,6 +21,12 @@ _rbd_create3 = _librbd.rbd_create3
 _rbd_create3.restype = c_int
 _rbd_create3.errcheck = errcheck
 _rbd_create3.argtypes = c_void_p, c_char_p, c_uint64, c_uint64, POINTER(c_int), c_uint64, c_uint64
+
+# int rbd_remove(rados_ioctx_t io, const char *name);
+_rbd_remove = _librbd.rbd_remove
+_rbd_remove.restype = c_int
+_rbd_remove.errcheck = errcheck
+_rbd_remove.argtypes = c_void_p, c_char_p
 
 # int rbd_open(rados_ioctx_t io, const char *name, rbd_image_t *image,
 #              const char *snap_name);
@@ -61,7 +68,12 @@ class Rbd(object):
         return _RbdImage(self.pool._io_context, name)
 
     def __delitem__(self, name):
-        raise NotImplementedError
+        try:
+            _rbd_remove(self.pool._io_context.pointer, name)
+        except OSError as e:
+            if e.errno == errno.ENOENT:
+                raise KeyError(name)
+            raise
 
     def create(self, name, size, features=0,
                order=0, stripe_unit=0, stripe_count=0):

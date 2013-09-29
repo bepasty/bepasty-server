@@ -2,6 +2,7 @@
 # License: BSD 2-clause, see LICENSE for details.
 
 import collections
+import errno
 import pickle
 
 from flask import g
@@ -61,6 +62,22 @@ class Storage(object):
         data = rbd[objectname]
         meta = g.ceph_ioctx_data[objectname]
         return Item(data, meta)
+
+    def remove(self, name):
+        objectname = self._objectname(name)
+        rbd = Rbd(g.ceph_ioctx_data)
+
+        e_data = e_meta = None
+        try:
+            del rbd[objectname]
+        except KeyError as e_data:
+            pass
+        try:
+            del g.ceph_ioctx_data[objectname]
+        except KeyError as e_meta:
+            pass
+        if e_data and e_meta:
+            raise KeyError(name)
 
 
 class Item(object):

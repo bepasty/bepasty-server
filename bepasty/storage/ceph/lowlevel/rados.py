@@ -2,6 +2,7 @@
 # License: BSD 2-clause, see LICENSE for details.
 
 import collections
+import errno
 
 from ctypes import (
     CDLL,
@@ -65,6 +66,12 @@ _rados_read = _librados.rados_read
 _rados_read.restype = c_int
 _rados_read.errcheck = errcheck
 _rados_read.argtypes = c_void_p, c_char_p, c_char_p, c_size_t, c_uint64
+
+# int rados_remove(rados_ioctx_t io, const char *oid);
+_rados_remove = _librados.rados_remove
+_rados_remove.restype = c_int
+_rados_remove.errcheck = errcheck
+_rados_remove.argtypes = c_void_p, c_char_p
 
 
 class Rados(object):
@@ -138,7 +145,12 @@ class RadosIoctx(object):
         return RadosObject(self._io_context, name)
 
     def __delitem__(self, name):
-        raise NotImplementedError
+        try:
+            _rados_remove(self._io_context.pointer, name)
+        except OSError as e:
+            if e.errno == errno.ENOENT:
+                raise KeyError(name)
+            raise
 
 
 class RadosObject(object):
