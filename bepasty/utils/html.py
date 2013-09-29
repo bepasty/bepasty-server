@@ -40,5 +40,9 @@ class ContentRange(collections.namedtuple('ContentRange', ('begin', 'end', 'comp
             return cls.parse(content_range)
 
     @property
+    def is_complete(self):
+        return self.complete == self.end + 1
+
+    @property
     def size(self):
         return self.end - self.begin + 1
