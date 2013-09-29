@@ -7,7 +7,7 @@
   <dt>Download</dt>
   <dd><a href="{{ url_for('bepasty.download', name=name) }}">try here…</a></dd>
   <dt>Type</dt>
-  <dd>{{ item.meta.get('type') }}</dd>
+  <dd>{{ item.meta.get('type') or 'undefined' }}</dd>
   <dt>Size</dt>
   <dd>{{ item.meta['size'] }}</dd>
 </p>
