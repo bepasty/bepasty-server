@@ -1,21 +1,23 @@
 $(function () {
     'use strict';
-    $('#fileupload').fileupload({
-        dataType: 'json',
-        autoUpload: true,
-        singleFileUploads: true,
-        maxChunkSize: 10000000, // 10MB
-        maxFileSize: 100000000, // 1000MB
+    $('#fileupload')
+        .fileupload({
+            dataType: 'json',
+            autoUpload: true,
+            singleFileUploads: true,
+            maxChunkSize: 10000000, // 10MB
+            maxFileSize: 100000000, // 1000MB
+        })
 
-        submit: function (e, data) {
+        .on('fileuploadsubmit', function (e, data) {
             var $this = $(this);
             $.ajax({
                 type: 'POST',
                 url: '/+upload/new',
                 data: JSON.stringify({
                     filename: data.files[0].name,
-                    size: data.files[0].size,
-                    type: data.files[0].type
+                size: data.files[0].size,
+                type: data.files[0].type
                 }),
                 contentType: 'application/json',
                 success: function (result) {
@@ -24,28 +26,34 @@ $(function () {
                 }
             });
             return false;
-        },
+        })
 
-        start: function (e, data) {
+        .on('fileuploadstart', function (e, data) {
             $('#fileupload-progress').css('visibility', 'visible');
-        },
+        })
 
-        stop: function (e, data) {
+        .on('fileuploadstop', function (e, data) {
             $('#fileupload-progress').css('visibility', 'hidden');
-        }
-        }).on('fileuploadfail',function (e, data) {
+        })
+
+        .on('fileuploadfail', function (e, data) {
             $(data.context.children()[0])
                 .append('<br>')
                 .append('<strong>Upload failed!</strong>')
                 .wrap("<div class='alert alert-danger'></div>");
-        }).on('fileuploadadd',function (e, data) {
+        })
+
+        .on('fileuploadadd', function (e, data) {
             data.context = $('<div/>').appendTo('#files');
             $.each(data.files, function (index, file) {
                 var node = $('<p/>')
                     .append($('<span/>').text(file.name));
                 node.appendTo(data.context);
             });
-        }).on('fileuploadprocessalways',function (e, data) {
+        })
+
+        .on('fileuploadprocessalways', function (e, data) {
+            console.log("processalways")
             var index = data.index,
                 file = data.files[index],
                 node = $(data.context.children()[index]);
@@ -60,10 +68,16 @@ $(function () {
                     .text('Upload')
                     .prop('disabled', !!data.files.error);
             }
-        }).on('fileuploadprogressall',function (e, data) {
+        })
+
+        .on('fileuploadprogressall', function (e, data) {
+            console.log("progressall")
             var progress = parseInt(data.loaded / data.total * 100, 10);
             $('#fileupload-progress .progress-bar').css('width', progress + '%');
-        }).on('fileuploaddone',function (e, data) {
+        })
+
+        .on('fileuploaddone', function (e, data) {
+            console.log("done")
             $.each(data.result.files, function (index, file) {
                 var link = $('<a>')
                     .attr('target', '_blank')
@@ -71,7 +85,9 @@ $(function () {
                 $(data.context.children()[index])
                     .wrap(link)
                     .wrap("<div class='alert alert-success'></div>");
-            });
-        }).prop('disabled', !$.support.fileInput)
+            })
+        })
+
+        .prop('disabled', !$.support.fileInput)
         .parent().addClass($.support.fileInput ? undefined : 'disabled');
 });
