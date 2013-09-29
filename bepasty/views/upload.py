@@ -73,9 +73,10 @@ class UploadView(MethodView):
 class UploadNewView(MethodView):
     def post(self):
         data = request.get_json()
+
         data_filename = data['filename']
         data_size = data['size']
-        data_type = data['type']
+        data_type = data['type'] or 'application/octet-stream'
 
         # Create new name
         name = ItemName.create()
