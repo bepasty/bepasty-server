@@ -25,14 +25,11 @@ $(function () {
             return false;
         },
         done: function (e, data) {
-            $('#progress .progress-bar').css('width', '0%');
+            setTimeout(function(){
+                $('#progress .progress-bar').css('width', '0%');
+            }, 2000);
         }
-    }).on('fileuploadfail',function (e, data) {
-            $(data.context.children()[0])
-                .append('<br>')
-                .append('<strong>Upload failed!</strong>')
-                .wrap("<div class='alert alert-danger'></div>");
-        }).on('fileuploadchunkfail',function (e, data) {
+        }).on('fileuploadfail',function (e, data) {
             $(data.context.children()[0])
                 .append('<br>')
                 .append('<strong>Upload failed!</strong>')
@@ -61,7 +58,6 @@ $(function () {
             }
         }).on('fileuploadprogressall',function (e, data) {
             var progress = parseInt(data.loaded / data.total * 100, 10);
-            console.log(progress);
             $('#progress .progress-bar').css('width', progress + '%');
         }).on('fileuploaddone',function (e, data) {
             $.each(data.result.files, function (index, file) {
@@ -74,5 +70,4 @@ $(function () {
             });
         }).prop('disabled', !$.support.fileInput)
         .parent().addClass($.support.fileInput ? undefined : 'disabled');
-
 });
