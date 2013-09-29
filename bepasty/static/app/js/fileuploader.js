@@ -31,8 +31,23 @@ $(function () {
         .on('fileuploadadd', function (e, data) {
             data.context = $('<div class="alert alert-processing"/>')
                 .appendTo('#files');
+
+            // Generate human readable file size
+            function humansize (size) {
+                var suffix = ["B", "KiB", "MiB", "GiB", "TiB", "PiB"],
+                    tier = 0;
+
+                while (size >= 1024) {
+                    size = size / 1024;
+                    tier++;
+                }
+
+                return Math.round(size * 10) / 10 + " " + suffix[tier];
+            }
+
             $.each(data.files, function (index, file) {
-                var node = $('<p/>').text(file.name);
+                var node = $('<p/>')
+                    .text(file.name + " (" + humansize(file.size) + ")");
                 node.appendTo(data.context);
             });
         })
