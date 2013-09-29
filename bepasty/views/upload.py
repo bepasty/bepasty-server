@@ -45,11 +45,8 @@ class UploadView(MethodView):
             raise NotImplementedError
 
         # Check Content-Range, disallow its usage
-        try:
-            if ContentRange.from_request():
-                abort(416)
-        except RuntimeError:
-            abort(400)
+        if ContentRange.from_request():
+            abort(416)
 
         # Check Content-Type, default to application/octet-stream
         content_type = request.headers.get('Content-Type') or 'application/octet-stream'
@@ -99,10 +96,7 @@ class UploadContinueView(MethodView):
             raise NotImplementedError
 
         # Check Content-Range
-        try:
-            content_range = ContentRange.from_request()
-        except RuntimeError:
-            abort(400)
+        content_range = ContentRange.from_request()
 
         # Parse name
         name = ItemName.parse(name)

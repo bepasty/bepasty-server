@@ -3,7 +3,8 @@
 
 import collections
 
-from flask import request
+from flask import request, abort
+from werkzeug.exceptions import BadRequest
 
 
 class ContentRange(collections.namedtuple('ContentRange', ('begin', 'end', 'complete'))):
@@ -18,7 +19,7 @@ class ContentRange(collections.namedtuple('ContentRange', ('begin', 'end', 'comp
         range_type, range_count = content_range.split(' ', 1)
         # There are no other types then "bytes"
         if range_type != 'bytes':
-            raise RuntimeError
+            raise BadRequest
 
         range_count, range_complete = range_count.split('/', 1)
         range_begin, range_end = range_count.split('-', 1)
@@ -29,7 +30,8 @@ class ContentRange(collections.namedtuple('ContentRange', ('begin', 'end', 'comp
 
         if range_begin <= range_end and range_end < range_complete:
             return ContentRange(range_begin, range_end, range_complete)
-        raise RuntimeError
+
+        raise BadRequest
 
     @classmethod
     def from_request(cls):
