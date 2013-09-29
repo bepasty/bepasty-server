@@ -23,6 +23,9 @@ $(function () {
                 }
             });
             return false;
+        },
+        done: function (e, data) {
+            $('#progress .progress-bar').css('width', '0%');
         }
     }).on('fileuploadfail',function (e, data) {
             $(data.context.children()[0])
@@ -58,10 +61,8 @@ $(function () {
             }
         }).on('fileuploadprogressall',function (e, data) {
             var progress = parseInt(data.loaded / data.total * 100, 10);
-            $('#progress .progress-bar').css(
-                'width',
-                progress + '%'
-            );
+            console.log(progress);
+            $('#progress .progress-bar').css('width', progress + '%');
         }).on('fileuploaddone',function (e, data) {
             $.each(data.result.files, function (index, file) {
                 var link = $('<a>')
