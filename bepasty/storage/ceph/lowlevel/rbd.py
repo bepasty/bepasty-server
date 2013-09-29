@@ -5,8 +5,8 @@ import collections
 
 from ctypes import (
         CDLL,
-        c_char_p, c_void_p, c_int, c_uint64,
-        POINTER,
+        c_char_p, c_void_p, c_int, c_size_t, c_ssize_t, c_uint64,
+        POINTER, create_string_buffer,
         )
 
 from . import errcheck, ContextWrapper
@@ -40,6 +40,17 @@ _rbd_get_size.restype = c_int
 _rbd_get_size.errcheck = errcheck
 _rbd_get_size.argtypes = c_void_p, POINTER(c_uint64)
 
+# ssize_t rbd_read(rbd_image_t image, uint64_t ofs, size_t len, char *buf);
+_rbd_read = _librbd.rbd_read
+_rbd_read.restype = c_ssize_t
+_rbd_read.errcheck = errcheck
+_rbd_read.argtypes = c_void_p, c_uint64, c_size_t, c_char_p
+
+# ssize_t rbd_write(rbd_image_t image, uint64_t ofs, size_t len, const char *buf);
+_rbd_write = _librbd.rbd_write
+_rbd_write.restype = c_ssize_t
+_rbd_write.errcheck = errcheck
+_rbd_write.argtypes = c_void_p, c_uint64, c_size_t, c_char_p
 
 class Rbd(object):
     def __init__(self, pool):
@@ -54,7 +65,7 @@ class Rbd(object):
     def create(self, name, size, features=0,
                order=0, stripe_unit=0, stripe_count=0):
         order_c = c_int(order)
-        _rbd_create3(self.pool._io_context, name, size, features, order_c, stripe_unit, stripe_count)
+        _rbd_create3(self.pool._io_context.pointer, name, size, features, order_c, stripe_unit, stripe_count)
         return self[name]
 
 
@@ -74,16 +85,14 @@ class _RbdImage(object):
 
         self._image_context = ContextWrapper(_rbd_close, context, self._io_context)
 
-        return _RbdImageManager(self._image_context)
+        return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, *exc):
         self._image_context.destroy()
         self._image_context = None
 
-
-class _RbdImageManager(object):
-    def __init__(self, image_context):
-        self._image_context = image_context
+    open = __enter__
+    close = __exit__
 
     @property
     def size(self):
@@ -91,4 +100,10 @@ class _RbdImageManager(object):
         _rbd_get_size(self._image_context.pointer, size)
         return size.value
 
+    def read(self, size, offset):
+        buf = create_string_buffer(size)
+        _rdb_read(self._image_context.pointer, buf, size, offset)
+        return buf.value
 
+    def write(self, buf, offset):
+        return _rbd_write(self._image_context.pointer, offset, len(buf), buf)

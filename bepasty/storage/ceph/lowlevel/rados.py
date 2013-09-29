@@ -5,8 +5,8 @@ import collections
 
 from ctypes import (
         CDLL,
-        c_char_p, c_void_p, c_int, c_uint64,
-        POINTER,
+        c_char_p, c_void_p, c_int, c_size_t, c_uint64,
+        POINTER, create_string_buffer,
         )
 
 from . import errcheck, ContextWrapper
@@ -48,6 +48,18 @@ _rados_ioctx_destroy = _librados.rados_ioctx_destroy
 _rados_ioctx_destroy.restype = None
 _rados_ioctx_destroy.argtypes = c_void_p,
 
+# int rados_write(rados_ioctx_t io, const char *oid, const char *buf, size_t len, uint64_t off);
+_rados_write = _librados.rados_write
+_rados_write.restype = c_int
+_rados_write.errcheck = errcheck
+_rados_write.argtypes = c_void_p, c_char_p, c_char_p, c_size_t, c_uint64
+
+# int rados_read(rados_ioctx_t io, const char *oid, char *buf, size_t len, uint64_t off);
+_rados_read = _librados.rados_read
+_rados_read.restype = c_int
+_rados_read.errcheck = errcheck
+_rados_read.argtypes = c_void_p, c_char_p, c_char_p, c_size_t, c_uint64
+
 
 class Rados(object):
     def __init__(self, cluster_name=None, client_name=None, config_file=None):
@@ -72,16 +84,14 @@ class Rados(object):
 
         self._context = ContextWrapper(_rados_shutdown, context)
 
-        return _RadosManager(self._context)
+        return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, *exc):
         self._context.destroy()
         self._context = None
 
-
-class _RadosManager(object):
-    def __init__(self, context):
-        self._context = context
+    open = __enter__
+    close = __exit__
 
     def __getitem__(self, key):
         return RadosIoctx(self, key)
@@ -109,13 +119,30 @@ class RadosIoctx(object):
 
         self._io_context = ContextWrapper(_rados_ioctx_destroy, context, self._context)
 
-        return _RadosIoctxManager(self._io_context)
+        return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, *exc):
         self._io_context.destroy()
         self._io_context = None
 
+    open = __enter__
+    close = __exit__
 
-class _RadosIoctxManager(object):
-    def __init__(self, io_context):
-        self._io_context = io_context
+    def __getitem__(self, name):
+        return RadosObject(self._io_context, name)
+
+    def __delitem__(self, name):
+        raise NotImplementedError
+
+
+class RadosObject(object):
+    def __init__(io_context, name):
+        self._io_context, self.name = io_context, name
+
+    def read(self, size, offset):
+        buf = create_string_buffer(size)
+        _rados_read(self._io_context.pointer, self.name, buf, size, offset)
+        return buf.value
+
+    def write(self, buf, offset):
+        return _rados_write(self._io_context.pointer, self.name, buf, len(buf), offset)
