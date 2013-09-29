@@ -26,7 +26,10 @@ class DownloadView(MethodView):
             finally:
                 item.close()
 
-        return Response(stream_with_context(stream()))
+        ret = Response(stream_with_context(stream()))
+        ret.headers['Content-Disposition'] = 'attachment; filename="{}"'.format(item.meta['filename'])
+        ret.headers['Content-Length'] = item.meta['size']
+        return ret
 
 
 blueprint.add_url_rule('/<name>/+download', view_func=DownloadView.as_view('download'))
