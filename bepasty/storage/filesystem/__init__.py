@@ -7,8 +7,9 @@ import pickle
 
 
 class Storage(object):
-    def __init__(self, directory):
-        self.directory = directory
+    def __init__(self, app):
+        self.directory = app.config['STORAGE_FILESYSTEM_DIRECTORY']
+        app.storage = self
 
     def _filename(self, name):
         if '/' in name:
@@ -21,7 +22,7 @@ class Storage(object):
         file_meta = open(basefilename + '.meta', mode)
         return Item(file_data, file_meta)
 
-    def create(self, name):
+    def create(self, name, size):
         return self._open(name, 'w+bx')
 
     def open(self, name):
