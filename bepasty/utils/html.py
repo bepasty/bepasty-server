@@ -8,6 +8,9 @@ from werkzeug.exceptions import BadRequest
 
 
 class ContentRange(collections.namedtuple('ContentRange', ('begin', 'end', 'complete'))):
+    """
+    Work with Content-Range headers.
+    """
     __slots__ = ()
 
     @classmethod
@@ -35,6 +38,9 @@ class ContentRange(collections.namedtuple('ContentRange', ('begin', 'end', 'comp
 
     @classmethod
     def from_request(cls):
+        """
+        Read Content-Range from request and parse it
+        """
         content_range = request.headers.get('Content-Range')
         if content_range is not None:
             return cls.parse(content_range)

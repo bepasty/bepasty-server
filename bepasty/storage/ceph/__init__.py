@@ -25,6 +25,9 @@ class Storage(object):
         app.storage = self
 
     def _before_request(self):
+        """
+        Open ioctx for data and meta-data storage.
+        """
         g.ceph_ioctx_data = self.__cluster[self.pool_data]
         g.ceph_ioctx_data.open()
 
@@ -35,6 +38,9 @@ class Storage(object):
             g.ceph_ioctx_meta = None
 
     def _teardown_request(self, exc):
+        """
+        Close ioctx for data and meta-data storage.
+        """
         del g.ceph_ioctx_data
         del g.ceph_ioctx_meta
 
