@@ -1,7 +1,7 @@
 # Copyright: 2013 Bastian Blank <bastian@waldi.eu.org>
 # License: BSD 2-clause, see LICENSE for details.
 
-from flask import Flask
+from flask import Flask, render_template
 
 from .storage import create_storage
 from .views import blueprint
@@ -20,5 +20,9 @@ def create_app():
     setup_werkzeug_routing(app)
 
     app.register_blueprint(blueprint)
+
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return render_template('_error_404.html'), 404
 
     return app
