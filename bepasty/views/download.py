@@ -1,8 +1,11 @@
 # Copyright: 2013 Bastian Blank <bastian@waldi.eu.org>
 # License: BSD 2-clause, see LICENSE for details.
 
+import errno
+
 from flask import Response, current_app, render_template, stream_with_context
 from flask.views import MethodView
+from werkzeug.exceptions import NotFound
 
 from ..utils.name import ItemName
 from . import blueprint
@@ -10,7 +13,11 @@ from . import blueprint
 
 class DownloadView(MethodView):
     def get(self, name):
-        baseitem = current_app.storage.open(name)
+        try:
+            baseitem = current_app.storage.open(name)
+        except OSError as e:
+            if e.errno == errno.ENOENT:
+                raise NotFound()
 
         if not baseitem.meta['complete']:
             error = 'Upload incomplete. Try again later.'
