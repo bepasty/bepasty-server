@@ -151,4 +151,3 @@ class Meta(collections.MutableMapping):
     def _write(self):
         buf = pickle.dumps(self._data)
         self._object.write_full(buf)
-

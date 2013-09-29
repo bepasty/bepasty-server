@@ -4,10 +4,10 @@
 import collections
 
 from ctypes import (
-        CDLL,
-        c_char_p, c_void_p, c_int, c_size_t, c_ssize_t, c_uint64,
-        POINTER, create_string_buffer, string_at,
-        )
+    CDLL,
+    c_char_p, c_void_p, c_int, c_size_t, c_ssize_t, c_uint64,
+    POINTER, create_string_buffer, string_at,
+    )
 
 from . import errcheck, ContextWrapper
 
@@ -51,6 +51,7 @@ _rbd_write = _librbd.rbd_write
 _rbd_write.restype = c_ssize_t
 _rbd_write.errcheck = errcheck
 _rbd_write.argtypes = c_void_p, c_uint64, c_size_t, c_char_p
+
 
 class Rbd(object):
     def __init__(self, pool):

@@ -3,6 +3,7 @@
 
 import os
 
+
 def errcheck(result, func, *arguments):
     if result is None:
         pass
@@ -39,4 +40,3 @@ class ContextWrapper(object):
         if p is None:
             raise RuntimeError
         return p
-

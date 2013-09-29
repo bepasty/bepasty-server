@@ -5,6 +5,7 @@ import tempfile
 
 from . import Data
 
+
 def test():
     f = tempfile.TemporaryFile()
 

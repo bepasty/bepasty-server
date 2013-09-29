@@ -113,9 +113,9 @@ class UploadContinueView(MethodView):
                 Upload.upload(item, f, size)
 
             return jsonify({'files': [{
-                    'filename': item.meta['filename'],
-                    'size': item.meta['size'],
-                    'url': url_for('bepasty.display', name=name),
+                'filename': item.meta['filename'],
+                'size': item.meta['size'],
+                'url': url_for('bepasty.display', name=name),
             }]})
 
 

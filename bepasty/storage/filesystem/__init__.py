@@ -128,4 +128,3 @@ class Meta(collections.MutableMapping):
         self._file.seek(0)
         pickle.dump(self._data, self._file)
         self._file.seek(0)
-

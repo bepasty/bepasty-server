@@ -1,6 +1,7 @@
 # Copyright: 2013 Bastian Blank <bastian@waldi.eu.org>
 # License: BSD 2-clause, see LICENSE for details.
 
+
 class Config(object):
     # Storage specific config
     STORAGE = None

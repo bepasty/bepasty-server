@@ -4,6 +4,7 @@ from werkzeug.exceptions import BadRequest
 
 from .html import ContentRange
 
+
 def test_ContentRange_parse():
     r = ContentRange.parse('bytes 0-1/2')
     assert r.begin == 0

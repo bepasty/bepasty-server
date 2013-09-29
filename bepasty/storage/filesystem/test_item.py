@@ -5,6 +5,7 @@ import tempfile
 
 from . import Item
 
+
 def test():
     f1 = tempfile.TemporaryFile()
     f2 = tempfile.TemporaryFile()

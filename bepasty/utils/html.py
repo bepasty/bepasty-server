@@ -42,4 +42,3 @@ class ContentRange(collections.namedtuple('ContentRange', ('begin', 'end', 'comp
     @property
     def size(self):
         return self.end - self.begin + 1
-
