@@ -39,7 +39,6 @@ class Upload(object):
         item.meta['filename'] = cls.filter_filename(input_filename)
         item.meta['size'] = int(input_size)
         item.meta['type'] = cls.filter_type(input_type)
-        print item.meta['type'], item.meta['filename'], input_type, input_filename
 
     @staticmethod
     def upload(item, f, size_input, offset=0):
