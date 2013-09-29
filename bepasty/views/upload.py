@@ -49,7 +49,10 @@ class UploadView(MethodView):
             abort(416)
 
         # Check Content-Type, default to application/octet-stream
-        content_type = request.headers.get('Content-Type') or 'application/octet-stream'
+        content_type = (
+            f.headers.get('Content-Type') or
+            request.headers.get('Content-Type') or
+            'application/octet-stream')
 
         # Get size of temporary file
         f.seek(0, os.SEEK_END)
