@@ -29,7 +29,7 @@ $(function () {
         })
 
         .on('fileuploadadd', function (e, data) {
-            data.context = $('<div/>').appendTo('#files');
+            data.context = $('<div class="alert alert-processing"/>').appendTo('#files');
             $.each(data.files, function (index, file) {
                 var node = $('<p/>')
                     .append($('<span/>').text(file.name));
@@ -38,21 +38,19 @@ $(function () {
         })
 
         .on('fileuploaddone', function (e, data) {
+            $(data.context)
+                .attr('class', 'alert alert-success')
             $.each(data.result.files, function (index, file) {
-                var link = $('<a>')
+                $(data.context.children()[index]) = $('<a>')
                     .attr('target', '_blank')
                     .prop('href', file.url);
-                $(data.context.children()[index])
-                    .wrap(link)
-                    .wrap("<div class='alert alert-success'></div>");
             })
         })
 
         .on('fileuploadfail', function (e, data) {
-            $(data.context.children()[0])
-                .append('<br>')
-                .append('<strong>Upload failed!</strong>')
-                .wrap("<div class='alert alert-danger'></div>");
+            $(data.context)
+                .attr('class', 'alert alert-danger')
+                .append('<p><strong>Upload failed!</strong></p>');
         })
 
         .on('fileuploadprogressall', function (e, data) {

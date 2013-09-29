@@ -31,3 +31,17 @@ body {
 .alert {
     padding: 5px 35px 5px 15px;
 }
+
+.alert-processing {
+    color: #464646;
+    background-color: #f0f0f0;
+    border-color: #eeeeee;
+}
+
+.alert-processing hr {
+    border-top-color: #e6e6e6;
+}
+
+.alert-processing .alert-link {
+    color: #959595;
+}
