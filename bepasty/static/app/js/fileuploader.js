@@ -28,21 +28,6 @@ $(function () {
             return false;
         })
 
-        .on('fileuploadstart', function (e, data) {
-            $('#fileupload-progress').css('visibility', 'visible');
-        })
-
-        .on('fileuploadstop', function (e, data) {
-            $('#fileupload-progress').css('visibility', 'hidden');
-        })
-
-        .on('fileuploadfail', function (e, data) {
-            $(data.context.children()[0])
-                .append('<br>')
-                .append('<strong>Upload failed!</strong>')
-                .wrap("<div class='alert alert-danger'></div>");
-        })
-
         .on('fileuploadadd', function (e, data) {
             data.context = $('<div/>').appendTo('#files');
             $.each(data.files, function (index, file) {
@@ -52,8 +37,38 @@ $(function () {
             });
         })
 
+        .on('fileuploaddone', function (e, data) {
+            $.each(data.result.files, function (index, file) {
+                var link = $('<a>')
+                    .attr('target', '_blank')
+                    .prop('href', file.url);
+                $(data.context.children()[index])
+                    .wrap(link)
+                    .wrap("<div class='alert alert-success'></div>");
+            })
+        })
+
+        .on('fileuploadfail', function (e, data) {
+            $(data.context.children()[0])
+                .append('<br>')
+                .append('<strong>Upload failed!</strong>')
+                .wrap("<div class='alert alert-danger'></div>");
+        })
+
+        .on('fileuploadprogressall', function (e, data) {
+            var progress = parseInt(data.loaded / data.total * 100, 10);
+            $('#fileupload-progress .progress-bar').css('width', progress + '%');
+        })
+
+        .on('fileuploadstart', function (e, data) {
+            $('#fileupload-progress').css('visibility', 'visible');
+        })
+
+        .on('fileuploadstop', function (e, data) {
+            $('#fileupload-progress').css('visibility', 'hidden');
+        })
+
         .on('fileuploadprocessalways', function (e, data) {
-            console.log("processalways")
             var index = data.index,
                 file = data.files[index],
                 node = $(data.context.children()[index]);
@@ -68,24 +83,6 @@ $(function () {
                     .text('Upload')
                     .prop('disabled', !!data.files.error);
             }
-        })
-
-        .on('fileuploadprogressall', function (e, data) {
-            console.log("progressall")
-            var progress = parseInt(data.loaded / data.total * 100, 10);
-            $('#fileupload-progress .progress-bar').css('width', progress + '%');
-        })
-
-        .on('fileuploaddone', function (e, data) {
-            console.log("done")
-            $.each(data.result.files, function (index, file) {
-                var link = $('<a>')
-                    .attr('target', '_blank')
-                    .prop('href', file.url);
-                $(data.context.children()[index])
-                    .wrap(link)
-                    .wrap("<div class='alert alert-success'></div>");
-            })
         })
 
         .prop('disabled', !$.support.fileInput)
