@@ -3,6 +3,9 @@
 
 
 class Config(object):
+    # Upload specific config
+    UPLOAD_LOCKED = True
+
     # Storage specific config
     STORAGE = None
 

@@ -47,10 +47,13 @@ class Upload(object):
 
     @classmethod
     def meta_new(cls, item, input_size, input_filename, input_type):
-        item.meta['complete'] = False
         item.meta['filename'] = cls.filter_filename(input_filename)
         item.meta['size'] = cls.filter_size(input_size)
         item.meta['type'] = cls.filter_type(input_type)
+
+        item.meta['complete'] = False
+
+        item.meta['locked'] = current_app.config['UPLOAD_LOCKED']
 
     @classmethod
     def meta_complete(cls, item):
