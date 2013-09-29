@@ -19,9 +19,14 @@ class DownloadView(MethodView):
             if e.errno == errno.ENOENT:
                 raise NotFound()
 
-        if not item.meta['complete']:
+        if not item.meta.get('unlocked'):
+            error = 'File Locked.'
+        elif not item.meta.get('complete'):
+            error = 'Upload incomplete. Try again later.'
+        else:
+            error = None
+        if error:
             try:
-                error = 'Upload incomplete. Try again later.'
                 return render_template('display_error.html', name=name, item=item, error=error), 409
             finally:
                 item.close()
