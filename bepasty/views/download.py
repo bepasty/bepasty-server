@@ -10,10 +10,10 @@ from . import blueprint
 
 class DownloadView(MethodView):
     def get(self, name):
-        item = current_app.storage.open(name)
+        baseitem = current_app.storage.open(name)
 
         def stream():
-            try:
+            with baseitem as item:
                 # Stream content from storage
                 offset = 0
                 size = item.data.size
@@ -21,12 +21,10 @@ class DownloadView(MethodView):
                     buf = item.data.read(16*1024, offset)
                     offset += len(buf)
                     yield buf
-            finally:
-                item.close()
 
         ret = Response(stream_with_context(stream()))
-        ret.headers['Content-Disposition'] = 'attachment; filename="{}"'.format(item.meta['filename'])
-        ret.headers['Content-Length'] = item.meta['size']
+        ret.headers['Content-Disposition'] = 'attachment; filename="{}"'.format(baseitem.meta['filename'])
+        ret.headers['Content-Length'] = baseitem.meta['size']
         return ret
 
 

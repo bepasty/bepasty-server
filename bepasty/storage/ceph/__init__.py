@@ -56,9 +56,6 @@ class Storage(object):
         meta = g.ceph_ioctx_data[name]
         return Item(data, meta)
 
-    def destroy(self, name):
-        raise NotImplementedError
-
 
 class Item(object):
     """
