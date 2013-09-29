@@ -21,8 +21,13 @@ class DisplayView(MethodView):
             raise
 
         with item as item:
-            if not item.meta['complete']:
+            if not item.meta.get('unlocked'):
+                error = 'File Locked.'
+            elif not item.meta.get('complete'):
                 error = 'Upload incomplete. Try again later.'
+            else:
+                error = None
+            if error:
                 return render_template('display_error.html', name=name, item=item, error=error), 409
             return render_template('display.html', name=name, item=item)
 
