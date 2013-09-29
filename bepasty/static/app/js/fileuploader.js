@@ -31,8 +31,7 @@ $(function () {
         .on('fileuploadadd', function (e, data) {
             data.context = $('<div class="alert alert-processing"/>').appendTo('#files');
             $.each(data.files, function (index, file) {
-                var node = $('<p/>')
-                    .append($('<span/>').text(file.name));
+                var node = $('<p/>').text(file.name);
                 node.appendTo(data.context);
             });
         })
@@ -41,9 +40,10 @@ $(function () {
             $(data.context)
                 .attr('class', 'alert alert-success')
             $.each(data.result.files, function (index, file) {
-                $(data.context.children()[index]).wrap($('<a>')
-                    .attr('target', '_blank')
-                    .prop('href', file.url));
+                $(data.context.children()[index])
+                    .wrapInner($('<a>')
+                        .attr('target', '_blank')
+                        .prop('href', file.url));
             })
         })
 
