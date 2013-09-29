@@ -19,9 +19,12 @@ class DownloadView(MethodView):
             if e.errno == errno.ENOENT:
                 raise NotFound()
 
-        if not baseitem.meta['complete']:
-            error = 'Upload incomplete. Try again later.'
-            return render_template('display_error.html', name=name, item=baseitem, error=error), 409
+        try:
+            if not baseitem.meta['complete'] or 1:
+                error = 'Upload incomplete. Try again later.'
+                return render_template('display_error.html', name=name, item=baseitem, error=error), 409
+        finally:
+            baseitem.close()
 
         def stream():
             with baseitem as item:
