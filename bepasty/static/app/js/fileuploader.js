@@ -29,7 +29,8 @@ $(function () {
         })
 
         .on('fileuploadadd', function (e, data) {
-            data.context = $('<div class="alert alert-processing"/>').appendTo('#files');
+            data.context = $('<div class="alert alert-processing"/>')
+                .appendTo('#files');
             $.each(data.files, function (index, file) {
                 var node = $('<p/>').text(file.name);
                 node.appendTo(data.context);
@@ -76,13 +77,5 @@ $(function () {
                     .append('<strong>' + file.error + '</strong>')
                     .wrap("<div class='alert alert-danger'></div>");
             }
-            if (index + 1 === data.files.length) {
-                data.context.find('button')
-                    .text('Upload')
-                    .prop('disabled', !!data.files.error);
-            }
-        })
-
-        .prop('disabled', !$.support.fileInput)
-        .parent().addClass($.support.fileInput ? undefined : 'disabled');
+        });
 });
