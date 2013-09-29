@@ -6,7 +6,7 @@ import collections
 from ctypes import (
         CDLL,
         c_char_p, c_void_p, c_int, c_size_t, c_ssize_t, c_uint64,
-        POINTER, create_string_buffer,
+        POINTER, create_string_buffer, string_at,
         )
 
 from . import errcheck, ContextWrapper
@@ -102,8 +102,8 @@ class _RbdImage(object):
 
     def read(self, size, offset):
         buf = create_string_buffer(size)
-        _rdb_read(self._image_context.pointer, buf, size, offset)
-        return buf.value
+        ret = _rbd_read(self._image_context.pointer, offset, size, buf)
+        return string_at(buf, ret)
 
     def write(self, buf, offset):
         return _rbd_write(self._image_context.pointer, offset, len(buf), buf)

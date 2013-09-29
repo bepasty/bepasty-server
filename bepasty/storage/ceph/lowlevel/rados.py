@@ -54,6 +54,12 @@ _rados_write.restype = c_int
 _rados_write.errcheck = errcheck
 _rados_write.argtypes = c_void_p, c_char_p, c_char_p, c_size_t, c_uint64
 
+# int rados_write_full(rados_ioctx_t io, const char *oid, const char *buf, size_t len);
+_rados_write_full = _librados.rados_write_full
+_rados_write_full.restype = c_int
+_rados_write_full.errcheck = errcheck
+_rados_write_full.argtypes = c_void_p, c_char_p, c_char_p, c_size_t
+
 # int rados_read(rados_ioctx_t io, const char *oid, char *buf, size_t len, uint64_t off);
 _rados_read = _librados.rados_read
 _rados_read.restype = c_int
@@ -136,13 +142,16 @@ class RadosIoctx(object):
 
 
 class RadosObject(object):
-    def __init__(io_context, name):
+    def __init__(self, io_context, name):
         self._io_context, self.name = io_context, name
 
     def read(self, size, offset):
         buf = create_string_buffer(size)
-        _rados_read(self._io_context.pointer, self.name, buf, size, offset)
-        return buf.value
+        ret = _rados_read(self._io_context.pointer, self.name, buf, size, offset)
+        return string_at(buf, ret)
 
     def write(self, buf, offset):
         return _rados_write(self._io_context.pointer, self.name, buf, len(buf), offset)
+
+    def write_full(self, buf):
+        return _rados_write_full(self._io_context.pointer, self.name, buf, len(buf))

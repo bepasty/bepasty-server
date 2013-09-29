@@ -12,6 +12,7 @@ def errcheck(result, func, *arguments):
         except ValueError:
             mesg = 'Unknown error'
         raise OSError(-result, mesg)
+    return result
 
 
 class ContextWrapper(object):

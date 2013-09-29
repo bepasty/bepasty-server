@@ -38,19 +38,22 @@ class Storage(object):
 
     def create(self, name, size):
         rbd = Rbd(g.ceph_ioctx_data)
-        image = rbd.create(name, size)
-        return Item(name, image, g.ceph_ioctx_meta)
+        data = rbd.create(name, size)
+        meta = g.ceph_ioctx_data[name]
+        return Item(data, meta)
 
     def open(self, name):
         # XXX: Read-only
-        rdb = Rdb(g.ceph_ioctx_data)
-        image = rbd[name]
-        return Item(name, image, g.ceph_ioctx_meta)
+        rbd = Rbd(g.ceph_ioctx_data)
+        data = rbd[name]
+        meta = g.ceph_ioctx_data[name]
+        return Item(data, meta)
 
     def openwrite(self, name):
-        rdb = Rdb(g.ceph_ioctx_data)
+        rbd = Rbd(g.ceph_ioctx_data)
         image = rbd[name]
-        return Item(name, image, g.ceph_ioctx_meta)
+        meta = g.ceph_ioctx_data[name]
+        return Item(data, meta)
 
     def destroy(self, name):
         raise NotImplementedError
@@ -63,16 +66,18 @@ class Item(object):
     :ivar data: Open file-like object to data.
     """
 
-    def __init__(self, name, rbd_data, ioctx_meta):
+    def __init__(self, rbd_data, object_meta):
         self.data = Data(rbd_data)
-        self.meta = Meta(name, ioctx_meta)
+        self.meta = Meta(object_meta)
 
     def __enter__(self):
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, *exc):
         self.data.close()
         self.meta.close()
+
+    close = __exit__
 
 
 class Data(object):
@@ -86,7 +91,7 @@ class Data(object):
 
     @property
     def size(self):
-        return self._rbd.size()
+        return self._rbd.size
 
     def close(self):
         self._rbd.close()
@@ -102,8 +107,19 @@ class Meta(collections.MutableMapping):
     """
     Meta-data of item.
     """
-    def __init__(self, name, ioctx_meta):
-        self._ioctx = ioctx_meta
+    def __init__(self, object_meta):
+        self._object = object_meta
+
+        try:
+            data = self._object.read(0, 16*1024)
+            self._data = pickle.loads(data)
+            self._changed = False
+        except OSError as e:
+            # XXX: Constant
+            if e.errno != 2:
+                raise
+            self._data = {}
+            self._changed = True
 
     def __iter__(self):
         return iter(self._data)
@@ -124,13 +140,11 @@ class Meta(collections.MutableMapping):
 
     def close(self):
         self.write()
-        self._ioctx.close()
 
     def write(self):
         pass
 
     def _write(self):
-        self._file.seek(0)
-        pickle.dump(self._data, self._file)
-        self._file.seek(0)
+        buf = pickle.dumps(self._data)
+        self._object.write_full(buf)
 
