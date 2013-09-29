@@ -4,9 +4,11 @@
 {{ item.meta['filename'] }}
 </h1>
 <dl>
-  <dt>Size</dt>
-  <dd>{{ item.meta['size'] }}</dd>
   <dt>Download</dt>
   <dd><a href="{{ url_for('bepasty.download', name=name) }}">try here…</a></dd>
+  <dt>Type</dt>
+  <dd>{{ item.meta.get('type') }}</dd>
+  <dt>Size</dt>
+  <dd>{{ item.meta['size'] }}</dd>
 </p>
 {% endblock content %}
