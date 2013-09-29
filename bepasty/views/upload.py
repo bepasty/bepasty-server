@@ -1,6 +1,8 @@
 # Copyright: 2013 Bastian Blank <bastian@waldi.eu.org>
 # License: BSD 2-clause, see LICENSE for details.
 
+import os
+
 from flask import abort, current_app, jsonify, redirect, request, url_for
 from flask.views import MethodView
 
@@ -11,7 +13,7 @@ from . import blueprint
 
 class Upload(object):
     @staticmethod
-    def upload(item, f, offset=0, size_input=None):
+    def upload(item, f, size_input, offset=0):
         """
         Copy data from temp file into storage.
         """
@@ -52,8 +54,13 @@ class UploadView(MethodView):
 
         name = ItemName.create()
 
-        with current_app.storage.create(name) as item:
-            size = Upload.upload(item, f)
+        # Get size of temporary file
+        f.seek(0, os.SEEK_END)
+        size = f.tell()
+        f.seek(0)
+
+        with current_app.storage.create(name, size) as item:
+            Upload.upload(item, f, size)
 
             # Save meta-data
             item.meta['filename'] = f.filename
@@ -96,7 +103,7 @@ class UploadContinueView(MethodView):
 
         with current_app.storage.openwrite(name) as item:
             if content_range:
-                Upload.upload(item, f, content_range.begin, content_range.size)
+                Upload.upload(item, f, content_range.size, content_range.begin)
             else:
                 Upload.upload(item, f)
 
