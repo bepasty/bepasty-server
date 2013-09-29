@@ -37,23 +37,29 @@ class Storage(object):
         del g.ceph_ioctx_data
         del g.ceph_ioctx_meta
 
+    def _objectname(self, name):
+        return 'bepasty.' + name
+
     def create(self, name, size):
+        objectname = self._objectname(name)
         rbd = Rbd(g.ceph_ioctx_data)
-        data = rbd.create(name, size)
-        meta = g.ceph_ioctx_data[name]
+        data = rbd.create(objectname, size)
+        meta = g.ceph_ioctx_data[objectname]
         return Item(data, meta)
 
     def open(self, name):
         # XXX: Read-only
+        objectname = self._objectname(name)
         rbd = Rbd(g.ceph_ioctx_data)
-        data = rbd[name]
-        meta = g.ceph_ioctx_data[name]
+        data = rbd[objectname]
+        meta = g.ceph_ioctx_data[objectname]
         return Item(data, meta)
 
     def openwrite(self, name):
+        objectname = self._objectname(name)
         rbd = Rbd(g.ceph_ioctx_data)
-        data = rbd[name]
-        meta = g.ceph_ioctx_data[name]
+        data = rbd[objectname]
+        meta = g.ceph_ioctx_data[objectname]
         return Item(data, meta)
 
 
