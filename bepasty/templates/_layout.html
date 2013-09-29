@@ -11,12 +11,10 @@
     <!-- Bootstrap styles -->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" type="text/css"
           charset="utf-8">
-    <!-- Fileupload ui styles -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='jquery.fileupload/css/jquery.fileupload-ui.css') }}" type="text/css"
-          charset="utf-8">
     <!-- Bepasty styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='app/css/style.css' ) }}" type="text/css"
           charset="utf-8">
+    {% block extra_link %}{% endblock %}
 </head>
 <body>
 
@@ -36,8 +34,7 @@
 
     <!-- Begin page content -->
     <div class="container">
-        {% block content %}
-        {% endblock content %}
+        {% block content %}{% endblock %}
     </div>
     <!-- /.container -->
 </div>
@@ -59,7 +56,6 @@
 <!-- Bootstrap -->
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js" type="text/javascript"
         charset="utf-8"></script>
-{% block js_fileupload %}
-{% endblock js_fileupload %}
+{% block extra_script %}{% endblock %}
 </body>
 </html>
