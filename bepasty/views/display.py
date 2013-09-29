@@ -11,6 +11,9 @@ from . import blueprint
 class DisplayView(MethodView):
     def get(self, name):
         with current_app.storage.open(name) as item:
+            if not item.meta['complete']:
+                error = 'Upload incomplete. Try again later.'
+                return render_template('display_error.html', name=name, item=item, error=error), 409
             return render_template('display.html', name=name, item=item)
 
 

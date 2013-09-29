@@ -1,0 +1,15 @@
+{% extends "_layout.html" %}
+{% block content %}
+<h1>
+{{ item.meta['filename'] }}
+</h1>
+<div class="alert alert-danger">
+  <p>{{ error }}</p>
+</div>
+<dl>
+  <dt>Type</dt>
+  <dd>{{ item.meta.get('type') or 'undefined' }}</dd>
+  <dt>Size</dt>
+  <dd>{{ item.meta['size'] }}</dd>
+</p>
+{% endblock content %}
