@@ -41,9 +41,9 @@ $(function () {
             $(data.context)
                 .attr('class', 'alert alert-success')
             $.each(data.result.files, function (index, file) {
-                $(data.context.children()[index]) = $('<a>')
+                $(data.context.children()[index]).wrap($('<a>')
                     .attr('target', '_blank')
-                    .prop('href', file.url);
+                    .prop('href', file.url));
             })
         })
 
