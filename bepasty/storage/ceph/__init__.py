@@ -2,6 +2,7 @@
 # License: BSD 2-clause, see LICENSE for details.
 
 import collections
+import pickle
 
 from flask import g
 
@@ -51,7 +52,7 @@ class Storage(object):
 
     def openwrite(self, name):
         rbd = Rbd(g.ceph_ioctx_data)
-        image = rbd[name]
+        data = rbd[name]
         meta = g.ceph_ioctx_data[name]
         return Item(data, meta)
 
@@ -110,16 +111,17 @@ class Meta(collections.MutableMapping):
     def __init__(self, object_meta):
         self._object = object_meta
 
+        self._data = {}
+        self._changed = True
+
         try:
-            data = self._object.read(0, 16*1024)
-            self._data = pickle.loads(data)
-            self._changed = False
+            data = self._object.read(16*1024, 0)
+            if data:
+                self._data = pickle.loads(data)
+                self._changed = False
         except OSError as e:
-            # XXX: Constant
             if e.errno != 2:
                 raise
-            self._data = {}
-            self._changed = True
 
     def __iter__(self):
         return iter(self._data)
@@ -142,7 +144,9 @@ class Meta(collections.MutableMapping):
         self.write()
 
     def write(self):
-        pass
+        if self._changed:
+            self._write()
+            self._changed = False
 
     def _write(self):
         buf = pickle.dumps(self._data)
