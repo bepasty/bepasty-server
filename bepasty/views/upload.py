@@ -27,7 +27,8 @@ class Upload(object):
 
             buf = f.read(read_length)
             if not buf:
-                break
+                # Should not happen, we already checked the size
+                raise RuntimeError
 
             item.data.write(buf, offset + size_written)
 
