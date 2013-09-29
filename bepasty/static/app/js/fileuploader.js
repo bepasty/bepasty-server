@@ -57,8 +57,7 @@ $(function () {
                 .attr('class', 'alert alert-success')
             $.each(data.result.files, function (index, file) {
                 $(data.context.children()[index])
-                    .wrapInner($('<a>')
-                        .attr('target', '_blank')
+                    .wrapInner($('<a target="_blank" class="alert-link">')
                         .prop('href', file.url));
             })
         })
