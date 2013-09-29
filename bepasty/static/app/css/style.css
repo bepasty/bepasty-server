@@ -28,6 +28,11 @@ body {
     padding: 80px 15px 60px;
 }
 
+.jumbotron {
+    font-size: 100%;
+    text-align: center;
+}
+
 .alert {
     padding: 5px 35px 5px 15px;
 }

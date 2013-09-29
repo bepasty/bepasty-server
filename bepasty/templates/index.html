@@ -1,11 +1,35 @@
 {% extends "_layout.html" %}
 
 {% block content %}
-<h1>Binary File Uploader</h1>
+<div class="jumbotron">
+    <div class="container">
+        <div class="col-sm-4">
+            <h2>World Wide Web</h2>
+            <p>
+                bepasty is a <a href="https://bitbucket.org/waldi/wsgiwar2013">free and open-source</a> paste bin and trash can for your stuff.
+            </p>
+        </div>
+        <div class="col-sm-4">
+            <h2>Pure Awesomeness</h2>
+            <p>
+                Powered by <a href="http://python.org">Python</a>,
+                an really old <a href="http://flask.pocoo.org/">Flask</a>,
+                many <a href="http://ceph.com/">Ceph</a>-alopodes
+                and this stupid landing page.
+            </p>
+        </div>
+        <div class="col-sm-4">
+            <h2>The Trophy Is A Lie</h2>
+            <p>
+                bepasty tries to crush the <a href="http://wsgiwrestle.com/">WSGI Wrestle 2013</a>.
+            </p>
+        </div>
+    </div>
+</div>
 
-<p>
-    This is a simple file uploader with a ceph storage backend. Written und Python with jQuery File Upload.
-</p>
+<div class="page-header">
+    <h1>bepasty, the Binary File Uploader</h1>
+</div>
 
 <form action="/+upload" method="POST" enctype="multipart/form-data">
     <p>
