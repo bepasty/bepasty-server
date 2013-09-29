@@ -67,15 +67,13 @@ $(function () {
             $('#fileupload-progress').css('visibility', 'hidden');
         })
 
-        .on('fileuploadprocessalways', function (e, data) {
+        .on('fileuploadprocessfail', function (e, data) {
+            $(data.context)
+                .attr('class', 'alert alert-danger');
             var index = data.index,
-                file = data.files[index],
-                node = $(data.context.children()[index]);
-            if (file.error) {
-                node
-                    .append('<br>')
-                    .append('<strong>' + file.error + '</strong>')
-                    .wrap("<div class='alert alert-danger'></div>");
-            }
-        });
+                file = data.files[index];
+            $(data.context.children()[index])
+                .append('<br>')
+                .append('<strong>' + file.error + '</strong>');
+	});
 });
