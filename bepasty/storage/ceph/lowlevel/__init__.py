@@ -27,7 +27,6 @@ class ContextWrapper(object):
         self.__extra = extra
 
     def __del__(self):
-        print "destroy", self.__destroy.__name__, self.__pointer
         if self.__pointer is not None:
             self.__destroy(self.__pointer)
         self.__pointer = self.__extra = None
