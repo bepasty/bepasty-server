@@ -1,4 +1,12 @@
 {% extends "_layout.html" %}
 {% block content %}
-{{ item }}
+<h1>
+{{ item.meta['filename'] }}
+</h1>
+<dl>
+  <dt>Size</dt>
+  <dd>{{ item.meta['size'] }}</dd>
+  <dt>Download</dt>
+  <dd><a href="{{ url_for('bepasty.download', name=name) }}">try here…</a></dd>
+</p>
 {% endblock content %}

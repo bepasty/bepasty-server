@@ -13,7 +13,7 @@ class DisplayView(MethodView):
         n = ItemName.parse(name)
 
         with current_app.storage.open(n) as item:
-            return render_template('display.html', item=item)
+            return render_template('display.html', name=name, item=item)
 
 
 blueprint.add_url_rule('/<name>', view_func=DisplayView.as_view('display'))
