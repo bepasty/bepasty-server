@@ -1,8 +1,6 @@
 {% extends "_layout.html" %}
 {% block content %}
 <h1>Binary File Uploader</h1>
-<br>
-<blockquote>
     <p>
         This is a simple file uploader with a ceph storage backend. Written und Python with jQuery File Upload.
     </p>
@@ -35,8 +33,6 @@
         </form>
     </noscript>
 
-</blockquote>
-
 <br>
 <!-- The progress bar -->
 <div class="hasJS" style="display: none">
@@ -51,29 +47,22 @@
 
 {% block extra_link %}
 <!-- Fileupload ui styles -->
-<link rel="stylesheet" href="{{ url_for('static', filename='jquery.fileupload/css/jquery.fileupload-ui.css') }}" type="text/css"
-        charset="utf-8">
+<link rel="stylesheet" href="{{ url_for('static', filename='jquery.fileupload/css/jquery.fileupload-ui.css') }}" type="text/css">
 {% endblock %}
 
 {% block extra_script %}
 <!-- jquery ui widget -->
-<script src="{{ url_for('static', filename='jquery.fileupload/js/vendor/jquery.ui.widget.js') }}" type="text/javascript"
-        charset="utf-8"></script>
+<script src="{{ url_for('static', filename='jquery.fileupload/js/vendor/jquery.ui.widget.js') }}" type="text/javascript"></script>
 <!-- iframe transport for browser without XHR support -->
-<script src="{{ url_for('static', filename='jquery.fileupload/js/jquery.iframe-transport.js') }}" type="text/javascript"
-        charset="utf-8"></script>
+<script src="{{ url_for('static', filename='jquery.fileupload/js/jquery.iframe-transport.js') }}" type="text/javascript"></script>
 <!-- basic file upload -->
-<script src="{{ url_for('static', filename='jquery.fileupload/js/jquery.fileupload.js') }}" type="text/javascript"
-        charset="utf-8"></script>
+<script src="{{ url_for('static', filename='jquery.fileupload/js/jquery.fileupload.js') }}" type="text/javascript"></script>
 <!-- file upload progress bar -->
-<script src="{{ url_for('static', filename='jquery.fileupload/js/jquery.fileupload-process.js') }}" type="text/javascript"
-        charset="utf-8"></script>
+<script src="{{ url_for('static', filename='jquery.fileupload/js/jquery.fileupload-process.js') }}" type="text/javascript"></script>
 <!-- file upload validation -->
-<script src="{{ url_for('static', filename='jquery.fileupload/js/jquery.fileupload-validate.js') }}" type="text/javascript"
-        charset="utf-8"></script>
+<script src="{{ url_for('static', filename='jquery.fileupload/js/jquery.fileupload-validate.js') }}" type="text/javascript"></script>
 <!-- fileuploader -->
-<script src="{{ url_for('static', filename='app/js/fileuploader.js') }}" type="text/javascript"
-        charset="utf-8"></script>
+<script src="{{ url_for('static', filename='app/js/fileuploader.js') }}" type="text/javascript"></script>
 <script type="text/javascript" charset="utf-8">
     $(document).ready(function () {
         $('.hasJS').css('display', 'block');
