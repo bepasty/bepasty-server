@@ -17,6 +17,17 @@ class Upload(object):
     _type_re = re.compile(r'[^a-z/-]+')
 
     @classmethod
+    def filter_size(cls, i):
+        """
+        Filter size.
+        Check for advertised size.
+        """
+        i = int(i)
+        if i >= 4 * 1024 * 1024 * 1024: # 4 GiB
+            abort(413)
+        return i
+
+    @classmethod
     def filter_filename(cls, i):
         """
         Filter filename.
@@ -38,7 +49,7 @@ class Upload(object):
     def meta_new(cls, item, input_size, input_filename, input_type):
         item.meta['complete'] = False
         item.meta['filename'] = cls.filter_filename(input_filename)
-        item.meta['size'] = int(input_size)
+        item.meta['size'] = cls.filter_size(input_size)
         item.meta['type'] = cls.filter_type(input_type)
 
     @classmethod
