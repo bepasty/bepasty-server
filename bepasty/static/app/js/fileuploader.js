@@ -1,13 +1,37 @@
 $(function () {
     'use strict';
-    var url = window.location.hostname === '/+upload/json' ?
-        '//+upload/json' : '/+upload/json'
     $('#fileupload').fileupload({
-        url: url,
         dataType: 'json',
         autoUpload: true,
-        maxFileSize: 100000000 // 100 MB
-    }).on('fileuploadadd',function (e, data) {
+        maxChunkSize: 10000000, // 10MB
+        maxFileSize: 100000000, // 1000MB
+        submit: function (e, data) {
+            var $this = $(this);
+            $.ajax({
+                type: 'POST',
+                url: '/+upload/new',
+                data: JSON.stringify({
+                    filename: data.files[0].name,
+                    size: data.files[0].size
+                }),
+                contentType: 'application/json',
+                success: function (result) {
+                    data.url = result.url;
+                    $this.fileupload('send', data);
+                }
+            });
+            return false;
+        }
+        }).on('fileuploadchunkfail',function (e, data) {
+            console.log('chunk fail', data);
+            $.each(data.result.files, function (index, file) {
+                var error = $('<span/>').text(file.error);
+                $(data.context.children()[index])
+                    .append('<br>')
+                    .append('<strong>' + error + '</strong>')
+                    .wrap("<div class='alert alert-danger'></div>");
+            });
+        }).on('fileuploadadd',function (e, data) {
             data.context = $('<div/>').appendTo('#files');
             $.each(data.files, function (index, file) {
                 var node = $('<p/>')
@@ -30,7 +54,7 @@ $(function () {
                     .prop('disabled', !!data.files.error);
             }
         }).on('fileuploadprogressall',function (e, data) {
-            var progress = parseInt(data.loaded / data.total * 100, 15);
+            var progress = parseInt(data.loaded / data.total * 100, 10);
             $('#progress .progress-bar').css(
                 'width',
                 progress + '%'
@@ -44,14 +68,7 @@ $(function () {
                     .wrap(link)
                     .wrap("<div class='alert alert-success'></div>");
             });
-        }).on('fileuploadfail',function (e, data) {
-            $.each(data.result.files, function (index, file) {
-                var error = $('<span/>').text(file.error);
-                $(data.context.children()[index])
-                    .append('<br>')
-                    .append('<strong>' + error + '</strong>')
-                    .wrap("<div class='alert alert-danger'></div>");
-            });
         }).prop('disabled', !$.support.fileInput)
         .parent().addClass($.support.fileInput ? undefined : 'disabled');
+
 });
