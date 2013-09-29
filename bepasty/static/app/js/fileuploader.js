@@ -6,6 +6,7 @@ $(function () {
         singleFileUploads: true,
         maxChunkSize: 10000000, // 10MB
         maxFileSize: 100000000, // 1000MB
+
         submit: function (e, data) {
             var $this = $(this);
             $.ajax({
@@ -24,10 +25,13 @@ $(function () {
             });
             return false;
         },
-        done: function (e, data) {
-            setTimeout(function(){
-                $('#fileupload-progress .progress-bar').css('width', '0%');
-            }, 2000);
+
+        start: function (e, data) {
+            $('#fileupload-progress').css('visibility', 'visible');
+        },
+
+        stop: function (e, data) {
+            $('#fileupload-progress').css('visibility', 'hidden');
         }
         }).on('fileuploadfail',function (e, data) {
             $(data.context.children()[0])
