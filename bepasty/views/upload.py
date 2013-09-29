@@ -2,6 +2,7 @@
 # License: BSD 2-clause, see LICENSE for details.
 
 import os
+import re
 
 from flask import abort, current_app, jsonify, redirect, request, url_for
 from flask.views import MethodView
@@ -12,6 +13,34 @@ from . import blueprint
 
 
 class Upload(object):
+    _filename_re = re.compile(r'[^a-zA-Z0-9 \*+:;.,_-]+')
+    _type_re = re.compile(r'[^a-z/-]+')
+
+    @classmethod
+    def filter_filename(cls, i):
+        """
+        Filter filename.
+        Only allow some basic characters and shorten to 50 characters.
+        """
+        return cls._filename_re.sub('', i)[:50]
+
+    @classmethod
+    def filter_type(cls, i):
+        """
+        Filter Content-Type
+        Only allow some basic characters and shorten to 50 characters.
+        """
+        if not i:
+            return 'application/octet-stream'
+        return cls._type_re.sub('', i)[:50]
+
+    @classmethod
+    def meta(cls, item, input_size, input_filename, input_type):
+        item.meta['filename'] = cls.filter_filename(input_filename)
+        item.meta['size'] = int(input_size)
+        item.meta['type'] = cls.filter_type(input_type)
+        print item.meta['type'], item.meta['filename'], input_type, input_filename
+
     @staticmethod
     def upload(item, f, size_input, offset=0):
         """
@@ -52,8 +81,7 @@ class UploadView(MethodView):
         # Check Content-Type, default to application/octet-stream
         content_type = (
             f.headers.get('Content-Type') or
-            request.headers.get('Content-Type') or
-            'application/octet-stream')
+            request.headers.get('Content-Type'))
 
         # Get size of temporary file
         f.seek(0, os.SEEK_END)
@@ -65,11 +93,7 @@ class UploadView(MethodView):
 
         with current_app.storage.create(name, size) as item:
             Upload.upload(item, f, size)
-
-            # Save meta-data
-            item.meta['filename'] = f.filename
-            item.meta['size'] = size
-            item.meta['type'] = content_type
+            Upload.meta(item, size, f.filename, content_type)
 
         return redirect(url_for('bepasty.display', name=name))
 
@@ -79,17 +103,15 @@ class UploadNewView(MethodView):
         data = request.get_json()
 
         data_filename = data['filename']
-        data_size = data['size']
-        data_type = data['type'] or 'application/octet-stream'
+        data_size = int(data['size'])
+        data_type = data['type']
 
         # Create new name
         name = ItemName.create()
 
         with current_app.storage.create(name, data_size) as item:
             # Save meta-data
-            item.meta['filename'] = data_filename
-            item.meta['size'] = data_size
-            item.meta['type'] = data_type
+            Upload.meta(item, data_size, data_filename, data_type)
 
             return jsonify({'url': url_for('bepasty.upload_continue', name=name)})
 
