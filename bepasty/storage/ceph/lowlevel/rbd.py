@@ -5,8 +5,8 @@ import collections
 
 from ctypes import (
         CDLL,
-        c_char_p, c_void_p, c_int, c_uint64,
-        POINTER,
+        c_char_p, c_void_p, c_int, c_size_t, c_ssize_t, c_uint64,
+        POINTER, create_string_buffer,
         )
 
 from . import errcheck, ContextWrapper
@@ -40,6 +40,17 @@ _rbd_get_size.restype = c_int
 _rbd_get_size.errcheck = errcheck
 _rbd_get_size.argtypes = c_void_p, POINTER(c_uint64)
 
+# ssize_t rbd_read(rbd_image_t image, uint64_t ofs, size_t len, char *buf);
+_rbd_read = _librbd.rbd_read
+_rbd_read.restype = c_ssize_t
+_rbd_read.errcheck = errcheck
+_rbd_read.argtypes = c_void_p, c_uint64, c_size_t, c_char_p
+
+# ssize_t rbd_write(rbd_image_t image, uint64_t ofs, size_t len, const char *buf);
+_rbd_write = _librbd.rbd_write
+_rbd_write.restype = c_ssize_t
+_rbd_write.errcheck = errcheck
+_rbd_write.argtypes = c_void_p, c_uint64, c_size_t, c_char_p
 
 class Rbd(object):
     def __init__(self, pool):
@@ -89,4 +100,10 @@ class _RbdImage(object):
         _rbd_get_size(self._image_context.pointer, size)
         return size.value
 
+    def read(self, size, offset):
+        buf = create_string_buffer(size)
+        _rdb_read(self._image_context.pointer, buf, size, offset)
+        return buf.value
 
+    def write(self, buf, offset):
+        return _rbd_write(self._image_context.pointer, offset, len(buf), buf)

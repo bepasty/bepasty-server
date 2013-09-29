@@ -91,11 +91,11 @@ class Data(object):
     def close(self):
         self._rbd.close()
 
-    def read(self, offset, length):
-        raise NotImplementedError
+    def read(self, size, offset):
+        return self._rbd.read(size, offset)
 
     def write(self, data, offset):
-        raise NotImplementedError
+        return self._rbd.write(data, offset)
 
 
 class Meta(collections.MutableMapping):
