@@ -79,7 +79,7 @@ class UploadNewView(MethodView):
 
         name = ItemName.create()
 
-        with current_app.storage.create(name) as item:
+        with current_app.storage.create(name, data_size) as item:
             # Save meta-data
             item.meta['filename'] = data_filename
             item.meta['size'] = data_size
@@ -105,7 +105,12 @@ class UploadContinueView(MethodView):
             if content_range:
                 Upload.upload(item, f, content_range.size, content_range.begin)
             else:
-                Upload.upload(item, f)
+                # Get size of temporary file
+                f.seek(0, os.SEEK_END)
+                size = f.tell()
+                f.seek(0)
+
+                Upload.upload(item, f, size)
 
             return jsonify({'files': [{
                     'filename': item.meta['filename'],
