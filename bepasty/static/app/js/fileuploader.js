@@ -3,6 +3,7 @@ $(function () {
     $('#fileupload').fileupload({
         dataType: 'json',
         autoUpload: true,
+        singleFileUploads: true,
         maxChunkSize: 10000000, // 10MB
         maxFileSize: 100000000, // 1000MB
         submit: function (e, data) {
@@ -12,7 +13,8 @@ $(function () {
                 url: '/+upload/new',
                 data: JSON.stringify({
                     filename: data.files[0].name,
-                    size: data.files[0].size
+                    size: data.files[0].size,
+                    type: data.files[0].type
                 }),
                 contentType: 'application/json',
                 success: function (result) {
@@ -22,15 +24,16 @@ $(function () {
             });
             return false;
         }
+    }).on('fileuploadfail',function (e, data) {
+            $(data.context.children()[0])
+                .append('<br>')
+                .append('<strong>Upload failed!</strong>')
+                .wrap("<div class='alert alert-danger'></div>");
         }).on('fileuploadchunkfail',function (e, data) {
-            console.log('chunk fail', data);
-            $.each(data.result.files, function (index, file) {
-                var error = $('<span/>').text(file.error);
-                $(data.context.children()[index])
-                    .append('<br>')
-                    .append('<strong>' + error + '</strong>')
-                    .wrap("<div class='alert alert-danger'></div>");
-            });
+            $(data.context.children()[0])
+                .append('<br>')
+                .append('<strong>Upload failed!</strong>')
+                .wrap("<div class='alert alert-danger'></div>");
         }).on('fileuploadadd',function (e, data) {
             data.context = $('<div/>').appendTo('#files');
             $.each(data.files, function (index, file) {
