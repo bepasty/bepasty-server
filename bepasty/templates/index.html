@@ -16,16 +16,14 @@
             <!-- Input for file upload widget -->
             <input id="fileupload" type="file" name="file">
         </span>
-        <button id="fileupload-submit" class="btn btn-success">Upload</button>
+        <noscript><button id="fileupload-submit" class="btn btn-success">Upload</button></noscript>
         or drop your file directly into the browser.
     </p>
 </form>
 
 <!-- The progress bar -->
-<div class="hasJS" style="display: none">
-    <div id="progress" class="progress progress-striped active">
-        <div class="progress-bar"></div>
-    </div>
+<div id="fileupload-progress" class="progress progress-striped active">
+    <div class="progress-bar"></div>
 </div>
 
 <!-- Uploaded files -->
@@ -50,13 +48,4 @@
 <script src="{{ url_for('static', filename='jquery.fileupload/js/jquery.fileupload-validate.js') }}" type="text/javascript"></script>
 <!-- fileuploader -->
 <script src="{{ url_for('static', filename='app/js/fileuploader.js') }}" type="text/javascript"></script>
-<script type="text/javascript" charset="utf-8">
-    $(document).ready(function () {
-        $('.hasJS').css('display', 'block');
-    });
-    $(document).ready(function () {
-        $('#fileupload-submit').css('display', 'none');
-    });
-</script>
-
 {% endblock %}
