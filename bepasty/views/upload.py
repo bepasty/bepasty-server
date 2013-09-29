@@ -41,7 +41,7 @@ class Upload(object):
         item.meta['type'] = cls.filter_type(input_type)
 
     @staticmethod
-    def upload(item, f, size_input, offset=0):
+    def data(item, f, size_input, offset=0):
         """
         Copy data from temp file into storage.
         """
@@ -91,7 +91,7 @@ class UploadView(MethodView):
         name = ItemName.create()
 
         with current_app.storage.create(name, size) as item:
-            Upload.upload(item, f, size)
+            Upload.data(item, f, size)
             Upload.meta(item, size, f.filename, content_type)
 
         return redirect(url_for('bepasty.display', name=name))
@@ -126,14 +126,14 @@ class UploadContinueView(MethodView):
 
         with current_app.storage.openwrite(name) as item:
             if content_range:
-                Upload.upload(item, f, content_range.size, content_range.begin)
+                Upload.data(item, f, content_range.size, content_range.begin)
             else:
                 # Get size of temporary file
                 f.seek(0, os.SEEK_END)
                 size = f.tell()
                 f.seek(0)
 
-                Upload.upload(item, f, size)
+                Upload.data(item, f, size)
 
             return jsonify({'files': [{
                 'filename': item.meta['filename'],
