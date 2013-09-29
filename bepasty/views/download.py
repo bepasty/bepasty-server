@@ -10,9 +10,7 @@ from . import blueprint
 
 class DownloadView(MethodView):
     def get(self, name):
-        n = ItemName.parse(name)
-
-        item = current_app.storage.open(n)
+        item = current_app.storage.open(name)
 
         def stream():
             try:
@@ -32,4 +30,4 @@ class DownloadView(MethodView):
         return ret
 
 
-blueprint.add_url_rule('/<name>/+download', view_func=DownloadView.as_view('download'))
+blueprint.add_url_rule('/<itemname:name>/+download', view_func=DownloadView.as_view('download'))

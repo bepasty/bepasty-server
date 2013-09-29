@@ -5,6 +5,7 @@ from flask import Flask
 
 from .storage import create_storage
 from .views import blueprint
+from .utils.name import setup_werkzeug_routing
 
 
 def create_app():
@@ -13,8 +14,9 @@ def create_app():
     app.config.from_object('bepasty.config.Config')
     app.config.from_envvar('BEPASTY_CONFIG')
 
-    app.register_blueprint(blueprint)
-
     create_storage(app)
+    setup_werkzeug_routing(app)
+
+    app.register_blueprint(blueprint)
 
     return app

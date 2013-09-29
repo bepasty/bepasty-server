@@ -10,10 +10,8 @@ from . import blueprint
 
 class DisplayView(MethodView):
     def get(self, name):
-        n = ItemName.parse(name)
-
-        with current_app.storage.open(n) as item:
+        with current_app.storage.open(name) as item:
             return render_template('display.html', name=name, item=item)
 
 
-blueprint.add_url_rule('/<name>', view_func=DisplayView.as_view('display'))
+blueprint.add_url_rule('/<itemname:name>', view_func=DisplayView.as_view('display'))

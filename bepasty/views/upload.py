@@ -98,9 +98,6 @@ class UploadContinueView(MethodView):
         # Check Content-Range
         content_range = ContentRange.from_request()
 
-        # Parse name
-        name = ItemName.parse(name)
-
         with current_app.storage.openwrite(name) as item:
             if content_range:
                 Upload.upload(item, f, content_range.size, content_range.begin)
@@ -121,4 +118,4 @@ class UploadContinueView(MethodView):
 
 blueprint.add_url_rule('/+upload', view_func=UploadView.as_view('upload'))
 blueprint.add_url_rule('/+upload/new', view_func=UploadNewView.as_view('upload_new'))
-blueprint.add_url_rule('/+upload/<name>', view_func=UploadContinueView.as_view('upload_continue'))
+blueprint.add_url_rule('/+upload/<itemname:name>', view_func=UploadContinueView.as_view('upload_continue'))
