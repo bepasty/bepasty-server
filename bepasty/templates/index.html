@@ -1,48 +1,35 @@
 {% extends "_layout.html" %}
+
 {% block content %}
 <h1>Binary File Uploader</h1>
+
+<p>
+    This is a simple file uploader with a ceph storage backend. Written und Python with jQuery File Upload.
+</p>
+
+<form action="/+upload" method="POST" enctype="multipart/form-data">
     <p>
-        This is a simple file uploader with a ceph storage backend. Written und Python with jQuery File Upload.
+        Just
+        <span class="btn btn-default fileinput-button">
+            <i class="glyphicon glyphicon-upload"></i>
+            <span>add files</span>
+            <!-- Input for file upload widget -->
+            <input id="fileupload" type="file" name="file">
+        </span>
+        <button id="fileupload-submit" class="btn btn-success">Upload</button>
+        or drop your file directly into the browser.
     </p>
+</form>
 
-    <div class="hasJS" style="display: none">
-        <p>
-            Click on
-            <span class="btn btn-default fileinput-button">
-                <i class="glyphicon glyphicon-upload"></i>
-                <span>Add files</span>
-                <!-- Input for file upload widget -->
-                <input id="fileupload" type="file" name="file">
-            </span>
-            or drop your file directly into the browser.
-        </p>
-    </div>
-
-    <noscript>
-        <p>
-            Choose your file and click the Upload Button.
-        </p>
-        <!-- Input for file upload widget -->
-        <form id="fileupload" action="/+upload" method="POST" enctype="multipart/form-data" class="">
-            <span class="btn btn-default fileinput-button">
-                <i class="glyphicon glyphicon-upload"></i>
-                <span>Choose file</span>
-                <input type="file" name="file">
-            </span>
-            <button class="btn btn-success">Upload</button>
-        </form>
-    </noscript>
-
-<br>
 <!-- The progress bar -->
 <div class="hasJS" style="display: none">
     <div id="progress" class="progress progress-striped active">
         <div class="progress-bar"></div>
     </div>
 </div>
+
 <!-- Uploaded files -->
 <div id="files" class="files"></div>
-<br>
 {% endblock content %}
 
 {% block extra_link %}
@@ -66,6 +53,9 @@
 <script type="text/javascript" charset="utf-8">
     $(document).ready(function () {
         $('.hasJS').css('display', 'block');
+    });
+    $(document).ready(function () {
+        $('#fileupload-submit').css('display', 'none');
     });
 </script>
 
