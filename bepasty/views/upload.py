@@ -53,7 +53,7 @@ class Upload(object):
 
         item.meta['complete'] = False
 
-        item.meta['locked'] = current_app.config['UPLOAD_LOCKED']
+        item.meta['unlocked'] = current_app.config['UPLOAD_UNLOCKED']
 
     @classmethod
     def meta_complete(cls, item):

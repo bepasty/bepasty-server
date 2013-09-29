@@ -4,7 +4,7 @@
 
 class Config(object):
     # Upload specific config
-    UPLOAD_LOCKED = True
+    UPLOAD_UNLOCKED = False
 
     # Storage specific config
     STORAGE = None
