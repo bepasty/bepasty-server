@@ -35,10 +35,15 @@ class Upload(object):
         return cls._type_re.sub('', i)[:50]
 
     @classmethod
-    def meta(cls, item, input_size, input_filename, input_type):
+    def meta_new(cls, item, input_size, input_filename, input_type):
+        item.meta['complete'] = False
         item.meta['filename'] = cls.filter_filename(input_filename)
         item.meta['size'] = int(input_size)
         item.meta['type'] = cls.filter_type(input_type)
+
+    @classmethod
+    def meta_complete(cls, item):
+        item.meta['complete'] = True
 
     @staticmethod
     def data(item, f, size_input, offset=0):
@@ -92,7 +97,8 @@ class UploadView(MethodView):
 
         with current_app.storage.create(name, size) as item:
             Upload.data(item, f, size)
-            Upload.meta(item, size, f.filename, content_type)
+            Upload.meta_new(item, size, f.filename, content_type)
+            Upload.meta_complete(item)
 
         return redirect(url_for('bepasty.display', name=name))
 
@@ -110,7 +116,7 @@ class UploadNewView(MethodView):
 
         with current_app.storage.create(name, data_size) as item:
             # Save meta-data
-            Upload.meta(item, data_size, data_filename, data_type)
+            Upload.meta_new(item, data_size, data_filename, data_type)
 
             return jsonify({'url': url_for('bepasty.upload_continue', name=name)})
 
@@ -127,6 +133,9 @@ class UploadContinueView(MethodView):
         with current_app.storage.openwrite(name) as item:
             if content_range:
                 Upload.data(item, f, content_range.size, content_range.begin)
+
+                if content_range.is_complete:
+                    Upload.meta_complete(item)
             else:
                 # Get size of temporary file
                 f.seek(0, os.SEEK_END)
@@ -134,6 +143,7 @@ class UploadContinueView(MethodView):
                 f.seek(0)
 
                 Upload.data(item, f, size)
+                Upload.meta_complete(item)
 
             return jsonify({'files': [{
                 'filename': item.meta['filename'],
