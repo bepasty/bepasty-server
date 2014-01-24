@@ -10,7 +10,7 @@ class Config(object):
     # Available:
     # - filesystem
     # - ceph
-    STORAGE = 'fileystem'
+    STORAGE = 'filesystem'
 
     # Filesystem storage specific config
     STORAGE_FILESYSTEM_DIRECTORY = '/tmp/'
