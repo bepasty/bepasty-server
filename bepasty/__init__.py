@@ -14,7 +14,7 @@ def create_app():
     app = Flask(__name__)
 
     app.config.from_object('bepasty.config.Config')
-    if 'BEPASTY_CONFIG' in os.environ:
+    if os.environ.get('BEPASTY_CONFIG'):
         app.config.from_envvar('BEPASTY_CONFIG')
 
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
