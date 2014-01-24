@@ -6,11 +6,14 @@ class Config(object):
     # Upload specific config
     UPLOAD_UNLOCKED = False
 
-    # Storage specific config
-    STORAGE = None
+    # Define storage module
+    # Available:
+    # - filesystem
+    # - ceph
+    STORAGE = 'fileystem'
 
     # Filesystem storage specific config
-    STORAGE_FILESYSTEM_DIRECTORY = None
+    STORAGE_FILESYSTEM_DIRECTORY = '/tmp/'
 
     # CEPH storage specific config
     STORAGE_CEPH_CONFIG_FILE = '/etc/ceph/ceph.conf'
