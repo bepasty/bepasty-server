@@ -1,0 +1,4 @@
+-r all.txt
+pytest
+pytest-pep8
+Sphinx
