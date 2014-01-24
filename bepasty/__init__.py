@@ -1,6 +1,8 @@
 # Copyright: 2013 Bastian Blank <bastian@waldi.eu.org>
 # License: BSD 2-clause, see LICENSE for details.
 
+import os
+
 from flask import Flask, render_template
 
 from .storage import create_storage
@@ -12,7 +14,8 @@ def create_app():
     app = Flask(__name__)
 
     app.config.from_object('bepasty.config.Config')
-    app.config.from_envvar('BEPASTY_CONFIG')
+    if 'BEPASTY_CONFIG' in os.environ:
+        app.config.from_envvar('BEPASTY_CONFIG')
 
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
