@@ -3,8 +3,11 @@
 
 
 class Config(object):
-    # Upload specific config
+    # Uploads are normaly locked and must first unlock the file
     UPLOAD_UNLOCKED = False
+
+    # Set max content length
+    MAX_CONTENT_LENGTH = 16 * 1024 * 1024
 
     # Define storage module
     # Available:

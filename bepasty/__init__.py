@@ -17,8 +17,6 @@ def create_app():
     if os.environ.get('BEPASTY_CONFIG'):
         app.config.from_envvar('BEPASTY_CONFIG')
 
-    app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
-
     create_storage(app)
     setup_werkzeug_routing(app)
 
