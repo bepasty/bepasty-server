@@ -141,7 +141,7 @@ class Meta(collections.MutableMapping):
         self._changed = True
 
         try:
-            data = self._object.read(16*1024, 0)
+            data = self._object.read(16 * 1024, 0)
             if data:
                 self._data = pickle.loads(data)
                 self._changed = False
