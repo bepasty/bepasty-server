@@ -31,7 +31,7 @@ class ContentRange(collections.namedtuple('ContentRange', ('begin', 'end', 'comp
         range_end = int(range_end)
         range_complete = int(range_complete)
 
-        if range_begin <= range_end and range_end < range_complete:
+        if range_begin <= range_end < range_complete:
             return ContentRange(range_begin, range_end, range_complete)
 
         raise BadRequest

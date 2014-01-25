@@ -7,7 +7,7 @@ from werkzeug.routing import BaseConverter
 
 
 class ItemName(str):
-    def __new__(self, uuid):
+    def __new__(cls, uuid):
         return str(uuid)
 
     @classmethod
