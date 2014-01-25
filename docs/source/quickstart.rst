@@ -22,6 +22,10 @@ You can run the bepasty server after installation with following command.
 
 The default config is to use the filesystem as storage location in /tmp.
 
+.. warning::
+
+    The default setting is that all files are unlocked. This means every user can upload and some other can download the file. If you host bepasty public you should set ``UPLOAD_UNLOCKED=False`` to avoid copyright issues.
+
 You can use also another WSGI server like gunicorn.
 
 ::
