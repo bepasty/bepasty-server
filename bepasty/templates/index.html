@@ -1,34 +1,35 @@
 {% extends "_layout.html" %}
 
 {% block content %}
+<div class="page-header">
+    <h1>bepasty, the Binary File Upload Site</h1>
+</div>
+
 <div class="jumbotron">
     <div class="container">
-        <div class="col-sm-4">
-            <h2>World Wide Web</h2>
+        <div class="col-sm-3">
+            <h2>Free and Nice</h2>
             <p>
-                bepasty is a <a href="https://github.com/bepasty/">free and open-source</a> paste bin and trash can for your stuff.
+                A pastebin for <em>all</em> the stuff,<br>
+                not just for text.
             </p>
         </div>
-        <div class="col-sm-4">
-            <h2>Pure Awesomeness</h2>
+        <div class="col-sm-6">
+            <h2>Free and Open Source</h2>
+            <p>
+                bepasty is free and open source software.<br>
+                <a href="https://github.com/bepasty/">bepasty project on github</a>
+            </p>
+        </div>
+        <div class="col-sm-3">
+            <h2>Awesome Code</h2>
             <p>
                 Powered by <a href="http://python.org">Python</a>,
-                an really old <a href="http://flask.pocoo.org/">Flask</a>,
-                many <a href="http://ceph.com/">Ceph</a>-alopodes
-                and this stupid landing page.
-            </p>
-        </div>
-        <div class="col-sm-4">
-            <h2>The Trophy Is A Lie</h2>
-            <p>
-                bepasty tries to crush the <a href="http://wsgiwrestle.com/">WSGI Wrestle 2013</a>.
+                <a href="http://flask.pocoo.org/">Flask</a> and
+                many <a href="http://ceph.com/">Ceph</a>-alopodes.
             </p>
         </div>
     </div>
-</div>
-
-<div class="page-header">
-    <h1>bepasty, the Binary File Uploader</h1>
 </div>
 
 <form action="/+upload" method="POST" enctype="multipart/form-data">
@@ -41,7 +42,7 @@
             <input id="fileupload" type="file" name="file">
         </span>
         <noscript>and <button id="fileupload-submit" class="btn btn-success">upload</button></noscript>
-        or drop your file directly into the browser.
+        or drop your file(s) directly into the browser.
     </p>
 </form>
 
