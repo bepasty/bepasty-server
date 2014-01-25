@@ -39,14 +39,14 @@ class Storage(object):
         file_data = basefilename + '.data'
         file_meta = basefilename + '.meta'
         try:
-            os.remove(file_data.name)
+            os.remove(file_data)
         except OSError:
-            raise logger.error("Could not delete file: %s" % file_data.name)
+            raise logger.error("Could not delete file: %s" % file_data)
 
         try:
-            os.remove(file_meta.name)
+            os.remove(file_meta)
         except OSError:
-            raise logger.error("Could not delete file: %s" % file_meta.name)
+            raise logger.error("Could not delete file: %s" % file_meta)
 
 
 class Item(object):
