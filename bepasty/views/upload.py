@@ -3,6 +3,7 @@
 
 import os
 import re
+import hashlib
 
 from flask import abort, current_app, jsonify, redirect, request, url_for
 from flask.views import MethodView
@@ -46,10 +47,11 @@ class Upload(object):
         return cls._type_re.sub('', i)[:50]
 
     @classmethod
-    def meta_new(cls, item, input_size, input_filename, input_type):
+    def meta_new(cls, item, input_size, input_filename, input_type, md5_hash):
         item.meta['filename'] = cls.filter_filename(input_filename)
         item.meta['size'] = cls.filter_size(input_size)
         item.meta['type'] = cls.filter_type(input_type)
+        item.meta['hash'] = md5_hash
 
         item.meta['complete'] = False
 
@@ -66,6 +68,7 @@ class Upload(object):
         """
         read_length = 16 * 1024
         size_written = 0
+        md5 = hashlib.md5()
 
         while True:
             read_length = min(read_length, size_input)
@@ -78,12 +81,13 @@ class Upload(object):
                 raise RuntimeError
 
             item.data.write(buf, offset + size_written)
+            md5.update(buf)
 
             len_buf = len(buf)
             size_written += len_buf
             size_input -= len_buf
 
-        return size_written
+        return size_written, md5.hexdigest()
 
 
 class UploadView(MethodView):
@@ -110,8 +114,8 @@ class UploadView(MethodView):
         name = ItemName.create()
 
         with current_app.storage.create(name, size) as item:
-            Upload.data(item, f, size)
-            Upload.meta_new(item, size, f.filename, content_type)
+            size_written, md5_hash = Upload.data(item, f, size)
+            Upload.meta_new(item, size, f.filename, content_type, md5_hash)
             Upload.meta_complete(item)
 
         return redirect(url_for('bepasty.display', name=name))
