@@ -22,6 +22,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'flask>=0.10',
+        'Pygments',
     ],
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
