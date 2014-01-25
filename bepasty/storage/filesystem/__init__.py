@@ -4,6 +4,9 @@
 import collections
 import os
 import pickle
+import logging
+
+logger = logging.getLogger(__name__) 
 
 
 class Storage(object):
@@ -31,8 +34,19 @@ class Storage(object):
     def openwrite(self, name):
         return self._open(name, 'r+b')
 
-    def destroy(self, name):
-        raise NotImplementedError
+    def remove(self, name):
+        basefilename = self._filename(name)
+        file_data = open(basefilename + '.data', mode)
+        file_meta = open(basefilename + '.meta', mode)
+        try:
+            os.remove(file_data)
+        except OSError:
+            raise logger.error("Could not delete file: %s" % file_data)
+
+        try:
+            os.remove(file_meta)
+        except OSError:
+            raise logger.error("Could not delete file: %s" % file_meta)
 
 
 class Item(object):
