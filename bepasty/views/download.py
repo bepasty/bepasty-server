@@ -37,7 +37,7 @@ class DownloadView(MethodView):
                 offset = 0
                 size = _item.data.size
                 while offset < size:
-                    buf = _item.data.read(16*1024, offset)
+                    buf = _item.data.read(16 * 1024, offset)
                     offset += len(buf)
                     yield buf
 

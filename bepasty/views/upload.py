@@ -64,7 +64,7 @@ class Upload(object):
         """
         Copy data from temp file into storage.
         """
-        read_length = 16*1024
+        read_length = 16 * 1024
         size_written = 0
 
         while True:

@@ -20,6 +20,9 @@ setup(
     },
     include_package_data=True,
     zip_safe=False,
+    entry_points = {
+        'console_scripts': ['bepasty-server = bepasty:server_cli'],
+    },
     install_requires=[
         'flask>=0.10',
         'Pygments',

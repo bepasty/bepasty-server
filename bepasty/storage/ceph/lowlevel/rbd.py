@@ -7,8 +7,7 @@ import errno
 from ctypes import (
     CDLL,
     c_char_p, c_void_p, c_int, c_size_t, c_ssize_t, c_uint64,
-    POINTER, create_string_buffer, string_at,
-    )
+    POINTER, create_string_buffer, string_at)
 
 from . import errcheck, ContextWrapper
 
