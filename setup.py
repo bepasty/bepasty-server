@@ -20,7 +20,7 @@ setup(
     },
     include_package_data=True,
     zip_safe=False,
-    entry_points = {
+    entry_points={
         'console_scripts': ['bepasty-server = bepasty:server_cli'],
     },
     install_requires=[
