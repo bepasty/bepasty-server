@@ -2,17 +2,19 @@
 
 {% block content %}
 <div class="page-header">
-    <h1>{{ item.meta['filename'] }}</h1>
+    <h1>
+        {{ item.meta['filename'] }}
+    </h1>
 </div>
 
 <div class="alert alert-danger">
     <p>{{ error }}</p>
 </div>
 
-<dl>
-    <dt>Type</dt>
-    <dd>{{ item.meta.get('type') or 'undefined' }}</dd>
-    <dt>Size</dt>
-    <dd>{{ item.meta['size'] }}</dd>
-</p>
+<div class="meta">
+    <p>
+        Type {{ item.meta.get('type') or 'undefined' }}, Size {{ item.meta['size'] }} bytes.
+    </p>
+</div>
+
 {% endblock content %}

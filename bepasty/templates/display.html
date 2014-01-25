@@ -2,19 +2,21 @@
 
 {% block content %}
 <div class="page-header">
-    <h1>{{ item.meta['filename'] }}</h1>
+    <h1>
+        <a href="{{ url_for('bepasty.download', name=name) }}">
+            <span class="glyphicon glyphicon-download-alt"></span>
+        </a>
+        {{ item.meta['filename'] }}
+    </h1>
 </div>
 
-<dl>
-    <dt>Download</dt>
-    <dd><a href="{{ url_for('bepasty.download', name=name) }}">Download {{ item.meta['filename']}} ...</a></dd>
-    <dt>Type</dt>
-    <dd>{{ item.meta.get('type') or 'undefined' }}</dd>
-    <dt>Size</dt>
-    <dd>{{ item.meta['size'] }}</dd>
-</dl>
+<div class="meta">
+    <p>
+        Type {{ item.meta.get('type') or 'undefined' }}, Size {{ item.meta['size'] }} bytes.
+    </p>
+</div>
 
-<div>
+<div class="data">
     {{ rendered_content }}
 </div>
 
