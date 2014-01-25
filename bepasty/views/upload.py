@@ -47,19 +47,19 @@ class Upload(object):
         return cls._type_re.sub('', i)[:50]
 
     @classmethod
-    def meta_new(cls, item, input_size, input_filename, input_type, md5_hash):
+    def meta_new(cls, item, input_size, input_filename, input_type):
         item.meta['filename'] = cls.filter_filename(input_filename)
         item.meta['size'] = cls.filter_size(input_size)
         item.meta['type'] = cls.filter_type(input_type)
-        item.meta['hash'] = md5_hash
 
         item.meta['complete'] = False
 
         item.meta['unlocked'] = current_app.config['UPLOAD_UNLOCKED']
 
     @classmethod
-    def meta_complete(cls, item):
+    def meta_complete(cls, item, md5_hash):
         item.meta['complete'] = True
+        item.meta['hash'] = md5_hash
 
     @staticmethod
     def data(item, f, size_input, offset=0):
@@ -115,8 +115,8 @@ class UploadView(MethodView):
 
         with current_app.storage.create(name, size) as item:
             size_written, md5_hash = Upload.data(item, f, size)
-            Upload.meta_new(item, size, f.filename, content_type, md5_hash)
-            Upload.meta_complete(item)
+            Upload.meta_new(item, size, f.filename, content_type)
+            Upload.meta_complete(item, md5_hash)
 
         return redirect(url_for('bepasty.display', name=name))
 
@@ -150,18 +150,18 @@ class UploadContinueView(MethodView):
 
         with current_app.storage.openwrite(name) as item:
             if content_range:
-                Upload.data(item, f, content_range.size, content_range.begin)
+                size_written, md5_hash = Upload.data(item, f, content_range.size, content_range.begin)
 
                 if content_range.is_complete:
-                    Upload.meta_complete(item)
+                    Upload.meta_complete(item, md5_hash)
             else:
                 # Get size of temporary file
                 f.seek(0, os.SEEK_END)
                 size = f.tell()
                 f.seek(0)
 
-                Upload.data(item, f, size)
-                Upload.meta_complete(item)
+                size_written, md5_hash = Upload.data(item, f, size)
+                Upload.meta_complete(item, md5_hash)
 
             return jsonify({'files': [{
                 'filename': item.meta['filename'],
