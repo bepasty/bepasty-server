@@ -3,7 +3,7 @@
 
 import errno
 
-from flask import current_app, render_template, Markup, request
+from flask import current_app, render_template, Markup, request, url_for
 from flask.views import MethodView
 from werkzeug.exceptions import NotFound
 from pygments import highlight
@@ -40,8 +40,11 @@ class DisplayView(MethodView):
                 lexer = get_lexer_for_mimetype(ct)
                 formatter = HtmlFormatter(linenos='table', lineanchors="L", anchorlinenos=True)
                 rendered_content = Markup(highlight(code, lexer, formatter))
+            elif ct.startswith('image/'):
+                src = url_for('bepasty.download', name=name)
+                rendered_content = Markup(u'<img src="%s" width="800">' % src)
             else:
-                rendered_content = u"Can't render non-text content types."
+                rendered_content = u"Can't render this content type."
             return render_template('display.html', name=name, item=item,
                                    rendered_content=rendered_content)
 
