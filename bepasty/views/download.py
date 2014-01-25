@@ -18,6 +18,7 @@ class DownloadView(MethodView):
         except OSError as e:
             if e.errno == errno.ENOENT:
                 raise NotFound()
+            # XXX item is undefined here, but we proceed... XXX
 
         if not item.meta.get('unlocked'):
             error = 'File Locked.'
