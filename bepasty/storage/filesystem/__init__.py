@@ -36,8 +36,8 @@ class Storage(object):
 
     def remove(self, name):
         basefilename = self._filename(name)
-        file_data = open(basefilename + '.data', mode)
-        file_meta = open(basefilename + '.meta', mode)
+        file_data = basefilename + '.data'
+        file_meta = basefilename + '.meta'
         try:
             os.remove(file_data)
         except OSError:
