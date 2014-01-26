@@ -47,6 +47,10 @@ class DisplayView(MethodView):
                 src = url_for('bepasty.download', name=name)
                 alt_msg = u'html5 audio element not supported by your browser.'
                 rendered_content = Markup(u'<audio controls src="%s">%s</audio>' % (src, alt_msg))
+            elif ct.startswith('video/'):
+                src = url_for('bepasty.download', name=name)
+                alt_msg = u'html5 video element not supported by your browser.'
+                rendered_content = Markup(u'<video controls src="%s">%s</video>' % (src, alt_msg))
             else:
                 rendered_content = u"Can't render this content type."
             return render_template('display.html', name=name, item=item,
