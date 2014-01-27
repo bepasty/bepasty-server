@@ -41,13 +41,13 @@ class Storage(object):
         try:
             os.remove(file_data)
         except OSError as e:
-            logger.error("Could not delete file: %s\n %s" % (file_data, str(e))
+            logger.error("Could not delete file: %s\n %s" % (file_data, str(e)))
             raise
 
         try:
             os.remove(file_meta)
-        except OSError:
-            logger.error("Could not delete file: %s\n %s" % file_meta)
+        except OSError as e:
+            logger.error("Could not delete file: %s\n %s" % (file_meta, str(e)))
             raise
 
 
