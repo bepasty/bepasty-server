@@ -36,8 +36,6 @@ class DeleteView(MethodView):
             if e.errno == errno.ENOENT:
                 return render_template('file_not_found.html'), 404
 
-
         return redirect(url_for('bepasty.display', name=name))
-
 
 blueprint.add_url_rule('/<itemname:name>/+delete', view_func=DeleteView.as_view('delete'))
