@@ -36,3 +36,10 @@ Features
 * Audio and video files:
 
   - we show the html5 player for it (format support depends on browser)
+
+* Storage: we use a storage backend api, currently we have backends for:
+
+  - filesystem storage (just use a filesystem directory to store
+    <uuid>.meta and <uuid>.data files)
+  - ceph cluster storage (distributed & fault-tolerant - uses RADOS Block
+    Devices via librbd and librados)
