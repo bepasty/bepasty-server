@@ -9,4 +9,5 @@ from . import (
     index,
     display,
     download,
-    upload)
+    upload,
+    delete)

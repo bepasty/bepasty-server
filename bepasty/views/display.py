@@ -21,8 +21,10 @@ class DisplayView(MethodView):
             item = current_app.storage.open(name)
         except OSError as e:
             if e.errno == errno.ENOENT:
-                raise NotFound()
-            raise
+                return render_template('file_not_found.html'), 404
+        except IOError as e:
+            if e.errno == errno.ENOENT:
+                return render_template('file_not_found.html'), 404
 
         with item as item:
             if not item.meta.get('unlocked'):
