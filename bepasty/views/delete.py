@@ -1,4 +1,4 @@
-# Copyright: 2013 Bastian Blank <bastian@waldi.eu.org>
+# Copyright: 2014 Dennis Schmalacker <github@progde.de>
 # License: BSD 2-clause, see LICENSE for details.
 
 import errno
@@ -14,15 +14,12 @@ class DeleteView(MethodView):
     def get(self, name):
         try:
             item = current_app.storage.open(name)
-        except OSError as e:
-            if e.errno == errno.ENOENT:
-                return render_template('file_not_found.html'), 404
-        except IOError as e:
+        except (OSError, IOError) as e:
             if e.errno == errno.ENOENT:
                 return render_template('file_not_found.html'), 404
 
         if not item.meta.get('unlocked'):
-            error = 'File Locked.'
+            error = 'File locked.'
         elif not item.meta.get('complete'):
             error = 'Upload incomplete. Try again later.'
         else:
@@ -35,12 +32,10 @@ class DeleteView(MethodView):
 
         try:
             item = current_app.storage.remove(name)
-        except OSError as e:
+        except (OSError, IOError) as e:
             if e.errno == errno.ENOENT:
                 return render_template('file_not_found.html'), 404
-        except IOError as e:
-            if e.errno == errno.ENOENT:
-                return render_template('file_not_found.html'), 404
+
 
         return redirect(url_for('bepasty.display', name=name))
 

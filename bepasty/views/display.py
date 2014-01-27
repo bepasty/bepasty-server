@@ -19,16 +19,13 @@ class DisplayView(MethodView):
     def get(self, name):
         try:
             item = current_app.storage.open(name)
-        except OSError as e:
-            if e.errno == errno.ENOENT:
-                return render_template('file_not_found.html'), 404
-        except IOError as e:
+        except (OSError, IOError) as e:
             if e.errno == errno.ENOENT:
                 return render_template('file_not_found.html'), 404
 
         with item as item:
             if not item.meta.get('unlocked'):
-                error = 'File Locked.'
+                error = 'File locked.'
             elif not item.meta.get('complete'):
                 error = 'Upload incomplete. Try again later.'
             else:
