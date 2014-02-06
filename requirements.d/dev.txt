@@ -1,4 +1,4 @@
--r all.txt
+-r requirements.d/all.txt
 pytest
 pytest-pep8
 Sphinx
