@@ -12,3 +12,4 @@ Contents:
 
    quickstart
    config
+   install-tutorial
