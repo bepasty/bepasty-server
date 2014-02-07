@@ -1,0 +1,7 @@
+include README.rst CHANGES.rst LICENSE
+include setup.cfg setup.py
+recursive-include docs *
+recursive-include static *
+recursive-include templates *
+prune docs/build
+
