@@ -22,6 +22,8 @@ commands to run
   git clone https://github.com/bepasty/bepasty-server.git src
   # create folder for storage
   mkdir storage
+  # create folder for logs
+  mkdir logs
   # create virtualenv
   virtualenv .
   # activate virtualenv
@@ -48,7 +50,7 @@ add this content to ``/home/bepasty/bin/gunicorn_bepasty``:
 
   source $HOME/bin/activate
 
-  cd $HOME/sry
+  cd $HOME/src
 
   exec gunicorn bepasty.wsgi \
     --name $NAME \
@@ -58,6 +60,7 @@ add this content to ``/home/bepasty/bin/gunicorn_bepasty``:
     --pid $PIDFILE \
     -k gevent
 
+Make it executable: ``chmod +x ~/bin/gunicorn_bepasty``
 
 A nginx configuration i.e. in ``/etc/nginx/conf.d/bepasty.conf``:
 
