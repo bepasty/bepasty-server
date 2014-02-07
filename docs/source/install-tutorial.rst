@@ -34,6 +34,15 @@ commands to run
   # add gunicorn and gevent for hosting
   pip install gunicorn gevent
 
+config file for bepasty -- ``/home/bepasty/bepasty.conf``:
+
+::
+
+  UPLOAD_UNLOCKED = True
+  MAX_CONTENT_LENGTH = 16 * 1024 * 1024
+  STORAGE = 'filesystem'
+  STORAGE_FILESYSTEM_DIRECTORY = '/home/bepasty/storage/'
+
 
 add this content to ``/home/bepasty/bin/gunicorn_bepasty``:
 
