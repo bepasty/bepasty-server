@@ -6,7 +6,7 @@ $(function () {
             autoUpload: true,
             singleFileUploads: true,
             maxChunkSize: 10 * 1024 * 1024, // 10 MiB
-            maxFileSize: 4 * 1024 * 1024 * 1024, // 4 GiB
+            maxFileSize: 4 * 1024 * 1024 * 1024 // 4 GiB
         })
 
         .on('fileuploadadd', function (e, data) {
@@ -43,7 +43,7 @@ $(function () {
                 data: JSON.stringify({
                     filename: data.files[0].name,
                     size: data.files[0].size,
-                    type: data.files[0].type,
+                    type: data.files[0].type
                 }),
                 contentType: 'application/json',
                 success: function (result) {
@@ -56,7 +56,7 @@ $(function () {
 
         .on('fileuploaddone', function (e, data) {
             $(data.context)
-                .attr('class', 'alert alert-success')
+                .attr('class', 'alert alert-success');
             $.each(data.result.files, function (index, file) {
                 $(data.context.children()[index])
                     .wrapInner($('<a target="_blank" class="alert-link">')
@@ -72,7 +72,7 @@ $(function () {
 
         .on('fileuploadprogressall', function (e, data) {
             var progress = parseInt(data.loaded / data.total * 100, 10);
-            $('#fileupload-progress .progress-bar').css('width', progress + '%');
+            $('#fileupload-progress').find('.progress-bar').css('width', progress + '%');
         })
 
         .on('fileuploadstart', function (e, data) {
