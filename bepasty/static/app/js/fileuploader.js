@@ -48,8 +48,16 @@ $(function () {
                 contentType: 'application/json',
                 success: function (result) {
                     data.url = result.url;
-                    $this.fileupload('send', data);
-                }
+                    $this.fileupload('send', data)
+                        .error(function (jqXHR, textStatus, errorThrown) 
+                        {
+                            //Delete file garbage on server
+                            $.ajax({
+                                type: 'GET',
+                                url: data.url+'/abort',
+                            });
+                        });
+                    }
             });
             return false;
         })
@@ -77,10 +85,12 @@ $(function () {
 
         .on('fileuploadstart', function (e, data) {
             $('#fileupload-progress').css('visibility', 'visible');
+            $('#fileupload-abort').css('visibility', 'visible')
         })
 
         .on('fileuploadstop', function (e, data) {
             $('#fileupload-progress').css('visibility', 'hidden');
+            $('#fileupload-abort').css('visibility', 'hidden');
         })
 
         .on('fileuploadprocessfail', function (e, data) {
@@ -92,4 +102,12 @@ $(function () {
                 .append('<br>')
                 .append('<strong>' + file.error + '</strong>');
         });
+
+        $('#fileupload-abort').click(function (e) {
+            bootbox.confirm("Are you sure you want to abort the upload?", function(result) {
+                if (result == true){
+                    jqXHR.abort();
+                }
+            });
+        }); 
 });
