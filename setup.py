@@ -2,9 +2,18 @@
 
 from setuptools import setup, find_packages
 
+with open('README.rst') as f:
+    readme_content = f.read()
+
 setup(
     name='bepasty',
-    version='dev',
+    version='0.0.1',
+    url='http://github.com/bepasty/bepasty-server/',
+    license='BSD',
+    author='The Bepasty Team (see AUTHORS)',
+    description='A binary file upload service',
+    long_description=readme_content,
+    keywords="text image audio video binary pastebin upload service wsgi flask ceph",
     packages=find_packages(),
     package_data={
         'bepasty': [
@@ -28,7 +37,7 @@ setup(
         'Pygments',
     ],
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',

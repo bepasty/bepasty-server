@@ -1,18 +1,7 @@
 ChangeLog
 =========
 
-Release / Date <TBD>
---------------------
+Release 0.0.1
+-------------
 
-Important notes:
-
-* ...
-
-New Features:
-
-* ...
-
-Other changes:
-
-* ...
-
+* first pypi release. release early, release often! :)

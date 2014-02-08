@@ -45,7 +45,7 @@ class DownloadView(MethodView):
         ret = Response(stream_with_context(stream()))
         ret.headers['Content-Disposition'] = 'attachment; filename="{}"'.format(item.meta['filename'])
         ret.headers['Content-Length'] = item.meta['size']
-        ret.headers['Content-Type'] = 'application/octet-stream'
+        ret.headers['Content-Type'] = item.meta['type']  # 'application/octet-stream'
         return ret
 
 
