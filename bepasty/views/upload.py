@@ -15,7 +15,7 @@ from . import blueprint
 
 class Upload(object):
     _filename_re = re.compile(r'[^a-zA-Z0-9 \*+:;.,_-]+')
-    _type_re = re.compile(r'[^a-z0-9/-]+')
+    _type_re = re.compile(r'[^a-zA-Z0-9/+-]+')
 
     @classmethod
     def filter_size(cls, i):
