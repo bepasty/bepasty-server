@@ -20,4 +20,3 @@ author_email = u""  # XXX TBD
 
 maintainer = u"Thomas Waldmann"
 maintainer_email = u"tw@waldmann-edv.de"
-

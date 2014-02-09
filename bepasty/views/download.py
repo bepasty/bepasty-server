@@ -51,6 +51,7 @@ class DownloadView(MethodView):
         ret.headers['Content-Type'] = item.meta['type']  # 'application/octet-stream'
         return ret
 
+
 class InlineView(DownloadView):
     content_disposition = 'inline'  # to trigger viewing in browser, for some types
 
