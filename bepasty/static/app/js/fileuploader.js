@@ -61,6 +61,7 @@ $(function () {
                 $(data.context.children()[index])
                     .wrapInner($('<a target="_blank" class="alert-link">')
                         .prop('href', file.url));
+                $('<li>').text(document.location.origin + file.url).appendTo('#file-list>ul');
             })
         })
 
