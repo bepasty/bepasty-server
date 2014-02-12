@@ -50,6 +50,10 @@ class DisplayView(MethodView):
                 src = url_for('bepasty.download', name=name)
                 alt_msg = u'html5 video element not supported by your browser.'
                 rendered_content = Markup(u'<video controls src="%s">%s</video>' % (src, alt_msg))
+            elif ct == 'application/pdf':
+                src = url_for('bepasty.inline', name=name)
+                link_txt = u'Click to see PDF'
+                rendered_content = Markup(u'<a href="%s">%s</a>' % (src, link_txt))
             else:
                 rendered_content = u"Can't render this content type."
             return render_template('display.html', name=name, item=item,

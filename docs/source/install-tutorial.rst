@@ -22,6 +22,8 @@ commands to run
   git clone https://github.com/bepasty/bepasty-server.git src
   # create folder for storage
   mkdir storage
+  # create folder for logs
+  mkdir logs
   # create virtualenv
   virtualenv .
   # activate virtualenv
@@ -32,6 +34,15 @@ commands to run
   # add gunicorn and gevent for hosting
   pip install gunicorn gevent
 
+config file for bepasty -- ``/home/bepasty/bepasty.conf``:
+
+::
+
+  UPLOAD_UNLOCKED = True
+  MAX_CONTENT_LENGTH = 16 * 1024 * 1024
+  STORAGE = 'filesystem'
+  STORAGE_FILESYSTEM_DIRECTORY = '/home/bepasty/storage/'
+
 
 add this content to ``/home/bepasty/bin/gunicorn_bepasty``:
 
@@ -41,16 +52,16 @@ add this content to ``/home/bepasty/bin/gunicorn_bepasty``:
 
   NAME="bepasty"
   HOME=/home/bepasty
-  SOCKFILE=$HOME/gunicorn.sock  # we will communicte using this unix socket
+  SOCKFILE=$HOME/gunicorn.sock  # we will communicate using this unix socket
   PIDFILE=$HOME/gunicorn.pid
   NUM_WORKERS=3                 # how many worker processes should Gunicorn spawn
   export BEPASTY_CONFIG=$HOME/bepasty.conf
 
   source $HOME/bin/activate
 
-  cd $HOME/sry
+  cd $HOME/src
 
-  exec gunicorn bepasty.wsgi \
+  exec gunicorn bepasty/wsgi.py \
     --name $NAME \
     --workers $NUM_WORKERS \
     --log-level=info \
@@ -58,6 +69,7 @@ add this content to ``/home/bepasty/bin/gunicorn_bepasty``:
     --pid $PIDFILE \
     -k gevent
 
+Make it executable: ``chmod +x ~/bin/gunicorn_bepasty``
 
 A nginx configuration i.e. in ``/etc/nginx/conf.d/bepasty.conf``:
 
@@ -95,4 +107,3 @@ Supervisord config i.e. in ``/etc/supervisor/conf.d/bepasty.conf``:
   user = bepasty                                                ; User to run as
   stdout_logfile = /home/bepasty/logs/gunicorn_supervisor.log   ; Where to write log messages
   redirect_stderr = true                                        ; Save stderr in the same log
-

@@ -1,53 +1,22 @@
-# Copyright: 2013 Bastian Blank <bastian@waldi.eu.org>
-# License: BSD 2-clause, see LICENSE for details.
+# note: keep this module rather slim, esp. do not import stuff
+#       from other dependencies here, so we can import this from
+#       everywhere where we just need the version number, project
+#       name, etc. - even if the dependencies are not installed.
 
-import os
+version = u"0.0.1"
 
-from flask import Flask, render_template
+project = u"bepasty"  # == python package name, pypi package name,
+                      # but: repo name is "bepasty-server"
 
-from .storage import create_storage
-from .views import blueprint
-from .utils.name import setup_werkzeug_routing
+description = u"a binary pastebin / file upload service"
 
+__doc__ = u"%s - %s" % (project, description)
 
-def create_app():
-    app = Flask(__name__)
+license = u"BSD 2-clause"
+copyright_years = u"2013, 2014"
 
-    app.config.from_object('bepasty.config.Config')
-    if os.environ.get('BEPASTY_CONFIG'):
-        app.config.from_envvar('BEPASTY_CONFIG')
+author = u"The Bepasty Team (see AUTHORS file)"
+author_email = u""  # XXX TBD
 
-    create_storage(app)
-    setup_werkzeug_routing(app)
-
-    app.register_blueprint(blueprint)
-
-    @app.errorhandler(404)
-    def page_not_found(e):
-        return render_template('_error_404.html'), 404
-
-    return app
-
-
-def server_cli():
-    """Create command-line interface for bepasty server"""
-
-    import argparse
-
-    parser = argparse.ArgumentParser(
-        description="The free and open-source paste bin and trash can "
-                    "for your stuff.")
-    parser.add_argument('--host', help='Host to listen on')
-    parser.add_argument('--port', type=int, help='Port to listen on')
-    parser.add_argument('--debug', help='Activate debug mode',
-                        action='store_true')
-    args = parser.parse_args()
-
-    app = create_app()
-
-    print " * Starting bepasty server..."
-    app.run(
-        host=args.host,
-        port=args.port,
-        debug=args.debug
-    )
+maintainer = u"Thomas Waldmann"
+maintainer_email = u"tw@waldmann-edv.de"

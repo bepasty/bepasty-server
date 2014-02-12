@@ -12,6 +12,8 @@ from . import blueprint
 
 
 class DownloadView(MethodView):
+    content_disposition = 'attachment'  # to trigger download
+
     def get(self, name):
         try:
             item = current_app.storage.open(name)
@@ -43,10 +45,16 @@ class DownloadView(MethodView):
                     yield buf
 
         ret = Response(stream_with_context(stream()))
-        ret.headers['Content-Disposition'] = 'attachment; filename="{}"'.format(item.meta['filename'])
+        ret.headers['Content-Disposition'] = '{}; filename="{}"'.format(
+            self.content_disposition, item.meta['filename'])
         ret.headers['Content-Length'] = item.meta['size']
-        ret.headers['Content-Type'] = 'application/octet-stream'
+        ret.headers['Content-Type'] = item.meta['type']  # 'application/octet-stream'
         return ret
 
 
+class InlineView(DownloadView):
+    content_disposition = 'inline'  # to trigger viewing in browser, for some types
+
+
 blueprint.add_url_rule('/<itemname:name>/+download', view_func=DownloadView.as_view('download'))
+blueprint.add_url_rule('/<itemname:name>/+inline', view_func=InlineView.as_view('inline'))

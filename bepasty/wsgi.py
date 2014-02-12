@@ -3,7 +3,7 @@
 # Copyright: 2013 Bastian Blank <bastian@waldi.eu.org>
 # License: BSD 2-clause, see LICENSE for details.
 
-from . import create_app
+from .app import create_app
 
 application = create_app()
 

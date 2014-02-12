@@ -8,14 +8,14 @@ import hashlib
 from flask import abort, current_app, jsonify, redirect, request, url_for
 from flask.views import MethodView
 
-from ..utils.html import ContentRange
+from ..utils.http import ContentRange
 from ..utils.name import ItemName
 from . import blueprint
 
 
 class Upload(object):
     _filename_re = re.compile(r'[^a-zA-Z0-9 \*+:;.,_-]+')
-    _type_re = re.compile(r'[^a-z0-9/-]+')
+    _type_re = re.compile(r'[^a-zA-Z0-9/+.-]+')
 
     @classmethod
     def filter_size(cls, i):

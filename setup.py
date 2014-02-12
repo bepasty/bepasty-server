@@ -2,9 +2,24 @@
 
 from setuptools import setup, find_packages
 
+from bepasty import (project, version, license, description,
+                     author, author_email, maintainer, maintainer_email)
+
+with open('README.rst') as f:
+    readme_content = f.read()
+
 setup(
-    name='bepasty',
-    version='dev',
+    name=project,
+    version=version,
+    license=license,
+    author=author,
+    author_email=author_email,
+    maintainer=maintainer,
+    maintainer_email=maintainer_email,
+    description=description,
+    long_description=readme_content,
+    url='http://github.com/bepasty/bepasty-server/',
+    keywords="text image audio video binary pastebin upload service wsgi flask ceph",
     packages=find_packages(),
     package_data={
         'bepasty': [
@@ -21,14 +36,14 @@ setup(
     include_package_data=True,
     zip_safe=False,
     entry_points={
-        'console_scripts': ['bepasty-server = bepasty:server_cli'],
+        'console_scripts': ['bepasty-server = bepasty.app:server_cli'],
     },
     install_requires=[
         'flask>=0.10',
         'Pygments',
     ],
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
