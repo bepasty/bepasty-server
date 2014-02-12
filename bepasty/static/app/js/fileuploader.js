@@ -1,3 +1,4 @@
+jqXHR = null;
 $(function () {
     'use strict';
     $('#fileupload')
@@ -48,8 +49,8 @@ $(function () {
                 contentType: 'application/json',
                 success: function (result) {
                     data.url = result.url;
-                    $this.fileupload('send', data)
-                        .error(function (jqXHR, textStatus, errorThrown) 
+                    jqXHR = $this.fileupload('send', data);
+                    jqXHR.error(function (jqXHR, textStatus, errorThrown) 
                         {
                             //Delete file garbage on server
                             $.ajax({
@@ -69,13 +70,15 @@ $(function () {
                 $(data.context.children()[index])
                     .wrapInner($('<a target="_blank" class="alert-link">')
                         .prop('href', file.url));
-            })
+            });
+            jqXHR = null;
         })
 
         .on('fileuploadfail', function (e, data) {
             $(data.context)
                 .attr('class', 'alert alert-danger')
                 .append('<p><strong>Upload failed!</strong></p>');
+                jqXHR = null;
         })
 
         .on('fileuploadprogressall', function (e, data) {
@@ -103,11 +106,12 @@ $(function () {
                 .append('<strong>' + file.error + '</strong>');
         });
 
-        $('#fileupload-abort').click(function (e) {
-            bootbox.confirm("Are you sure you want to abort the upload?", function(result) {
-                if (result == true){
-                    jqXHR.abort();
-                }
-            });
-        }); 
+    $('#fileupload-abort').click(function (e) {
+        bootbox.confirm("Are you sure you want to abort the upload?", function(result) {
+            if (result == true){
+                jqXHR.abort();
+                console.log(jqXHR);
+            }
+        });
+    }); 
 });
