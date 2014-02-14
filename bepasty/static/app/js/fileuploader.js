@@ -78,7 +78,7 @@ $(function () {
             $(data.context)
                 .attr('class', 'alert alert-danger')
                 .append('<p><strong>Upload failed!</strong></p>');
-                jqXHR = null;
+            jqXHR = null;
         })
 
         .on('fileuploadprogressall', function (e, data) {
@@ -108,9 +108,8 @@ $(function () {
 
     $('#fileupload-abort').click(function (e) {
         bootbox.confirm("Are you sure you want to abort the upload?", function(result) {
-            if (result == true){
+            if (result == true && jqXHR != null){
                 jqXHR.abort();
-                console.log(jqXHR);
             }
         });
     }); 
