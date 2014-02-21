@@ -61,7 +61,7 @@ add this content to ``/home/bepasty/bin/gunicorn_bepasty``:
 
   cd $HOME/src
 
-  exec gunicorn bepasty/wsgi.py \
+  exec gunicorn bepasty.wsgi \
     --name $NAME \
     --workers $NUM_WORKERS \
     --log-level=info \

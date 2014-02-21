@@ -37,4 +37,5 @@ For production, you should use a WSGI server like gunicorn, apache+mod-wsgi, ngi
 
 ::
 
-    gunicorn bepasty/wsgi.py
+    gunicorn bepasty.wsgi
+
