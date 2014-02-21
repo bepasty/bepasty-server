@@ -8,6 +8,16 @@ from bepasty import (project, version, license, description,
 with open('README.rst') as f:
     readme_content = f.read()
 
+install_requires = [
+    'flask>=0.10',
+    'Pygments',
+]
+
+try:
+    import importlib
+except ImportError:
+    install_requires.append('importlib')
+
 setup(
     name=project,
     version=version,
@@ -38,10 +48,7 @@ setup(
     entry_points={
         'console_scripts': ['bepasty-server = bepasty.app:server_cli'],
     },
-    install_requires=[
-        'flask>=0.10',
-        'Pygments',
-    ],
+    install_requires=install_requires,
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
@@ -50,5 +57,6 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 2.6',
     ],
 )
