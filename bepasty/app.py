@@ -10,6 +10,7 @@ from .views import blueprint
 from .utils.name import setup_werkzeug_routing
 
 
+
 def create_app():
     app = Flask(__name__)
 
@@ -27,6 +28,7 @@ def create_app():
         return render_template('_error_404.html'), 404
 
     return app
+
 
 
 def server_cli():
