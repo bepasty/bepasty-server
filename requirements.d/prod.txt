@@ -1,1 +1,1 @@
--r requirements.d/all.txt
+-r all.txt
