@@ -5,7 +5,7 @@ import pytest
 
 from werkzeug.exceptions import BadRequest
 
-from .html import ContentRange
+from .http import ContentRange
 
 
 def test_ContentRange_parse():

@@ -2,17 +2,33 @@
 
 from setuptools import setup, find_packages
 
+from bepasty import (project, version, license, description,
+                     author, author_email, maintainer, maintainer_email)
+
 with open('README.rst') as f:
     readme_content = f.read()
 
+install_requires = [
+    'flask>=0.10',
+    'Pygments',
+]
+
+try:
+    import importlib
+except ImportError:
+    install_requires.append('importlib')
+
 setup(
-    name='bepasty',
-    version='0.0.1',
-    url='http://github.com/bepasty/bepasty-server/',
-    license='BSD',
-    author='The Bepasty Team (see AUTHORS)',
-    description='A binary file upload service',
+    name=project,
+    version=version,
+    license=license,
+    author=author,
+    author_email=author_email,
+    maintainer=maintainer,
+    maintainer_email=maintainer_email,
+    description=description,
     long_description=readme_content,
+    url='http://github.com/bepasty/bepasty-server/',
     keywords="text image audio video binary pastebin upload service wsgi flask ceph",
     packages=find_packages(),
     package_data={
@@ -30,12 +46,9 @@ setup(
     include_package_data=True,
     zip_safe=False,
     entry_points={
-        'console_scripts': ['bepasty-server = bepasty:server_cli'],
+        'console_scripts': ['bepasty-server = bepasty.app:server_cli'],
     },
-    install_requires=[
-        'flask>=0.10',
-        'Pygments',
-    ],
+    install_requires=install_requires,
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
@@ -44,5 +57,6 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 2.6',
     ],
 )

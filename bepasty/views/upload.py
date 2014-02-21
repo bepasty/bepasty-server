@@ -8,7 +8,7 @@ import hashlib
 from flask import abort, current_app, jsonify, redirect, request, url_for
 from flask.views import MethodView
 
-from ..utils.html import ContentRange
+from ..utils.http import ContentRange
 from ..utils.name import ItemName
 from . import blueprint
 
