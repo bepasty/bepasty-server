@@ -7,7 +7,7 @@ preliminary packages:
 
 ::
 
-  apt-get install build-essential nginx supervisor
+  apt-get install build-essential nginx supervisor python-dev git-core python-pip python-virtualenv
 
 
 commands to run
