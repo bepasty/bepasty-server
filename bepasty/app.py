@@ -5,14 +5,16 @@ import os
 
 from flask import Flask, render_template
 
+
 from .storage import create_storage
 from .views import blueprint
+from .rest_api import api
 from .utils.name import setup_werkzeug_routing
-
 
 
 def create_app():
     app = Flask(__name__)
+    api.init_app(blueprint)
 
     app.config.from_object('bepasty.config.Config')
     if os.environ.get('BEPASTY_CONFIG'):

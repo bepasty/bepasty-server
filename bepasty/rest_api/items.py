@@ -6,4 +6,3 @@ class Item(Resource):
 		return 'Hello World'
 
 api.add_ressource(Item, '/items')
-
