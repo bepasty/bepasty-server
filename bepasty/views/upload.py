@@ -136,7 +136,8 @@ class UploadNewView(MethodView):
             # Save meta-data
             Upload.meta_new(item, data_size, data_filename, data_type)
 
-            return jsonify({'url': url_for('bepasty.upload_continue', name=name)})
+            return jsonify({'url': url_for('bepasty.upload_continue', name=name),
+                            'name': name})
 
 
 class UploadContinueView(MethodView):
@@ -170,6 +171,29 @@ class UploadContinueView(MethodView):
             }]})
 
 
+class UploadAbortView(MethodView):
+    def get(self, name):
+        try:
+            item = current_app.storage.open(name)
+        except (OSError, IOError) as e:
+            if e.errno == errno.ENOENT:
+                return 'No file found.', 404
+
+        if item.meta.get('complete'):
+            error = 'Upload complete. Cannot delete fileupload garbage.'
+        else:
+            error = None
+        if error:
+            return error, 409
+
+        try:
+            item = current_app.storage.remove(name)
+        except (OSError, IOError) as e:
+            if e.errno == errno.ENOENT:
+                return render_template('file_not_found.html'), 404
+        return 'Upload aborted'
+
 blueprint.add_url_rule('/+upload', view_func=UploadView.as_view('upload'))
 blueprint.add_url_rule('/+upload/new', view_func=UploadNewView.as_view('upload_new'))
 blueprint.add_url_rule('/+upload/<itemname:name>', view_func=UploadContinueView.as_view('upload_continue'))
+blueprint.add_url_rule('/+upload/<itemname:name>/abort', view_func=UploadAbortView.as_view('upload_abort'))

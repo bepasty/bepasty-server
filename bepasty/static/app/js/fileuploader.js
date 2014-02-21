@@ -1,3 +1,4 @@
+jqXHR = null;
 $(function () {
     'use strict';
     $('#fileupload')
@@ -48,8 +49,16 @@ $(function () {
                 contentType: 'application/json',
                 success: function (result) {
                     data.url = result.url;
-                    $this.fileupload('send', data);
-                }
+                    jqXHR = $this.fileupload('send', data);
+                    jqXHR.error(function (jqXHR, textStatus, errorThrown)
+                        {
+                            //Delete file garbage on server
+                            $.ajax({
+                                type: 'GET',
+                                url: data.url+'/abort',
+                            });
+                        });
+                    }
             });
             return false;
         })
@@ -62,13 +71,15 @@ $(function () {
                     .wrapInner($('<a target="_blank" class="alert-link">')
                         .prop('href', file.url));
                 $('<li>').text(document.location.origin + file.url).appendTo('#file-list>ul');
-            })
+            });
+            jqXHR = null;
         })
 
         .on('fileuploadfail', function (e, data) {
             $(data.context)
                 .attr('class', 'alert alert-danger')
                 .append('<p><strong>Upload failed!</strong></p>');
+            jqXHR = null;
         })
 
         .on('fileuploadprogressall', function (e, data) {
@@ -78,10 +89,12 @@ $(function () {
 
         .on('fileuploadstart', function (e, data) {
             $('#fileupload-progress').css('visibility', 'visible');
+            $('#fileupload-abort').css('visibility', 'visible')
         })
 
         .on('fileuploadstop', function (e, data) {
             $('#fileupload-progress').css('visibility', 'hidden');
+            $('#fileupload-abort').css('visibility', 'hidden');
         })
 
         .on('fileuploadprocessfail', function (e, data) {
@@ -93,4 +106,12 @@ $(function () {
                 .append('<br>')
                 .append('<strong>' + file.error + '</strong>');
         });
+
+    $('#fileupload-abort').click(function (e) {
+        bootbox.confirm("Are you sure you want to abort the upload?", function(result) {
+            if (result == true && jqXHR != null){
+                jqXHR.abort();
+            }
+        });
+    });
 });
