@@ -8,13 +8,12 @@ from flask import Flask, render_template
 
 from .storage import create_storage
 from .views import blueprint
-from .rest_api import api
+from .rest_api import rest_api
 from .utils.name import setup_werkzeug_routing
 
 
 def create_app():
     app = Flask(__name__)
-    api.init_app(blueprint)
 
     app.config.from_object('bepasty.config.Config')
     if os.environ.get('BEPASTY_CONFIG'):
@@ -24,6 +23,7 @@ def create_app():
     setup_werkzeug_routing(app)
 
     app.register_blueprint(blueprint)
+    app.register_blueprint(rest_api)
 
     @app.errorhandler(404)
     def page_not_found(e):
