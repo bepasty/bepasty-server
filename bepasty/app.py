@@ -35,8 +35,7 @@ def server_cli():
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="The free and open-source paste bin and trash can "
-                    "for your stuff.")
+        description="The free and open-source pastebin for your stuff.")
     parser.add_argument('--host', help='Host to listen on')
     parser.add_argument('--port', type=int, help='Port to listen on')
     parser.add_argument('--debug', help='Activate debug mode',
