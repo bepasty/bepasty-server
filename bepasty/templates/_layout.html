@@ -26,6 +26,20 @@
                         <div class="navbar-header">
                             <a class="navbar-brand" href="/">bepasty</a>
                         </div>
+                        <div class="navbar-right">
+                            {% if session.may_upload %}
+                            <form class="navbar-form" method="post" action="/+logout">
+                                <input class="btn btn-default navbar-btn" type="submit" value="Logout">
+                            </form>
+                            {% else %}
+                            <form class="navbar-form form-inline" method="post" action="/+login">
+                                <div class="form-group">
+                                    <input class="form-control" type="password" name="token">
+                                </div>
+                                <input class="btn btn-default navbar-btn" type="submit" value="Login">
+                            </form>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>

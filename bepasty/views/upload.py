@@ -5,7 +5,7 @@ import os
 import re
 import hashlib
 
-from flask import abort, current_app, jsonify, redirect, request, url_for
+from flask import abort, current_app, jsonify, redirect, request, url_for, session
 from flask.views import MethodView
 
 from ..utils.http import ContentRange
@@ -90,8 +90,15 @@ class Upload(object):
         return size_written, hasher.hexdigest()
 
 
+def check_upload_permission():
+    if not session.get('may_upload', False):
+        abort(403)
+
+
 class UploadView(MethodView):
     def post(self):
+        check_upload_permission()
+
         f = request.files['file']
         if not f:
             raise NotImplementedError
@@ -123,6 +130,8 @@ class UploadView(MethodView):
 
 class UploadNewView(MethodView):
     def post(self):
+        check_upload_permission()
+
         data = request.get_json()
 
         data_filename = data['filename']
@@ -142,6 +151,8 @@ class UploadNewView(MethodView):
 
 class UploadContinueView(MethodView):
     def post(self, name):
+        check_upload_permission()
+
         f = request.files['file']
         if not f:
             raise NotImplementedError
@@ -173,6 +184,8 @@ class UploadContinueView(MethodView):
 
 class UploadAbortView(MethodView):
     def get(self, name):
+        check_upload_permission()
+
         try:
             item = current_app.storage.open(name)
         except (OSError, IOError) as e:

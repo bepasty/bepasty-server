@@ -32,6 +32,7 @@
     </div>
 </div>
 
+{% if session.may_upload %}
 <form action="/+upload" method="POST" enctype="multipart/form-data">
     <p>
         Just
@@ -58,6 +59,12 @@
 <div id="files" class="files"></div>
     {# file list for copying of several URLs #}
     <div id="file-list"><ul></ul></div>
+
+{% else %}
+    <p>
+        Login to be able to upload files.
+    </p>
+{% endif %}
 {% endblock content %}
 
 {% block extra_link %}

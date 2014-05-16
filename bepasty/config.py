@@ -31,3 +31,12 @@ class Config(object):
     STORAGE_CEPH_POOL_DATA = 'bepasty-data'
     #: CEPH pool name for meta data
     STORAGE_CEPH_POOL_META = 'bepasty-meta'
+
+    SECRET_KEY = 'verylongsecretstringneededforsessionstorage'  # XXX change this!
+
+    # secret "login" tokens to be able to upload files
+    TOKENS = {  # change these!
+        'usetheforceluke',
+        'foobar',
+    }
+
