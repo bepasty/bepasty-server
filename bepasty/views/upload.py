@@ -162,10 +162,13 @@ class UploadContinueView(MethodView):
 
         with current_app.storage.openwrite(name) as item:
             if content_range:
-                size_written, file_hash = Upload.data(item, f, content_range.size, content_range.begin)
+                # note: we ignore the hash as it is only for 1 chunk, not for the whole upload.
+                # also, we can not continue computing the hash as we can't save the internal
+                # state of the hash object
+                size_written, _ = Upload.data(item, f, content_range.size, content_range.begin)
 
                 if content_range.is_complete:
-                    Upload.meta_complete(item, file_hash)
+                    Upload.meta_complete(item, '')
             else:
                 # Get size of temporary file
                 f.seek(0, os.SEEK_END)
