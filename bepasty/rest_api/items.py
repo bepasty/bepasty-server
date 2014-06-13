@@ -16,6 +16,25 @@ from ..views.upload import Upload
 class ItemsView(MethodView):
 
     def post(self):
+        '''
+        Upload file via REST-API. Chunked Upload is supported.
+
+        HTTP-Header that need to be given:
+        * Content-Type: The type of the file that is being uploaded. If this is not given filetype will be 'application/octet-stream'
+        * Content-Length: The total size of the file to be uploaded.
+        * Content-Filename: The filename of the file. This will be shown when downloading.
+        * Content-Range: The Content-Range of the Chunk that is currently being uploaded. Follows the HTTP-Header Protocols.
+        * Transaction-Id: The Transaction-Id for Chunked Uploads. Needs to be delivered to upload in chunks.
+
+        To start an upload, the HTTP-Headers need to be delivered. The body of the request needs to be a base64 encoded binary of the file
+        that is uploaded. Content-Length is the original file size before base64 encoding. Content-Range follows the same logic.
+        After the first chunk is uploaded, bepasty will return the Transaction-Id for continued upload. Deliver the Transaction-Id and
+        the correct Content-Range to continue upload. After the file is uploaded and the Content-Range is reached, the file will be marked
+        as complete and a 201 HTTP-Status will be returned. The Content-Location Header will contain the api url to the uploaded Item.
+
+        If the file size exceeds the permitted size, the upload will be aborted. This will be checked twice.
+        The first check is the provided Content-Length. The second is the actual file size on the server.
+        '''
         file_type = request.headers.get("Content-Type")
         file_size = request.headers.get("Content-Length")
         file_name = request.headers.get("Content-Filename")
@@ -26,8 +45,8 @@ class ItemsView(MethodView):
             name = ItemName.create()
             item = current_app.storage.create(name, 0)
 
-            item.meta["filename"] = Upload.filter_filename(file_name)
-            item.meta["timestamp"] = int(time.time())
+            item.meta['filename'] = Upload.filter_filename(file_name)
+            item.meta['timestamp'] = int(time.time())
             item.meta['type'] = Upload.filter_type(file_type)
 
         else:
