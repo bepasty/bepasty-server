@@ -14,6 +14,7 @@ class Config(object):
     """
 
     #: Set max content length to 4 GB
+    #: This is the maximum size a uploaded file can have
     MAX_CONTENT_LENGTH = 4 * 1024 * 1024 * 1024
 
     #: Define storage module

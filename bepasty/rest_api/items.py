@@ -34,7 +34,7 @@ class ItemsView(MethodView):
             name = base64.b64decode(request.headers.get("Transaction-Id"))
             item = current_app.storage.open(name)
 
-        Upload.filter_size(item.data.size())
+        Upload.filter_size(item.data.size)
 
         if not request.headers.get("Content-Range"):
             return 'Content-Range not specified', 400
@@ -53,7 +53,7 @@ class ItemsView(MethodView):
         if file_range.is_complete:
             item.meta['complete'] = True
             item.meta['unlocked'] = current_app.config['UPLOAD_UNLOCKED']
-            item.meta['size'] = item.data.size()
+            item.meta['size'] = item.data.size
             response.status = '201'
             response.headers["Content-Location"] = url_for('bepasty_rest.items_detail', name=name)
 
