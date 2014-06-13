@@ -85,6 +85,15 @@ class Storage(object):
         if e_data and e_meta:
             raise KeyError(name)
 
+    def __iter__(self):
+        # XXX rbd.list() not implemented yet
+        #rbd = Rbd(g.ceph_ioctx_data)
+        #names = [img[8:] for img in rbd.list()
+        #         if img.startswith('bepasty.')]
+        names = []
+        for name in names:
+            yield name
+
 
 class Item(object):
     """

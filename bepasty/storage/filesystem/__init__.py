@@ -50,6 +50,12 @@ class Storage(object):
             logger.error("Could not delete file: %s\n %s" % (file_meta, str(e)))
             raise
 
+    def __iter__(self):
+        names = [fn[:-5] for fn in os.listdir(self.directory)
+                 if fn.endswith('.meta')]
+        for name in names:
+            yield name
+
 
 class Item(object):
     """
