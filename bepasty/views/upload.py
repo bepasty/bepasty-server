@@ -3,6 +3,7 @@
 
 import os
 import re
+import time
 import hashlib
 
 from flask import abort, current_app, jsonify, redirect, request, url_for, session
@@ -51,7 +52,7 @@ class Upload(object):
         item.meta['filename'] = cls.filter_filename(input_filename)
         item.meta['size'] = cls.filter_size(input_size)
         item.meta['type'] = cls.filter_type(input_type)
-
+        item.meta['timestamp'] = int(time.time())
         item.meta['complete'] = False
 
         item.meta['unlocked'] = current_app.config['UPLOAD_UNLOCKED']
