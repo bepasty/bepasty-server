@@ -1,61 +1,73 @@
 import hashlib
+import os
+import base64
+import time
+from io import BytesIO
 
 from . import rest_api
 from flask.views import MethodView
 from flask import request, make_response, current_app, url_for, jsonify
 
 from ..utils.name import ItemName
+from ..utils.http import ContentRange
+from ..views.upload import Upload
 
-class Upload(object):
-	@staticmethod
-	def data(item, stream, size_input, offset=0):
-	    """
-	    Copy data from temp file into storage.
-	    """
-	    read_length = 16 * 1024
-	    size_written = 0
-	    hasher = hashlib.sha256()
-
-	    while True:
-	        read_length = min(read_length, size_input)
-	        if size_input == 0:
-	            break
-
-	        buf = stream.read(read_length)
-	        if not buf:
-	            # Should not happen, we already checked the size
-	            raise RuntimeError
-
-	        item.data.write(buf, offset + size_written)
-	        hasher.update(buf)
-
-	        len_buf = len(buf)
-	        size_written += len_buf
-	        size_input -= len_buf
-
-	    return size_written, hasher.hexdigest()
 
 class ItemsView(MethodView):
-	def post(self):
-		name = ItemName.create()
-		if request.headers.get('Content-Type') == 'application/octet-stream':
-			with current_app.storage.create(name, int(request.headers.get("Content-Length"))) as item:
-				item.meta['type'] = 'application/octet-stream'
-				item.meta['unlocked'] = current_app.config['UPLOAD_UNLOCKED']
-				item.meta['size'], item.meta['hash'] = Upload.data(item, request.stream, int(request.headers.get("Content-Length")))
-				item.meta['complete'] = True
-		else:
-			return 'Content-Type is not application/octet-stream', 400
-		return jsonify({'uri': url_for('bepasty_rest.items_detail', name=name),
-						'size': item.meta['size'],
-						'sha256hash' : item.meta['hash']})
+
+    def post(self):
+        file_type = request.headers.get("Content-Type")
+        file_size = request.headers.get("Content-Length")
+        file_name = request.headers.get("Content-Filename")
+
+        Upload.filter_size(file_size)
+
+        if not request.headers.get("Transaction-Id"):
+            name = ItemName.create()
+            item = current_app.storage.create(name, 0)
+
+            item.meta["filename"] = Upload.filter_filename(file_name)
+            item.meta["timestamp"] = int(time.time())
+            item.meta['type'] = Upload.filter_type(file_type)
+
+        else:
+            name = base64.b64decode(request.headers.get("Transaction-Id"))
+            item = current_app.storage.open(name)
+
+        Upload.filter_size(item.data.size())
+
+        if not request.headers.get("Content-Range"):
+            return 'Content-Range not specified', 400
+
+        file_range = ContentRange.from_request()
+
+        raw_data = base64.b64decode(request.data)
+        file_data = BytesIO(raw_data)
+
+        Upload.data(item, file_data, len(raw_data), file_range.begin)
+
+        response = make_response()
+        response.headers["Transaction-Id"] = base64.b64encode(name)
+        response.status = '200'
+
+        if file_range.is_complete:
+            item.meta['complete'] = True
+            item.meta['unlocked'] = current_app.config['UPLOAD_UNLOCKED']
+            item.meta['size'] = item.data.size()
+            response.status = '201'
+            response.headers["Content-Location"] = url_for('bepasty_rest.items_detail', name=name)
+
+        item.__exit__()
+        return response
 
 
 class ItemDetailView(MethodView):
-	def get(self):
-		return 'Hello World'
+    def get(self, name):
+        with current_app.storage.open(name) as item:
+            return jsonify({'uri': url_for('bepasty_rest.items_detail', name=name),
+                            'file-meta': dict(item.meta)})
 
 rest_api.add_url_rule('/items', view_func=ItemsView.as_view('items'))
 rest_api.add_url_rule('/items/<itemname:name>', view_func=ItemDetailView.as_view('items_detail'))
 #rest_api.add_url_rule('/items/<itemname:name>/data', view_func=ItemsDataView.as_view('items_data'))
-#rest_api.add_url_rule('/items/<itemname:name>/meta', view_func=ItemsMetaView.as_view('items_meta'))
+#rest_api.add_url_rule('/items/<itemname:name>/meta', view_func=ItemsMetaView.as_view('items_meta')

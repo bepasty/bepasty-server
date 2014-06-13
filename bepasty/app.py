@@ -32,7 +32,6 @@ def create_app():
     return app
 
 
-
 def server_cli():
     """Create command-line interface for bepasty server"""
 

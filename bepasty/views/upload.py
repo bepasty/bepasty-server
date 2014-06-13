@@ -24,7 +24,7 @@ class Upload(object):
         Check for advertised size.
         """
         i = int(i)
-        if i >= 4 * 1024 * 1024 * 1024:  # 4 GiB
+        if i >= current_app.config['MAX_CONTENT_LENGTH']:  # 4 GiB
             abort(413)
         return i
 

@@ -13,8 +13,8 @@ class Config(object):
         version you should set ``UPLOAD_UNLOCKED = False``.
     """
 
-    #: Set max content length
-    MAX_CONTENT_LENGTH = 16 * 1024 * 1024
+    #: Set max content length to 4 GB
+    MAX_CONTENT_LENGTH = 4 * 1024 * 1024 * 1024
 
     #: Define storage module
     #: Available:
