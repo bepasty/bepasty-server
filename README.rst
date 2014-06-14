@@ -20,7 +20,7 @@ Features
     + file name we stored at upload time
     + file type we detected at upload time
     + precise size we computed at upload time
-    + SHA256 hash ("checksum") we computed at upload time
+    + SHA256 hash ("checksum") we computed at upload time (or later)
 
 * Text files:
 
@@ -37,9 +37,20 @@ Features
 
   - we show the html5 player for it (format support depends on browser)
 
+* PDFs:
+
+  - we support rendering PDFs in your browser (if your browser is able to)
+
 * Storage: we use a storage backend api, currently we have backends for:
 
   - filesystem storage (just use a filesystem directory to store
     <uuid>.meta and <uuid>.data files)
   - ceph cluster storage (distributed & fault-tolerant - uses RADOS Block
     Devices via librbd and librados)
+
+* Keeping some control:
+
+  - uploaders need to log in using one of the secret tokens (see config) to
+    be able to upload.
+  - everybody who has a file's URL may view/download that file.
+  - you can purge files from storage by age, inactivity, size, type, ...
