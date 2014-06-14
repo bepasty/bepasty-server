@@ -36,10 +36,10 @@ commands to run
 
 config file for bepasty -- ``/home/bepasty/bepasty.conf``:
 
+Copy ``bepasty/config.py`` to ``/home/bepasty/bepasty.conf`` first, then modify it:
+
 ::
 
-  UPLOAD_UNLOCKED = True
-  MAX_CONTENT_LENGTH = 16 * 1024 * 1024
   STORAGE = 'filesystem'
   STORAGE_FILESYSTEM_DIRECTORY = '/home/bepasty/storage/'
 
