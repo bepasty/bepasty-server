@@ -18,12 +18,17 @@ class Main(object):
             file_name = item.meta['filename']
             file_size = item.meta['size']
             t_upload = item.meta['timestamp-upload']
+            t_download = item.meta['timestamp-download']
             file_type = item.meta['type']
         purge = True
         if args.purge_age is not None:
-            dt = args.purge_age * 24 * 3600  # age in days
+            dt = args.purge_age * 24 * 3600  # n days since upload
             tnow = time.time()
             purge = purge and t_upload < tnow - dt
+        if args.purge_inactivity is not None:
+            dt = args.purge_inactivity * 24 * 3600  # n days inactivity (no download)
+            tnow = time.time()
+            purge = purge and t_download < tnow - dt
         if args.purge_size is not None:
             max_size = args.purge_size * 1024 * 1024  # size in MiB
             purge = purge and file_size > max_size
@@ -38,6 +43,7 @@ class Main(object):
     _parser.set_defaults(func=do_purge)
     _parser.add_argument('-S', '--size', dest='purge_size', type=int, default=None)
     _parser.add_argument('-A', '--age', dest='purge_age', type=int, default=None)
+    _parser.add_argument('-I', '--inactivity', dest='purge_inactivity', type=int, default=None)
     _parser.add_argument('-T', '--type', dest='purge_type', default=None)
     _parser.add_argument('-D', '--dry-run', dest='purge_dry_run', action='store_true')
 
