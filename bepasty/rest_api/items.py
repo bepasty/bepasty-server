@@ -16,25 +16,25 @@ from ..views.upload import Upload
 class ItemsView(MethodView):
 
     def post(self):
-        '''
+        """
         Upload file via REST-API. Chunked Upload is supported.
 
-        HTTP-Header that need to be given:
+        HTTP Headers that need to be given:
         * Content-Type: The type of the file that is being uploaded. If this is not given filetype will be 'application/octet-stream'
         * Content-Length: The total size of the file to be uploaded.
         * Content-Filename: The filename of the file. This will be shown when downloading.
-        * Content-Range: The Content-Range of the Chunk that is currently being uploaded. Follows the HTTP-Header Protocols.
-        * Transaction-Id: The Transaction-Id for Chunked Uploads. Needs to be delivered to upload in chunks.
+        * Content-Range: The Content-Range of the Chunk that is currently being uploaded. Follows the HTTP-Header Specifications.
+        * Transaction-Id: The Transaction-Id for Chunked Uploads. Needs to be delivered when uploading in chunks (After the first chunk).
 
-        To start an upload, the HTTP-Headers need to be delivered. The body of the request needs to be a base64 encoded binary of the file
+        To start an upload, the HTTP Headers need to be delivered. The body of the request needs to be the base64 encoded file contents
         that is uploaded. Content-Length is the original file size before base64 encoding. Content-Range follows the same logic.
-        After the first chunk is uploaded, bepasty will return the Transaction-Id for continued upload. Deliver the Transaction-Id and
-        the correct Content-Range to continue upload. After the file is uploaded and the Content-Range is reached, the file will be marked
-        as complete and a 201 HTTP-Status will be returned. The Content-Location Header will contain the api url to the uploaded Item.
+        After the first chunk is uploaded, bepasty will return the Transaction-Id to continue the upload. Deliver the Transaction-Id and
+        the correct Content-Range to continue upload. After the file is completely uploaded, the file will be marked
+        as complete and a 201 HTTP Status will be returned. The Content-Location Header will contain the api url to the uploaded Item.
 
         If the file size exceeds the permitted size, the upload will be aborted. This will be checked twice.
         The first check is the provided Content-Length. The second is the actual file size on the server.
-        '''
+        """
         file_type = request.headers.get("Content-Type")
         file_size = request.headers.get("Content-Length")
         file_name = request.headers.get("Content-Filename")
@@ -51,7 +51,7 @@ class ItemsView(MethodView):
 
         else:
             name = base64.b64decode(request.headers.get("Transaction-Id"))
-            item = current_app.storage.open(name)
+            item = current_app.storage.openwrite(name)
 
         Upload.filter_size(item.data.size)
 
@@ -59,6 +59,8 @@ class ItemsView(MethodView):
             return 'Content-Range not specified', 400
 
         file_range = ContentRange.from_request()
+        if not item.data.size == file_range.begin:
+            return ('Content-Range inconsistent. Last byte: %d' % item.data.size), 409
 
         raw_data = base64.b64decode(request.data)
         file_data = BytesIO(raw_data)
