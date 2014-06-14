@@ -33,7 +33,7 @@ class Main(object):
             t_upload = item.meta['timestamp-upload']
             t_download = item.meta['timestamp-download']
             file_type = item.meta['type']
-        purge = True
+        purge = True  # be careful: we start from True, then AND the specified criteria
         if args.purge_age is not None:
             dt = args.purge_age * 24 * 3600  # n days since upload
             purge = purge and t_upload < tnow - dt
@@ -52,11 +52,16 @@ class Main(object):
 
     _parser = _subparsers.add_parser('purge', help='Purge objects')
     _parser.set_defaults(func=do_purge)
-    _parser.add_argument('-S', '--size', dest='purge_size', type=int, default=None)
-    _parser.add_argument('-A', '--age', dest='purge_age', type=int, default=None)
-    _parser.add_argument('-I', '--inactivity', dest='purge_inactivity', type=int, default=None)
-    _parser.add_argument('-T', '--type', dest='purge_type', default=None)
-    _parser.add_argument('-D', '--dry-run', dest='purge_dry_run', action='store_true')
+    _parser.add_argument('-D', '--dry-run', dest='purge_dry_run', action='store_true',
+                         help='do not remove anything, just display what would happen')
+    _parser.add_argument('-A', '--age', dest='purge_age', type=int, default=None,
+                         help='only remove if upload older than PURGE_AGE days')
+    _parser.add_argument('-I', '--inactivity', dest='purge_inactivity', type=int, default=None,
+                         help='only remove if latest download older than PURGE_INACTIVITY days')
+    _parser.add_argument('-S', '--size', dest='purge_size', type=int, default=None,
+                         help='only remove if file size > PURGE_SIZE MiB')
+    _parser.add_argument('-T', '--type', dest='purge_type', default=None,
+                         help='only remove if file mimetype starts with PURGE_TYPE')
 
     def do_info(self, storage, name, args):
         with storage.open(name) as item:
