@@ -37,11 +37,13 @@ setup(
         'bepasty': [
             'static/app/css/*.css',
             'static/app/js/*.js',
+            'static/bootbox/*.js',
             'static/bootstrap/fonts/*',
             'static/jquery.fileupload/css/*.css',
             'static/jquery.fileupload/img/*',
             'static/jquery.fileupload/js/*.js',
             'static/jquery.fileupload/js/vendor/*.js',
+            'static/pygments/*.css',
             'templates/*',
         ],
     },
