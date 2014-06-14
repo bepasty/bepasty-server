@@ -2,6 +2,7 @@
 # License: BSD 2-clause, see LICENSE for details.
 
 import errno
+import time
 
 from flask import Response, current_app, render_template, stream_with_context
 from flask.views import MethodView
@@ -16,7 +17,7 @@ class DownloadView(MethodView):
 
     def get(self, name):
         try:
-            item = current_app.storage.open(name)
+            item = current_app.storage.openwrite(name)
         except OSError as e:
             if e.errno == errno.ENOENT:
                 raise NotFound()
@@ -43,6 +44,7 @@ class DownloadView(MethodView):
                     buf = _item.data.read(16 * 1024, offset)
                     offset += len(buf)
                     yield buf
+                item.meta['timestamp-download'] = int(time.time())
 
         ret = Response(stream_with_context(stream()))
         ret.headers['Content-Disposition'] = '{}; filename="{}"'.format(
