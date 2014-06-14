@@ -34,7 +34,11 @@ class Config(object):
 
     SECRET_KEY = 'verylongsecretstringneededforsessionstorage'  # XXX change this!
 
-    # secret "login" tokens to be able to upload files
+    #: secret "login" tokens to be able to login (required to be able to upload files)
+    #: you can use same token for all uploaders (shared secret) or give each uploader
+    #: an individual token (easier to revoke).
+    #: note: downloading does not require logging in, everybody who knows the download
+    #: url of a file may download it.
     TOKENS = {  # change these!
         'usetheforceluke',
         'foobar',
