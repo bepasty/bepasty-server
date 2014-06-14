@@ -43,4 +43,3 @@ class Config(object):
         'usetheforceluke',
         'foobar',
     }
-

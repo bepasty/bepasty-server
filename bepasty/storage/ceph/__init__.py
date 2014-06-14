@@ -87,9 +87,9 @@ class Storage(object):
 
     def __iter__(self):
         # XXX rbd.list() not implemented yet
-        #rbd = Rbd(g.ceph_ioctx_data)
-        #names = [img[8:] for img in rbd.list()
-        #         if img.startswith('bepasty.')]
+        # rbd = Rbd(g.ceph_ioctx_data)
+        # names = [img[8:] for img in rbd.list()
+        #          if img.startswith('bepasty.')]
         names = []
         for name in names:
             yield name
