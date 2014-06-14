@@ -17,7 +17,7 @@ class Main(object):
         with storage.open(name) as item:
             file_name = item.meta['filename']
             file_size = item.meta['size']
-            t_upload = item.meta['timestamp']
+            t_upload = item.meta['timestamp-upload']
             file_type = item.meta['type']
         purge = True
         if args.purge_age is not None:
