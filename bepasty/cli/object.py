@@ -14,7 +14,20 @@ class Main(object):
     argparser.add_argument('names', metavar='NAME', nargs='+')
 
     def do_purge(self, storage, name, args):
-        with storage.open(name) as item:
+        def _fix_meta(item, tnow):
+            # compatibility support for bepasty 0.0.1 and pre-0.0.2
+            # old items might have a 'timestamp' value which is not used any more
+            # (superseded by 'timestamp-*') - delete it:
+            item.meta.pop('timestamp', None)
+            # old items might miss some of the timestamps we require,
+            # just initialize them with the current time:
+            for ts_key in ['timestamp-upload', 'timestamp-download', ]:
+                if ts_key not in item.meta:
+                    item.meta[ts_key] = tnow
+
+        tnow = time.time()
+        with storage.openwrite(name) as item:
+            _fix_meta(item, tnow)
             file_name = item.meta['filename']
             file_size = item.meta['size']
             t_upload = item.meta['timestamp-upload']
@@ -23,11 +36,9 @@ class Main(object):
         purge = True
         if args.purge_age is not None:
             dt = args.purge_age * 24 * 3600  # n days since upload
-            tnow = time.time()
             purge = purge and t_upload < tnow - dt
         if args.purge_inactivity is not None:
             dt = args.purge_inactivity * 24 * 3600  # n days inactivity (no download)
-            tnow = time.time()
             purge = purge and t_download < tnow - dt
         if args.purge_size is not None:
             max_size = args.purge_size * 1024 * 1024  # size in MiB
