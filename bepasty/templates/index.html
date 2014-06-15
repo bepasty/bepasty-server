@@ -34,17 +34,23 @@
 
 {% if session.may_upload %}
 <form action="/+upload" method="POST" enctype="multipart/form-data">
-    <p>
-        Just
-        <span class="btn btn-default fileinput-button">
-            <i class="glyphicon glyphicon-upload"></i>
-            <span>add a file</span>
-            <!-- Input for file upload widget -->
-            <input id="fileupload" type="file" name="file">
-        </span>
-        <noscript>and <button id="fileupload-submit" class="btn btn-success">upload</button></noscript>
-        or drop your file(s) directly into the browser.
-    </p>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 lead text-center text-info">
+                <p>
+                    Just
+                    <span class="btn btn-default fileinput-button">
+                        <i class="glyphicon glyphicon-upload"></i>
+                        <span>add a file</span>
+                        <!-- Input for file upload widget -->
+                        <input id="fileupload" type="file" name="file">
+                    </span>
+                    <noscript>and <button id="fileupload-submit" class="btn btn-success">upload</button></noscript>
+                    or drop your file(s) directly into the browser.
+                </p>
+            </div>
+        </div>
+    </div>
 </form>
 
 <button id="fileupload-abort" class="btn btn-danger pull-right" style="visibility: hidden">abort</button>
@@ -57,13 +63,17 @@
 
 <!-- Uploaded files -->
 <div id="files" class="files"></div>
-    {# file list for copying of several URLs #}
-    <div id="file-list"><ul></ul></div>
+{# file list for copying of several URLs #}
+<div id="file-list"><ul></ul></div>
 
 {% else %}
-    <p>
-        Login to be able to upload files.
-    </p>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12 lead text-center text-warning">
+            Login to be able to upload files.
+        </div>
+    </div>
+</div>
 {% endif %}
 {% endblock content %}
 
