@@ -2,6 +2,7 @@
 # License: BSD 2-clause, see LICENSE for details.
 
 import os
+import time
 
 from flask import Flask, render_template
 
@@ -26,6 +27,13 @@ def create_app():
     def page_not_found(e):
         return render_template('_error_404.html'), 404
 
+    def datetime_format(ts):
+        """
+        takes a unix timestamp and outputs a iso 8601 formatted string
+        """
+        return time.strftime("%Y-%m-%d %H:%M:%S (UTC)", time.gmtime(ts))
+
+    app.jinja_env.filters['datetime'] = datetime_format
     return app
 
 

@@ -12,7 +12,7 @@
 
 <div class="meta">
     <p>
-        Type {{ item.meta.get('type') or 'undefined' }}, Size {{ item.meta['size'] }} bytes.<br/>
+        Type {{ item.meta.get('type') or 'undefined' }}, Size {{ item.meta['size'] }} bytes, uploaded {{ item.meta['timestamp-upload'] | datetime }}.<br/>
         SHA256-Hash: {{ item.meta.get('hash')}}
         <button id="del-btn" type="button" class="btn btn-danger pull-right">Delete File from Server</button>
     </p>
