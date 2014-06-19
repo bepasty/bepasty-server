@@ -5,6 +5,9 @@
 class Config(object):
     """This is the basic configuration class for bepasty."""
 
+    #: name of this site (put YOUR bepasty fqdn here)
+    SITENAME = 'bepasty.example.org'
+
     UPLOAD_UNLOCKED = True
     """
     .. warning::
