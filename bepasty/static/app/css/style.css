@@ -33,7 +33,7 @@ body {
 }
 
 #wrapper > .container {
-    padding: 80px 15px 60px;
+    padding: 0 15px 60px;
 }
 
 .jumbotron .glyphicon {
