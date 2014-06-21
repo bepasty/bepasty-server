@@ -121,7 +121,7 @@ class UploadView(MethodView):
         elif t is not None:
             # t is already unicode, but we want utf-8 for storage
             t = t.encode('utf-8')
-            content_type = 'text/plain'  # TODO: add coding
+            content_type = request.form.get('contenttype') or 'text/plain'  # TODO: add coding
             size = len(t)
             f = StringIO(t)
             filename = 'paste.txt'  # TODO: remove filename requirement
