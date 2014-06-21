@@ -3,26 +3,24 @@
 {% block content %}
 {% if session.may_upload %}
 <form action="/+upload" method="POST" enctype="multipart/form-data">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-12">
-                <textarea id="formupload" name="text" placeholder="Paste text here..."></textarea>
-                <button id="formupload-submit" class="btn btn-success">Submit</button>
-            </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <textarea id="formupload" name="text" placeholder="Paste text here..."></textarea>
+            <button id="formupload-submit" class="btn btn-success">Submit</button>
         </div>
-        <hr>
-        <div class="row">
-            <div class="col-sm-12">
-                    <p>
-                        <span class="btn btn-default fileinput-button dropzone">
-                            <i class="glyphicon glyphicon-upload"></i>
-                            <span>drag and drop files here - or click to select a single file</span>
-                            <!-- Input for file upload widget -->
-                            <input id="fileupload" type="file" name="file" style="height: 100%; width: 100%;">
-                        </span>
-                        <noscript><button id="fileupload-submit" class="btn btn-success">Upload</button></noscript>
-                    </p>
-            </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-sm-12">
+                <p>
+                    <span class="btn btn-default fileinput-button dropzone">
+                        <i class="glyphicon glyphicon-upload"></i>
+                        <span>drag and drop files here - or click to select a single file</span>
+                        <!-- Input for file upload widget -->
+                        <input id="fileupload" type="file" name="file" style="height: 100%; width: 100%;">
+                    </span>
+                    <noscript><button id="fileupload-submit" class="btn btn-success">Upload</button></noscript>
+                </p>
         </div>
     </div>
 </form>
@@ -40,37 +38,33 @@
 
 {% else %}
 <div class="jumbotron">
-    <div class="container">
-        <div class="col-sm-3">
-            <h2>Free and Nice</h2>
-            <p>
-                A pastebin for <em>all</em> the stuff,<br>
-                not just for text.
-            </p>
-        </div>
-        <div class="col-sm-6">
-            <h2>Free and Open Source</h2>
-            <p>
-                bepasty is free and open source software.<br>
-                <a href="https://github.com/bepasty/">bepasty project on github</a>
-            </p>
-        </div>
-        <div class="col-sm-3">
-            <h2>Awesome Code</h2>
-            <p>
-                Powered by <a href="http://python.org">Python</a>,
-                <a href="http://flask.pocoo.org/">Flask</a> and
-                many <a href="http://ceph.com/">Ceph</a>-alopodes.
-            </p>
-        </div>
+    <div class="col-sm-3">
+        <h2>Free and Nice</h2>
+        <p>
+            A pastebin for <em>all</em> the stuff,<br>
+            not just for text.
+        </p>
+    </div>
+    <div class="col-sm-6">
+        <h2>Free and Open Source</h2>
+        <p>
+            bepasty is free and open source software.<br>
+            <a href="https://github.com/bepasty/">bepasty project on github</a>
+        </p>
+    </div>
+    <div class="col-sm-3">
+        <h2>Awesome Code</h2>
+        <p>
+            Powered by <a href="http://python.org">Python</a>,
+            <a href="http://flask.pocoo.org/">Flask</a> and
+            many <a href="http://ceph.com/">Ceph</a>-alopodes.
+        </p>
     </div>
 </div>
 
-<div class="container">
-    <div class="row">
-        <div class="col-sm-12 lead text-center text-warning">
-            Login to be able to upload files.
-        </div>
+<div class="row">
+    <div class="col-sm-12 lead text-center text-warning">
+        Login to be able to upload files.
     </div>
 </div>
 {% endif %}
