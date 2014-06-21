@@ -36,6 +36,10 @@ body {
     padding: 80px 15px 60px;
 }
 
+.jumbotron .glyphicon {
+    font-size: 80px;
+}
+
 .jumbotron {
     font-size: 100%;
     text-align: center;
