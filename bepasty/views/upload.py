@@ -124,7 +124,7 @@ class UploadView(MethodView):
             content_type = request.form.get('contenttype') or 'text/plain'  # TODO: add coding
             size = len(t)
             f = StringIO(t)
-            filename = 'paste.txt'  # TODO: remove filename requirement
+            filename = request.form.get('filename') or 'paste.txt'
         else:
             raise NotImplementedError
 
