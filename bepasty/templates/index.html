@@ -1,10 +1,44 @@
 {% extends "_layout.html" %}
 
 {% block content %}
-<div class="page-header">
-    <h1>bepasty, the Binary File Upload Site</h1>
+{% if session.may_upload %}
+<form action="/+upload" method="POST" enctype="multipart/form-data">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <textarea id="formupload" name="text" placeholder="Paste text here..."></textarea>
+                <button id="formupload-submit" class="btn btn-success">Submit</button>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-sm-12">
+                    <p>
+                        <span class="btn btn-default fileinput-button dropzone">
+                            <i class="glyphicon glyphicon-upload"></i>
+                            <span>drag and drop files here - or click to select a single file</span>
+                            <!-- Input for file upload widget -->
+                            <input id="fileupload" type="file" name="file" style="height: 100%; width: 100%;">
+                        </span>
+                        <noscript><button id="fileupload-submit" class="btn btn-success">Upload</button></noscript>
+                    </p>
+            </div>
+        </div>
+    </div>
+</form>
+
+<button id="fileupload-abort" class="btn btn-danger pull-right" style="visibility: hidden">abort</button>
+<!-- The progress bar -->
+<div id="fileupload-progress" class="progress progress-striped active" style="visibility: hidden">
+    <div class="progress-bar"></div>
 </div>
 
+<!-- Uploaded files -->
+<div id="files" class="files"></div>
+{# file list for copying of several URLs #}
+<div id="file-list"><ul></ul></div>
+
+{% else %}
 <div class="jumbotron">
     <div class="container">
         <div class="col-sm-3">
@@ -32,41 +66,6 @@
     </div>
 </div>
 
-{% if session.may_upload %}
-<form action="/+upload" method="POST" enctype="multipart/form-data">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-12 lead text-center text-info">
-                <p>
-                    Just
-                    <span class="btn btn-default fileinput-button">
-                        <i class="glyphicon glyphicon-upload"></i>
-                        <span>add a file</span>
-                        <!-- Input for file upload widget -->
-                        <input id="fileupload" type="file" name="file">
-                    </span>
-                    <noscript>and <button id="fileupload-submit" class="btn btn-success">upload</button></noscript>
-                    or drop your file(s) directly into the browser.
-                </p>
-            </div>
-        </div>
-    </div>
-</form>
-
-<button id="fileupload-abort" class="btn btn-danger pull-right" style="visibility: hidden">abort</button>
-<!-- The progress bar -->
-<div id="fileupload-progress" class="progress progress-striped active" style="visibility: hidden">
-    <div class="progress-bar"></div>
-</div>
-
-
-
-<!-- Uploaded files -->
-<div id="files" class="files"></div>
-{# file list for copying of several URLs #}
-<div id="file-list"><ul></ul></div>
-
-{% else %}
 <div class="container">
     <div class="row">
         <div class="col-sm-12 lead text-center text-warning">

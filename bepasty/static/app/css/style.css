@@ -16,6 +16,16 @@ body {
     position: relative;
 }
 
+#formupload {
+    height: 400px;
+    width: 100%;
+}
+
+.dropzone {
+    width: 100%;
+    padding: 3em;
+}
+
 #wrapper {
     min-height: 100%;
     margin: 0 auto -30px;

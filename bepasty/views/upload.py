@@ -5,6 +5,7 @@ import os
 import re
 import time
 import hashlib
+from StringIO import StringIO
 
 from flask import abort, current_app, jsonify, redirect, request, url_for, session
 from flask.views import MethodView
@@ -101,29 +102,38 @@ class UploadView(MethodView):
         check_upload_permission()
 
         f = request.files['file']
-        if not f:
+        t = request.form.get('text')
+        if f:
+            # Check Content-Range, disallow its usage
+            if ContentRange.from_request():
+                abort(416)
+
+            # Check Content-Type, default to application/octet-stream
+            content_type = (
+                f.headers.get('Content-Type') or
+                request.headers.get('Content-Type'))
+            filename = f.filename
+
+            # Get size of temporary file
+            f.seek(0, os.SEEK_END)
+            size = f.tell()
+            f.seek(0)
+        elif t is not None:
+            # t is already unicode, but we want utf-8 for storage
+            t = t.encode('utf-8')
+            content_type = 'text/plain'  # TODO: add coding
+            size = len(t)
+            f = StringIO(t)
+            filename = 'paste.txt'  # TODO: remove filename requirement
+        else:
             raise NotImplementedError
-
-        # Check Content-Range, disallow its usage
-        if ContentRange.from_request():
-            abort(416)
-
-        # Check Content-Type, default to application/octet-stream
-        content_type = (
-            f.headers.get('Content-Type') or
-            request.headers.get('Content-Type'))
-
-        # Get size of temporary file
-        f.seek(0, os.SEEK_END)
-        size = f.tell()
-        f.seek(0)
 
         # Create new name
         name = ItemName.create()
 
         with current_app.storage.create(name, size) as item:
             size_written, file_hash = Upload.data(item, f, size)
-            Upload.meta_new(item, size, f.filename, content_type)
+            Upload.meta_new(item, size, filename, content_type)
             Upload.meta_complete(item, file_hash)
 
         return redirect(url_for('bepasty.display', name=name))
