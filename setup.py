@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+import os
+
 from setuptools import setup, find_packages
 
 from bepasty import (project, version, license, description,

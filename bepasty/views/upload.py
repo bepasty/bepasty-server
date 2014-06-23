@@ -8,7 +8,7 @@ import hashlib
 import errno
 from StringIO import StringIO
 
-from flask import abort, current_app, jsonify, redirect, request, url_for, session
+from flask import abort, current_app, jsonify, redirect, request, url_for, session, render_template
 from flask.views import MethodView
 
 from ..utils.http import ContentRange

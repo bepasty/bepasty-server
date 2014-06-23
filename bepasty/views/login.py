@@ -1,6 +1,6 @@
 # License: BSD 2-clause, see LICENSE for details.
 
-from flask import current_app, redirect, request, url_for, session, render_template
+from flask import current_app, redirect, request, url_for, session
 from flask.views import MethodView
 
 from . import blueprint
