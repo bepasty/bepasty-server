@@ -33,19 +33,19 @@
     <div class="progress-bar"></div>
 </div>
 
-<!-- Uploaded files -->
-<div id="files" class="files"></div>
+<div class="row">
+    <!-- Uploaded files -->
+    <div id="files" class="files col-sm-6"></div>
 
-{# item name list assembled here and offered for submission #}
-<form id="filelist-form" style="display: none" action="/+upload" method="POST" enctype="multipart/form-data">
-    <div class="row">
-        <div class="col-sm-12">
-            <textarea id="filelist" name="text"></textarea>
+    {# item name list assembled here and offered for submission #}
+    <form id="filelist-form" style="display: none" action="/+upload" method="POST" enctype="multipart/form-data">
+        <div class="col-sm-6">
+            <textarea id="filelist" name="text" rows="10" cols="40"></textarea>
             <input type="hidden" name="contenttype" value="text/x-bepasty-list">
             <button class="btn btn-success">Create List Item</button>
         </div>
-    </div>
-</form>
+    </form>
+</div>
 
 {% else %}
 <div class="page-header">

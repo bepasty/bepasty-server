@@ -22,7 +22,7 @@ body {
 }
 
 #filelist {
-    height: 100px;
+    height: auto;
     width: 100%;
     font-family: monospace;
 }
