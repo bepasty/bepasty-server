@@ -21,6 +21,12 @@ body {
     width: 100%;
 }
 
+#filelist {
+    height: 100px;
+    width: 100%;
+    font-family: monospace;
+}
+
 .dropzone {
     width: 100%;
     padding: 3em;

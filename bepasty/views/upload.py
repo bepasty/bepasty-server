@@ -101,7 +101,7 @@ class UploadView(MethodView):
     def post(self):
         check_upload_permission()
 
-        f = request.files['file']
+        f = request.files.get('file')
         t = request.form.get('text')
         if f:
             # Check Content-Range, disallow its usage
@@ -190,6 +190,7 @@ class UploadContinueView(MethodView):
                 Upload.meta_complete(item, file_hash)
 
             return jsonify({'files': [{
+                'name': name,
                 'filename': item.meta['filename'],
                 'size': item.meta['size'],
                 'url': url_for('bepasty.display', name=name),

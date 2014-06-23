@@ -35,8 +35,17 @@
 
 <!-- Uploaded files -->
 <div id="files" class="files"></div>
-{# file list for copying of several URLs #}
-<div id="file-list"><ul></ul></div>
+
+{# item name list assembled here and offered for submission #}
+<form id="filelist-form" style="display: none" action="/+upload" method="POST" enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-sm-12">
+            <textarea id="filelist" name="text"></textarea>
+            <input type="hidden" name="contenttype" value="text/x-bepasty-list">
+            <button class="btn btn-success">Create List Item</button>
+        </div>
+    </div>
+</form>
 
 {% else %}
 <div class="page-header">

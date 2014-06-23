@@ -33,7 +33,15 @@ class DisplayView(MethodView):
             if error:
                 return render_template('display_error.html', name=name, item=item, error=error), 409
             ct = item.meta['type']
-            if ct.startswith('text/'):
+            if ct.startswith('text/x-bepasty-'):
+                # special bepasty items
+                if ct == 'text/x-bepasty-list':
+                    names = item.data.read(item.data.size, 0).splitlines()
+                    # TODO: replace this by a nicely rendered table with all item metadata from storage
+                    rendered_content = Markup(u'<pre>%s</pre>' % '\n'.join(names))
+                else:
+                    rendered_content = u"Can't render this content type."
+            elif ct.startswith('text/'):
                 code = item.data.read(item.data.size, 0)
                 code = code.decode('utf-8')  # TODO we don't have the coding in metadata
                 lexer = get_lexer_for_mimetype(ct)
