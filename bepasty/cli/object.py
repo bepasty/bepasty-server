@@ -1,10 +1,10 @@
 import argparse
 import logging
 import time
-import hashlib
 
 from flask import Flask
 
+from ..utils.hashing import compute_hash
 from ..storage import create_storage
 
 
@@ -83,14 +83,7 @@ class Main(object):
                     item.meta['size'] = size
                     size_consistent = True
 
-            hasher = hashlib.sha256()
-            offset = 0
-            while offset < size:
-                buf = item.data.read(1024 * 1024, offset)
-                offset += len(buf)
-                hasher.update(buf)
-            file_hash = hasher.hexdigest()
-
+            file_hash = compute_hash(item.data, size)
             hash_consistent = meta_hash == file_hash
             if not hash_consistent:
                 if meta_hash:

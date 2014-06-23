@@ -4,7 +4,6 @@
 import os
 import re
 import time
-import hashlib
 import errno
 from StringIO import StringIO
 
@@ -13,6 +12,8 @@ from flask.views import MethodView
 
 from ..utils.http import ContentRange
 from ..utils.name import ItemName
+from ..utils.decorators import async
+from ..utils.hashing import compute_hash, hash_new
 from . import blueprint
 
 
@@ -71,7 +72,7 @@ class Upload(object):
         """
         read_length = 16 * 1024
         size_written = 0
-        hasher = hashlib.sha256()
+        hasher = hash_new()
 
         while True:
             read_length = min(read_length, size_input)
@@ -161,6 +162,14 @@ class UploadNewView(MethodView):
                             'name': name})
 
 
+@async
+def background_compute_hash(storage, name):
+    with storage.openwrite(name) as item:
+        size = item.meta['size']
+        file_hash = compute_hash(item.data, size)
+        item.meta['hash'] = file_hash
+
+
 class UploadContinueView(MethodView):
     def post(self, name):
         check_upload_permission()
@@ -178,9 +187,9 @@ class UploadContinueView(MethodView):
                 # also, we can not continue computing the hash as we can't save the internal
                 # state of the hash object
                 size_written, _ = Upload.data(item, f, content_range.size, content_range.begin)
+                file_hash = ''
+                is_complete = content_range.is_complete
 
-                if content_range.is_complete:
-                    Upload.meta_complete(item, '')
             else:
                 # Get size of temporary file
                 f.seek(0, os.SEEK_END)
@@ -188,14 +197,22 @@ class UploadContinueView(MethodView):
                 f.seek(0)
 
                 size_written, file_hash = Upload.data(item, f, size)
+                is_complete = True
+
+            if is_complete:
                 Upload.meta_complete(item, file_hash)
 
-            return jsonify({'files': [{
+            result = jsonify({'files': [{
                 'name': name,
                 'filename': item.meta['filename'],
                 'size': item.meta['size'],
                 'url': url_for('bepasty.display', name=name),
             }]})
+
+        if is_complete and not file_hash:
+            background_compute_hash(current_app.storage, name)
+
+        return result
 
 
 class UploadAbortView(MethodView):
