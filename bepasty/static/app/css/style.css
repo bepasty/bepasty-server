@@ -19,6 +19,7 @@ body {
 #formupload {
     height: 400px;
     width: 100%;
+    font-family: monospace;
 }
 
 #filelist {
