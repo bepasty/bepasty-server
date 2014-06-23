@@ -5,6 +5,7 @@ import os
 import re
 import time
 import hashlib
+import errno
 from StringIO import StringIO
 
 from flask import abort, current_app, jsonify, redirect, request, url_for, session
@@ -206,6 +207,7 @@ class UploadAbortView(MethodView):
         except (OSError, IOError) as e:
             if e.errno == errno.ENOENT:
                 return 'No file found.', 404
+            raise
 
         if item.meta.get('complete'):
             error = 'Upload complete. Cannot delete fileupload garbage.'
