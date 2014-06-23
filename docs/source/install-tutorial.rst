@@ -107,3 +107,4 @@ Supervisord config i.e. in ``/etc/supervisor/conf.d/bepasty.conf``:
   user = bepasty                                                ; User to run as
   stdout_logfile = /home/bepasty/logs/gunicorn_supervisor.log   ; Where to write log messages
   redirect_stderr = true                                        ; Save stderr in the same log
+

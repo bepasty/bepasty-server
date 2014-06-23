@@ -8,7 +8,7 @@ from werkzeug.exceptions import BadRequest
 from .http import ContentRange
 
 
-def test_ContentRange_parse():
+def test_contentrange_parse():
     r = ContentRange.parse('bytes 0-0/2')
     assert r.begin == 0
     assert r.end == 0

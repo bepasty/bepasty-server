@@ -55,7 +55,7 @@ $(function () {
                             //Delete file garbage on server
                             $.ajax({
                                 type: 'GET',
-                                url: data.url+'/abort',
+                                url: data.url+'/abort'
                             });
                         });
                     }
