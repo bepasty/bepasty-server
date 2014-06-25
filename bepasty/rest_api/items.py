@@ -13,7 +13,7 @@ from ..utils.http import ContentRange
 from ..views.upload import Upload
 
 
-class ItemsView(MethodView):
+class ItemsUploadView(MethodView):
 
     def post(self):
         """
@@ -60,7 +60,7 @@ class ItemsView(MethodView):
 
         file_range = ContentRange.from_request()
         if not item.data.size == file_range.begin:
-            return ('Content-Range inconsistent. Last byte: %d' % item.data.size), 409
+            return ('Content-Range inconsistent. Last byte on Server: %d' % item.data.size), 409
 
         raw_data = base64.b64decode(request.data)
         file_data = BytesIO(raw_data)
@@ -88,7 +88,40 @@ class ItemDetailView(MethodView):
             return jsonify({'uri': url_for('bepasty_rest.items_detail', name=name),
                             'file-meta': dict(item.meta)})
 
-rest_api.add_url_rule('/items', view_func=ItemsView.as_view('items'))
+class ItemDownloadView(MethodView):
+    def get(self, name):
+        with current_app.storage.open(name) as item:
+            if not item.meta.get('unlocked'):
+                error = 'File Locked.'
+            elif not item.meta.get('complete'):
+                error = 'Upload incomplete. Try again later.'
+            else:
+                error = None
+            if error:
+                try:
+                    return error, 400
+                finally:
+                    item.close()
+
+            request.headers['Range']
+
+            def stream(offset=0):
+                with item as _item:
+                    size = _item.data.size
+                    while offset < size:
+                        buf = _item.data.read(16 * 1024, offset)
+                        offset += len(buf)
+                        yield buf
+
+            ret = Response(stream_with_context(stream(offset)))
+            ret.headers['Content-Disposition'] = '{}; filename="{}"'.format(
+                self.content_disposition, item.meta['filename'])
+            ret.headers['Content-Length'] = item.meta['size']
+            ret.headers['Content-Type'] = item.meta['type']  # 'application/octet-stream'
+            return ret
+
+
+rest_api.add_url_rule('/items', view_func=ItemsUploadView.as_view('items'))
 rest_api.add_url_rule('/items/<itemname:name>', view_func=ItemDetailView.as_view('items_detail'))
-#rest_api.add_url_rule('/items/<itemname:name>/data', view_func=ItemsDataView.as_view('items_data'))
+rest_api.add_url_rule('/items/<itemname:name>/download', view_func=ItemsDownloadView.as_view('items_download'))
 #rest_api.add_url_rule('/items/<itemname:name>/meta', view_func=ItemsMetaView.as_view('items_meta')
