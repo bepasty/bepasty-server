@@ -6,14 +6,15 @@ from io import BytesIO
 
 from . import rest_api
 from flask.views import MethodView
-from flask import request, make_response, current_app, url_for, jsonify
+from flask import Response, current_app, request, make_response, url_for, jsonify
+from flask import Response, stream_with_context
 
 from ..utils.name import ItemName
-from ..utils.http import ContentRange
+from ..utils.http import ContentRange, DownloadRange
 from ..views.upload import Upload
 
 
-class ItemsUploadView(MethodView):
+class ItemUploadView(MethodView):
 
     def post(self):
         """
@@ -35,51 +36,68 @@ class ItemsUploadView(MethodView):
         If the file size exceeds the permitted size, the upload will be aborted. This will be checked twice.
         The first check is the provided Content-Length. The second is the actual file size on the server.
         """
+        # Collect all expected data from the Request
         file_type = request.headers.get("Content-Type")
         file_size = request.headers.get("Content-Length")
         file_name = request.headers.get("Content-Filename")
 
+        # Check the file size from Request
         Upload.filter_size(file_size)
 
+        # Check if Transaction-ID is available for continued upload
         if not request.headers.get("Transaction-Id"):
+            # Create ItemName and empty file in Storage
             name = ItemName.create()
             item = current_app.storage.create(name, 0)
 
+            # Fill meta with data from Request
             item.meta['filename'] = Upload.filter_filename(file_name)
             item.meta['timestamp'] = int(time.time())
             item.meta['type'] = Upload.filter_type(file_type)
-
         else:
+            # Get file name from Transaction-ID and open from Storage
             name = base64.b64decode(request.headers.get("Transaction-Id"))
             item = current_app.storage.openwrite(name)
 
+        # Check the actual size of the file on the server against limit
+        # Either 0 if new file or n bytes of already uploaded file
         Upload.filter_size(item.data.size)
 
+        # Check Content-Range. Needs to be specified, even if only one chunk
         if not request.headers.get("Content-Range"):
             return 'Content-Range not specified', 400
 
+        # Get Content-Range and check if Range is consistent with server state
         file_range = ContentRange.from_request()
         if not item.data.size == file_range.begin:
             return ('Content-Range inconsistent. Last byte on Server: %d' % item.data.size), 409
 
+        # Decode Base64 encoded request data
         raw_data = base64.b64decode(request.data)
         file_data = BytesIO(raw_data)
 
+        # Write data chunk to item
         Upload.data(item, file_data, len(raw_data), file_range.begin)
 
+        # Make a Response and create Transaction-ID from ItemName
         response = make_response()
         response.headers["Transaction-Id"] = base64.b64encode(name)
         response.status = '200'
 
+        # Check if file is completely uploaded and set meta
         if file_range.is_complete:
             item.meta['complete'] = True
             item.meta['unlocked'] = current_app.config['UPLOAD_UNLOCKED']
             item.meta['size'] = item.data.size
+            # Set status 'sucessfull' and return the new URL for the uploaded file
             response.status = '201'
             response.headers["Content-Location"] = url_for('bepasty_rest.items_detail', name=name)
 
-        item.__exit__()
-        return response
+        try:
+            return response
+        finally:
+            item.__exit__()
+
 
 
 class ItemDetailView(MethodView):
@@ -89,39 +107,61 @@ class ItemDetailView(MethodView):
                             'file-meta': dict(item.meta)})
 
 class ItemDownloadView(MethodView):
+    content_disposition = 'attachment'
     def get(self, name):
-        with current_app.storage.open(name) as item:
-            if not item.meta.get('unlocked'):
-                error = 'File Locked.'
-            elif not item.meta.get('complete'):
-                error = 'Upload incomplete. Try again later.'
+        try:
+            item = current_app.storage.open(name)
+        except (OSError, IOError) as e:
+            #if e.errno == errno.ENOENT:
+            return 'File not found', 404
+
+        if not item.meta.get('unlocked'):
+            error = 'File Locked.'
+        elif not item.meta.get('complete'):
+            error = 'Upload incomplete. Try again later.'
+        else:
+            error = None
+        if error:
+            try:
+                return error, 400
+            finally:
+                item.close()
+
+        request_range = DownloadRange.from_request()
+        if not request_range:
+            range_end = item.data.size
+            range_begin = 0
+            #return 'Range not specified', 400
+        else:
+            if request_range.end == -1:
+                range_end = item.data.size
             else:
-                error = None
-            if error:
-                try:
-                    return error, 400
-                finally:
-                    item.close()
+                range_end = min(request_range.end, item.data.size)
+            range_begin = request_range.begin
 
-            request.headers['Range']
+        print range_begin, range_end
 
-            def stream(offset=0):
-                with item as _item:
-                    size = _item.data.size
-                    while offset < size:
-                        buf = _item.data.read(16 * 1024, offset)
-                        offset += len(buf)
-                        yield buf
+        def stream(begin, end):
+            offset = max(0, begin)
+            with item as _item:
+                while offset < end:
+                    print offset
+                    buf = _item.data.read(16 * 1024, offset)
+                    offset += len(buf)
+                    yield buf
 
-            ret = Response(stream_with_context(stream(offset)))
-            ret.headers['Content-Disposition'] = '{}; filename="{}"'.format(
-                self.content_disposition, item.meta['filename'])
-            ret.headers['Content-Length'] = item.meta['size']
-            ret.headers['Content-Type'] = item.meta['type']  # 'application/octet-stream'
-            return ret
+        ret = Response(stream_with_context(stream(range_begin, range_end)))
+        ret.headers['Content-Disposition'] = '{}; filename="{}"'.format(
+            self.content_disposition, item.meta['filename'])
+        ret.headers['Content-Length'] = (range_end - range_begin)
+        ret.headers['Content-Type'] = item.meta['type']  # 'application/octet-stream'
+        ret.status = '200'
+        ret.headers['Content-Range'] = ('bytes %d-%d/%d' % (range_begin, range_end, item.data.size))
+        print ret
+        return ret
 
 
-rest_api.add_url_rule('/items', view_func=ItemsUploadView.as_view('items'))
+rest_api.add_url_rule('/items', view_func=ItemUploadView.as_view('items'))
 rest_api.add_url_rule('/items/<itemname:name>', view_func=ItemDetailView.as_view('items_detail'))
-rest_api.add_url_rule('/items/<itemname:name>/download', view_func=ItemsDownloadView.as_view('items_download'))
+rest_api.add_url_rule('/items/<itemname:name>/download', view_func=ItemDownloadView.as_view('items_download'))
 #rest_api.add_url_rule('/items/<itemname:name>/meta', view_func=ItemsMetaView.as_view('items_meta')
