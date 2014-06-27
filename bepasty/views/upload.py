@@ -2,8 +2,6 @@
 # License: BSD 2-clause, see LICENSE for details.
 
 import os
-import re
-import time
 import errno
 from StringIO import StringIO
 
@@ -12,8 +10,6 @@ from flask.views import MethodView
 
 from ..utils.http import ContentRange
 from ..utils.name import ItemName
-from ..utils.decorators import async
-from ..utils.hashing import compute_hash, hash_new
 from ..utils.upload import Upload, background_compute_hash
 from . import blueprint
 
