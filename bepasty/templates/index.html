@@ -2,49 +2,55 @@
 
 {% block content %}
 {% if session.may_upload %}
-<form action="/+upload" method="POST" enctype="multipart/form-data">
-    <div class="row">
-        <div class="col-sm-12">
-            <textarea id="formupload" name="text" placeholder="Paste text here..." autofocus></textarea>
-            <input type="text" id="contenttype" name="contenttype" size="30" placeholder="Content-Type">
-            <input type="text" id="filename" name="filename" size="40" placeholder="optional Filename for Download">
-            <button id="formupload-submit" class="btn btn-success">Submit</button>
-        </div>
-    </div>
-    <hr>
-    <div class="row">
-        <div class="col-sm-12">
-                <p>
-                    <span class="btn btn-default fileinput-button dropzone">
-                        <i class="glyphicon glyphicon-upload"></i>
-                        <span>drag and drop files here - or click to select a single file</span>
-                        <!-- Input for file upload widget -->
-                        <input id="fileupload" type="file" name="file" style="height: 100%; width: 100%;">
-                    </span>
-                    <noscript><button id="fileupload-submit" class="btn btn-success">Upload</button></noscript>
-                </p>
-        </div>
-    </div>
-</form>
-
-<button id="fileupload-abort" class="btn btn-danger pull-right" style="visibility: hidden">abort</button>
-<!-- The progress bar -->
-<div id="fileupload-progress" class="progress progress-striped active" style="visibility: hidden">
-    <div class="progress-bar"></div>
-</div>
-
 <div class="row">
-    <!-- Uploaded files -->
-    <div id="files" class="files col-sm-6"></div>
-
-    {# item name list assembled here and offered for submission #}
-    <form id="filelist-form" style="display: none" action="/+upload" method="POST" enctype="multipart/form-data">
-        <div class="col-sm-6">
-            <textarea id="filelist" name="text" rows="10" cols="40"></textarea>
-            <input type="hidden" name="contenttype" value="text/x-bepasty-list">
-            <button class="btn btn-success">Create List Item</button>
+    <div class="col-sm-8">
+        <form action="/+upload" method="POST" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-sm-12">
+                    <textarea id="formupload" name="text" placeholder="Paste text here..." autofocus></textarea>
+                    <input type="text" id="contenttype" name="contenttype" size="30" placeholder="Content-Type">
+                    <input type="text" id="filename" name="filename" size="40" placeholder="optional Filename for Download">
+                    <button id="formupload-submit" class="btn btn-success">Submit</button>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-sm-12">
+                        <p>
+                            <span class="btn btn-default fileinput-button dropzone">
+                                <i class="glyphicon glyphicon-upload"></i>
+                                <span>drag and drop files here - or click to select a single file</span>
+                                <!-- Input for file upload widget -->
+                                <input id="fileupload" type="file" name="file" style="height: 100%; width: 100%;">
+                            </span>
+                            <noscript><button id="fileupload-submit" class="btn btn-success">Upload</button></noscript>
+                        </p>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="col-sm-4">
+        <div class="row">
+            {# item name list assembled here and offered for submission #}
+            <form id="filelist-form" style="display: none" action="/+upload" method="POST" enctype="multipart/form-data">
+                <div class="col-sm-12">
+                    <textarea id="filelist" name="text" rows="10" cols="40"></textarea>
+                    <input type="hidden" name="contenttype" value="text/x-bepasty-list">
+                    <button class="btn btn-success">Create List Item</button>
+                </div>
+            </form>
         </div>
-    </form>
+        <button id="fileupload-abort" class="btn btn-danger pull-right" style="visibility: hidden">abort</button>
+        <!-- The progress bar -->
+        <div id="fileupload-progress" class="progress progress-striped active" style="visibility: hidden">
+            <div class="progress-bar"></div>
+        </div>
+
+        <div class="row">
+            <!-- Uploaded files -->
+            <div id="files" class="files col-sm-12"></div>
+        </div>
+    </div>
 </div>
 
 {% else %}
