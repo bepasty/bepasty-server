@@ -8,10 +8,12 @@ from flask.views import MethodView
 from werkzeug.exceptions import NotFound
 
 from . import blueprint
+from .upload import check_upload_permission
 
 
 class DeleteView(MethodView):
     def get(self, name):
+        check_upload_permission()
         try:
             item = current_app.storage.open(name)
         except (OSError, IOError) as e:

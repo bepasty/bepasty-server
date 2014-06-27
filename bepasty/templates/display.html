@@ -14,7 +14,9 @@
     <p>
         Type {{ item.meta.get('type') or 'undefined' }}, Size {{ item.meta['size'] }} bytes, uploaded {{ item.meta['timestamp-upload'] | datetime }}.<br/>
         SHA256-Hash: {{ item.meta.get('hash')}}
+        {% if session.may_upload %}
         <button id="del-btn" type="button" class="btn btn-danger pull-right">Delete File from Server</button>
+        {% endif %}
     </p>
     
 </div>
