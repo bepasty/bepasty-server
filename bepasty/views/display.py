@@ -13,6 +13,7 @@ from pygments.formatters import HtmlFormatter
 
 from ..utils.name import ItemName
 from . import blueprint
+from .filelist import file_infos
 
 
 class DisplayView(MethodView):
@@ -38,8 +39,7 @@ class DisplayView(MethodView):
                 # special bepasty items
                 if ct == 'text/x-bepasty-list':
                     names = item.data.read(item.data.size, 0).splitlines()
-                    # TODO: replace this by a nicely rendered table with all item metadata from storage
-                    rendered_content = Markup(u'<pre>%s</pre>' % '\n'.join(names))
+                    rendered_content = Markup(render_template('filelist_tableonly.html', files=file_infos(names)))
                 else:
                     rendered_content = u"Can't render this content type."
             elif ct.startswith('text/'):
