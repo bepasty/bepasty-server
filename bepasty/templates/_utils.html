@@ -1,0 +1,29 @@
+{% macro filelist(files) %}
+    <table>
+        <thead>
+        <tr>
+            <td>Filename</td>
+            <td>Type</td>
+            <td>Size</td>
+            <td>Uploaded</td>
+            <td>Actions</td>
+        </tr>
+        </thead>
+        <tbody>
+            {% for file in files %}
+            <tr>
+                <td><a href="{{ url_for('bepasty.display', name=file['id']) }}">{{ file['filename'] }}</a></td>
+                <td>{{ file['type'] }}</td>
+                <td>{{ file['size'] }}</td>
+                <td>{{ file['timestamp-upload'] | datetime }}</td>
+                <td>
+                    <a href="{{ url_for('bepasty.display', name=file['id']) }}">display</a>
+                    <a href="{{ url_for('bepasty.download', name=file['id']) }}">download</a>
+                    <a href="{{ url_for('bepasty.inline', name=file['id']) }}">inline</a>
+                    <a href="{{ url_for('bepasty.delete', name=file['id']) }}">delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endmacro %}
