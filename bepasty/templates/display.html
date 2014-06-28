@@ -1,28 +1,33 @@
 {% extends "_layout.html" %}
 
 {% block content %}
-<div class="page-header">
-    <h1>
-        {{ item.meta['filename'] }}
-        {% if session.may_upload %}
-        <button id="del-btn" type="button" class="btn btn-danger pull-right"><span class="glyphicon glyphicon-remove"></span> Delete</button>
-        {% endif %}
-        <button id="dl-btn" type="button" class="btn btn-info pull-right"><span class="glyphicon glyphicon-download-alt"></span> Download</button>
-    </h1>
-</div>
-
-<div class="meta">
-    <p>
-        Type {{ item.meta.get('type') or 'undefined' }}, Size {{ item.meta['size'] }} bytes, uploaded {{ item.meta['timestamp-upload'] | datetime }}.<br/>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h1>
+            {{ item.meta['filename'] }}
+            <div class="btn-group pull-right">
+                <button id="dl-btn" type="button" class="btn btn-info">
+                    <span class="glyphicon glyphicon-download-alt"></span> Download
+                </button>
+                {% if session.may_upload %}
+                <button id="del-btn" type="button" class="btn btn-danger">
+                    <span class="glyphicon glyphicon-remove"></span> Delete
+                </button>
+                {% endif %}
+            </div>
+        </h1>
+    </div>
+    <div class="panel-body">
+        <p>
+        Type {{ item.meta.get('type') or 'undefined' }}, Size {{ item.meta['size'] }} bytes, uploaded {{ item.meta['timestamp-upload'] | datetime }}.
+        <br/>
         SHA256-Hash: {{ item.meta.get('hash')}}
-    </p>
-    
+        </p>
+        <div class="data">
+            {{ rendered_content }}
+        </div>
+    </div>
 </div>
-
-<div class="data">
-    {{ rendered_content }}
-</div>
-
 {% endblock content %}
 
 {% block extra_script %}
