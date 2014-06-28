@@ -35,7 +35,7 @@ class Config(object):
     #: server secret key needed for secure cookies
     #: you must set a very long, very random, very secret string here,
     #: otherwise bepasty will not work (and crash when trying to log in)!
-    SECRET_KEY = 'xx'
+    SECRET_KEY = ''
 
     #: not logged-in users get these permissions
     #: usually either nothing ('') or read-only ('read'):
