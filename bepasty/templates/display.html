@@ -3,10 +3,11 @@
 {% block content %}
 <div class="page-header">
     <h1>
-        <a href="{{ url_for('bepasty.download', name=name) }}">
-            <span class="glyphicon glyphicon-download-alt"></span>
-        </a>
         {{ item.meta['filename'] }}
+        {% if session.may_upload %}
+        <button id="del-btn" type="button" class="btn btn-danger pull-right"><span class="glyphicon glyphicon-remove"></span> Delete</button>
+        {% endif %}
+        <button id="dl-btn" type="button" class="btn btn-info pull-right"><span class="glyphicon glyphicon-download-alt"></span> Download</button>
     </h1>
 </div>
 
@@ -14,9 +15,6 @@
     <p>
         Type {{ item.meta.get('type') or 'undefined' }}, Size {{ item.meta['size'] }} bytes, uploaded {{ item.meta['timestamp-upload'] | datetime }}.<br/>
         SHA256-Hash: {{ item.meta.get('hash')}}
-        {% if session.may_upload %}
-        <button id="del-btn" type="button" class="btn btn-danger pull-right">Delete File from Server</button>
-        {% endif %}
     </p>
     
 </div>
