@@ -9,7 +9,7 @@
                 <button id="dl-btn" type="button" class="btn btn-info">
                     <span class="glyphicon glyphicon-download-alt"></span> Download
                 </button>
-                {% if session.may_upload %}
+                {% if may(DELETE) %}
                 <button id="del-btn" type="button" class="btn btn-danger">
                     <span class="glyphicon glyphicon-remove"></span> Delete
                 </button>

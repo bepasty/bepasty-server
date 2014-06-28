@@ -3,11 +3,11 @@
 
 import errno
 
-from flask import current_app, render_template
+from flask import current_app, render_template, abort
 from flask.views import MethodView
 
 from . import blueprint
-from .upload import check_upload_permission
+from ..utils.permissions import *
 
 
 def file_infos(names=None):
@@ -34,7 +34,8 @@ def file_infos(names=None):
 
 class FileListView(MethodView):
     def get(self):
-        check_upload_permission()
+        if not may(ADMIN):
+            abort(403)
         return render_template('filelist.html', files=file_infos())
 
 

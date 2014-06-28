@@ -5,8 +5,7 @@ Using bepasty
 Logging in
 ==========
 
-You need to log in to paste text / upload files. Viewing pasted text / downloading uploaded files works without being
-logged in, though.
+You may need to log in to use bepasty (what you may do without or with logging in depends on the configuration).
 
 To log in, you need to know credentials - ask the admin who runs the site.
 

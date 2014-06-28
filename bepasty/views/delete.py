@@ -3,17 +3,18 @@
 
 import errno
 
-from flask import current_app, redirect, url_for, render_template
+from flask import current_app, redirect, url_for, render_template, abort
 from flask.views import MethodView
 from werkzeug.exceptions import NotFound
 
 from . import blueprint
-from .upload import check_upload_permission
+from ..utils.permissions import *
 
 
 class DeleteView(MethodView):
     def get(self, name):
-        check_upload_permission()
+        if not may(DELETE):
+            abort(403)
         try:
             item = current_app.storage.open(name)
         except (OSError, IOError) as e:

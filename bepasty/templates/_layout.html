@@ -29,7 +29,7 @@
                             <a class="navbar-brand" href="/">{{ config.SITENAME }}</a>
                         </div>
                         <div class="navbar-right">
-                            {% if session.may_upload %}
+                            {% if logged_in() %}
                             <form class="navbar-form" method="post" action="/+logout">
                                 <input class="btn btn-default navbar-btn" type="submit" value="Logout">
                             </form>

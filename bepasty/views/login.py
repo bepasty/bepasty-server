@@ -4,19 +4,26 @@ from flask import current_app, redirect, request, url_for, session
 from flask.views import MethodView
 
 from . import blueprint
+from ..utils.permissions import *
 
 
 class LoginView(MethodView):
     def post(self):
         token = request.form.get('token')
-        if token is not None and token in current_app.config['TOKENS']:
-            session['may_upload'] = True
+        if token is not None:
+            permissions = current_app.config['PERMISSIONS'].get(token)
+            if permissions is not None:
+                session[PERMISSIONS] = permissions
+                session[LOGGEDIN] = True
+            else:
+                session[PERMISSIONS] = current_app.config['DEFAULT_PERMISSIONS']
         return redirect(url_for('bepasty.index'))
 
 
 class LogoutView(MethodView):
     def post(self):
-        session['may_upload'] = False
+        session[LOGGEDIN] = False
+        session[PERMISSIONS] = current_app.config['DEFAULT_PERMISSIONS']
         return redirect(url_for('bepasty.index'))
 
 

@@ -9,6 +9,7 @@ from flask import Flask, render_template
 from .storage import create_storage
 from .views import blueprint
 from .utils.name import setup_werkzeug_routing
+from .utils.permissions import *
 
 
 def create_app():
@@ -34,6 +35,14 @@ def create_app():
         return time.strftime("%Y-%m-%d %H:%M:%S (UTC)", time.gmtime(ts))
 
     app.jinja_env.filters['datetime'] = datetime_format
+
+    app.jinja_env.globals['logged_in'] = logged_in
+    app.jinja_env.globals['may'] = may
+    app.jinja_env.globals['ADMIN'] = ADMIN
+    app.jinja_env.globals['CREATE'] = CREATE
+    app.jinja_env.globals['READ'] = READ
+    app.jinja_env.globals['DELETE'] = DELETE
+
     return app
 
 

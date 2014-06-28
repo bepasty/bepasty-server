@@ -3,7 +3,7 @@
 
 import errno
 
-from flask import current_app, render_template, Markup, request, url_for
+from flask import current_app, render_template, Markup, request, url_for, abort
 from flask.views import MethodView
 from werkzeug.exceptions import NotFound
 from pygments import highlight
@@ -12,12 +12,15 @@ from pygments.formatters import HtmlFormatter
 
 
 from ..utils.name import ItemName
+from ..utils.permissions import *
 from . import blueprint
 from .filelist import file_infos
 
 
 class DisplayView(MethodView):
     def get(self, name):
+        if not may(READ):
+            abort(403)
         try:
             item = current_app.storage.open(name)
         except (OSError, IOError) as e:

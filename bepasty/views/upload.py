@@ -5,24 +5,20 @@ import os
 import errno
 from StringIO import StringIO
 
-from flask import abort, current_app, jsonify, redirect, request, url_for, session, render_template
+from flask import abort, current_app, jsonify, redirect, request, url_for, session, render_template, abort
 from flask.views import MethodView
 
 from ..utils.http import ContentRange
 from ..utils.name import ItemName
 from ..utils.upload import Upload, background_compute_hash
+from ..utils.permissions import *
 from . import blueprint
-
-
-def check_upload_permission():
-    if not session.get('may_upload', False):
-        abort(403)
 
 
 class UploadView(MethodView):
     def post(self):
-        check_upload_permission()
-
+        if not may(CREATE):
+            abort(403)
         f = request.files.get('file')
         t = request.form.get('text')
         if f:
@@ -63,7 +59,8 @@ class UploadView(MethodView):
 
 class UploadNewView(MethodView):
     def post(self):
-        check_upload_permission()
+        if not may(CREATE):
+            abort(403)
 
         data = request.get_json()
 
@@ -84,7 +81,8 @@ class UploadNewView(MethodView):
 
 class UploadContinueView(MethodView):
     def post(self, name):
-        check_upload_permission()
+        if not may(CREATE):
+            abort(403)
 
         f = request.files['file']
         if not f:
@@ -129,7 +127,8 @@ class UploadContinueView(MethodView):
 
 class UploadAbortView(MethodView):
     def get(self, name):
-        check_upload_permission()
+        if not may(CREATE):
+            abort(403)
 
         try:
             item = current_app.storage.open(name)

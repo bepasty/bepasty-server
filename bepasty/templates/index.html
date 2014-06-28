@@ -1,7 +1,7 @@
 {% extends "_layout.html" %}
 
 {% block content %}
-{% if session.may_upload %}
+{% if may(CREATE) %}
 <div class="row">
     <div class="col-sm-8">
         <form action="/+upload" method="POST" enctype="multipart/form-data">
