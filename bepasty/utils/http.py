@@ -56,21 +56,20 @@ class ContentRange(collections.namedtuple('ContentRange', ('begin', 'end', 'comp
 
 class DownloadRange(collections.namedtuple('DownloadRange', ('begin', 'end'))):
     """
-    Work with Content-Range headers.
+    Work with Range headers.
     """
     __slots__ = ()
 
     @classmethod
     def parse(cls, content_range):
         """
-        Parse Content-Range header.
+        Parse Range header.
         Format is "bytes=0-524287".
         """
         range_type, range_count = content_range.split('=', 1)
         # There are no other types then "bytes"
         if range_type != 'bytes':
             raise BadRequest(description='Range Header is incorrect')
-
 
         range_begin, range_end = range_count.split('-', 1)
 

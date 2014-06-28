@@ -6,8 +6,7 @@ from io import BytesIO
 
 from . import rest_api
 from flask.views import MethodView
-from flask import Response, current_app, request, make_response, url_for, jsonify
-from flask import Response, stream_with_context
+from flask import Response, current_app, request, make_response, url_for, jsonify, stream_with_context
 
 from ..utils.name import ItemName
 from ..utils.http import ContentRange, DownloadRange
@@ -21,17 +20,24 @@ class ItemUploadView(MethodView):
         Upload file via REST-API. Chunked Upload is supported.
 
         HTTP Headers that need to be given:
-        * Content-Type: The type of the file that is being uploaded. If this is not given filetype will be 'application/octet-stream'
+        * Content-Type: The type of the file that is being uploaded.
+            If this is not given filetype will be 'application/octet-stream'
         * Content-Length: The total size of the file to be uploaded.
         * Content-Filename: The filename of the file. This will be shown when downloading.
-        * Content-Range: The Content-Range of the Chunk that is currently being uploaded. Follows the HTTP-Header Specifications.
-        * Transaction-Id: The Transaction-Id for Chunked Uploads. Needs to be delivered when uploading in chunks (After the first chunk).
+        * Content-Range: The Content-Range of the Chunk that is currently being uploaded.
+            Follows the HTTP-Header Specifications.
+        * Transaction-Id: The Transaction-Id for Chunked Uploads.
+            Needs to be delivered when uploading in chunks (After the first chunk).
 
-        To start an upload, the HTTP Headers need to be delivered. The body of the request needs to be the base64 encoded file contents
-        that is uploaded. Content-Length is the original file size before base64 encoding. Content-Range follows the same logic.
-        After the first chunk is uploaded, bepasty will return the Transaction-Id to continue the upload. Deliver the Transaction-Id and
+        To start an upload, the HTTP Headers need to be delivered.
+        The body of the request needs to be the base64 encoded file contents
+        that is uploaded. Content-Length is the original file size before base64 encoding.
+        Content-Range follows the same logic.
+        After the first chunk is uploaded, bepasty will return the Transaction-Id to continue the upload.
+        Deliver the Transaction-Id and
         the correct Content-Range to continue upload. After the file is completely uploaded, the file will be marked
-        as complete and a 201 HTTP Status will be returned. The Content-Location Header will contain the api url to the uploaded Item.
+        as complete and a 201 HTTP Status will be returned.
+        The Content-Location Header will contain the api url to the uploaded Item.
 
         If the file size exceeds the permitted size, the upload will be aborted. This will be checked twice.
         The first check is the provided Content-Length. The second is the actual file size on the server.
@@ -99,15 +105,16 @@ class ItemUploadView(MethodView):
             item.__exit__()
 
 
-
 class ItemDetailView(MethodView):
     def get(self, name):
         with current_app.storage.open(name) as item:
             return jsonify({'uri': url_for('bepasty_rest.items_detail', name=name),
                             'file-meta': dict(item.meta)})
 
+
 class ItemDownloadView(MethodView):
     content_disposition = 'attachment'
+
     def get(self, name):
         try:
             item = current_app.storage.open(name)
@@ -153,7 +160,7 @@ class ItemDownloadView(MethodView):
         ret = Response(stream_with_context(stream(range_begin, range_end)))
         ret.headers['Content-Disposition'] = '{}; filename="{}"'.format(
             self.content_disposition, item.meta['filename'])
-        ret.headers['Content-Length'] = (range_end - range_begin)
+        ret.headers['Content-Length'] = (range_end - range_begin) + 1
         ret.headers['Content-Type'] = item.meta['type']  # 'application/octet-stream'
         ret.status = '200'
         ret.headers['Content-Range'] = ('bytes %d-%d/%d' % (range_begin, range_end, item.data.size))
