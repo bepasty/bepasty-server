@@ -32,14 +32,16 @@ class Config(object):
     #: CEPH pool name for meta data
     STORAGE_CEPH_POOL_META = 'bepasty-meta'
 
-    SECRET_KEY = 'verylongsecretstringneededforsessionstorage'  # XXX change this!
+    #: server secret key needed for secure cookies
+    #: you must set a very long, very random, very secret string here,
+    #: otherwise bepasty will not work (and crash when trying to log in)!
+    SECRET_KEY = ''
 
     #: secret "login" tokens to be able to login (required to be able to upload files)
     #: you can use same token for all uploaders (shared secret) or give each uploader
     #: an individual token (easier to revoke).
     #: note: downloading does not require logging in, everybody who knows the download
     #: url of a file may download it.
-    TOKENS = {  # change these!
-        'usetheforceluke',
-        'foobar',
+    #: note: this is a set, use it like: TOKENS = {'foo', 'bar', 'baz'}
+    TOKENS = {
     }
