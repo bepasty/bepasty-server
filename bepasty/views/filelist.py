@@ -22,10 +22,14 @@ def file_infos(names=None):
     if names is None:
         names = list(storage)
     for name in names:
-        with storage.open(name) as item:
-            meta = dict(item.meta)
-            meta['id'] = name
-            yield meta
+        try:
+            with storage.open(name) as item:
+                meta = dict(item.meta)
+                meta['id'] = name
+                yield meta
+        except (OSError, IOError) as e:
+            if e.errno != errno.ENOENT:
+                raise
 
 
 class FileListView(MethodView):
