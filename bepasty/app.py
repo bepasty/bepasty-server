@@ -38,6 +38,7 @@ def create_app():
 
     app.jinja_env.globals['logged_in'] = logged_in
     app.jinja_env.globals['may'] = may
+    app.jinja_env.globals['PERMISSIONS'] = PERMISSIONS
     app.jinja_env.globals['ADMIN'] = ADMIN
     app.jinja_env.globals['CREATE'] = CREATE
     app.jinja_env.globals['READ'] = READ
