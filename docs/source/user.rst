@@ -2,12 +2,21 @@
 Using bepasty
 =============
 
-Logging in
-==========
+Logging in and Permissions
+==========================
 
-You may need to log in to use bepasty (what you may do without or with logging in depends on the configuration).
+You may need to log in to get enough permissions required for the misc. functions of bepasty.
 
 To log in, you need to know credentials - ask the admin who runs the site.
+
+The site admin can assign permissions to login credentials (and also to the anonymous, not logged-in user):
+
+* create: be able to upload files / create text pastebins
+* read: be able to read pastebins / download files
+* delete: be able to delete pastebins
+* admin: be able to list all pastebins / files
+
+Bepasty shows your current permissions on the web interface, near the login form.
 
 Pasting text
 ============
@@ -70,7 +79,6 @@ To download a file, click the download icon left of the filename.
 Important stuff to remember
 ===========================
 
-* if you get upload credentials from an admin, do not make them available to other persons except if explicitly allowed
-* for downloading or viewing a file, all one needs is the URL (no credentials required)
+* if you get credentials from an admin, do not make them available to other persons except if explicitly allowed
 * files may go away at any time, always remember that a pastebin site is only for short-term temporary storage
   (how long this is depends on the site's / site admin's policy and available disk space)
