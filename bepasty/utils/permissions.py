@@ -1,7 +1,7 @@
 # Copyright: 2014 Thomas Waldmann <tw@waldmann-edv.de>
 # License: BSD 2-clause, see LICENSE for details.
 
-from flask import session, config
+from flask import session, current_app
 
 # in the code, please always use this constants for permission values:
 ADMIN = 'admin'
@@ -20,7 +20,7 @@ def may(permission):
     """
     permissions = session.get(PERMISSIONS)
     if permissions is None:
-        permissions = config.DEFAULT_PERMISSIONS
+        permissions = current_app.config['DEFAULT_PERMISSIONS']
     permissions = permissions.split(',')
     return permission in permissions
 
