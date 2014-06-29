@@ -1,16 +1,20 @@
 ChangeLog
 =========
 
-Release <TBD>
+Release 0.1.0
 -------------
 
 New features:
 
-* simple login/logout for uploaders - see TOKENS in config.py.
+* add a textarea so one now actually can paste (not just upload)
+* simple login/logout and permissions system - see PERMISSIONS in config.py.
 * support inline viewing of PDFs
 * support Python 2.6
-* after upload, show file url list in an easy to copy format
+* after upload of multiple files, offer creation of list item
 * file uploads can be aborted (partially uploaded file will get deleted)
+* upload timestamps
+* Compute hash of chunked uploads in a background thread directly after upload
+  has finished.
 * new purge cli subcommand (see --help for details).
   you can use this to purge by age (since upload), inactivity (since last
   download), size or (mime)type.
@@ -25,11 +29,11 @@ New features:
 
 Fixes:
 
-* for chunked upload, a wrong hash was computed. Now it stores an empty hash as
-  computing the correct hash is not possible with Python's hashlib api.
-  The empty hashes can get fixed later by the consistency cli command.
+* for chunked upload, a wrong hash was computed. Fixed.
 * misc. cosmetic UI fixes
 * add project docs
+* use monospace font for textarea
+* now correctly positions to linenumber anchors
 
 
 Release 0.0.1
