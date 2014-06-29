@@ -17,7 +17,7 @@ class LockView(MethodView):
             abort(403)
         try:
             with current_app.storage.openwrite(name) as item:
-                if not item.meta.get('unlocked'):
+                if item.meta.get('locked'):
                     error = 'File already locked.'
                 elif not item.meta.get('complete'):
                     error = 'Upload incomplete. Try again later.'
@@ -25,7 +25,7 @@ class LockView(MethodView):
                     error = None
                 if error:
                     return render_template('display_error.html', name=name, item=item, error=error), 409
-                item.meta['unlocked'] = False
+                item.meta['locked'] = True
             return redirect(url_for('bepasty.display', name=name))
 
         except (OSError, IOError) as e:
@@ -40,7 +40,7 @@ class UnlockView(MethodView):
             abort(403)
         try:
             with current_app.storage.openwrite(name) as item:
-                if item.meta.get('unlocked'):
+                if not item.meta.get('locked'):
                     error = 'File already unlocked.'
                 elif not item.meta.get('complete'):
                     error = 'Upload incomplete. Try again later.'
@@ -48,7 +48,7 @@ class UnlockView(MethodView):
                     error = None
                 if error:
                     return render_template('display_error.html', name=name, item=item, error=error), 409
-                item.meta['unlocked'] = True
+                item.meta['locked'] = False
             return redirect(url_for('bepasty.display', name=name))
 
         except (OSError, IOError) as e:

@@ -34,7 +34,7 @@ class DownloadView(MethodView):
             finally:
                 item.close()
 
-        if not item.meta.get('unlocked') and not may(ADMIN):
+        if item.meta.get('locked') and not may(ADMIN):
             abort(403)
 
         def stream():

@@ -6,7 +6,7 @@
         <h1>
             {{ item.meta['filename'] }}
             <div class="btn-group pull-right">
-                {% if item.meta['unlocked'] or may(ADMIN) %}
+                {% if not item.meta['locked'] or may(ADMIN) %}
                     <button id="dl-btn" type="button" class="btn btn-info">
                         <span class="glyphicon glyphicon-download-alt"></span> Download
                     </button>
@@ -17,7 +17,7 @@
                 </button>
                 {% endif %}
                 {% if may(ADMIN) %}
-                {% if item.meta['unlocked'] %}
+                {% if not item.meta['locked'] %}
                     <button id="lock-btn" type="button" class="btn btn-danger">
                         <span class="glyphicon glyphicon-lock"></span> Lock
                     </button>
@@ -53,7 +53,7 @@ $("#del-btn").click(function(){
         }
     }); 
 });
-{% if item.meta['unlocked'] or may(ADMIN) %}
+{% if not item.meta['locked'] or may(ADMIN) %}
 $("#dl-btn").click(function(){
     window.location.replace("{{ url_for('bepasty.download', name=name) }}");
 });

@@ -8,11 +8,11 @@ class Config(object):
     #: name of this site (put YOUR bepasty fqdn here)
     SITENAME = 'bepasty.example.org'
 
-    #: Whether files are automatically unlocked after upload.
+    #: Whether files are automatically locked after upload.
     #:
     #: If you want to require admin approval and manual unlocking for each
-    #: uploaded file, set this to False.
-    UPLOAD_UNLOCKED = True
+    #: uploaded file, set this to True.
+    UPLOAD_LOCKED = False
 
     #: Define storage backend, choose from:
     #:

@@ -89,5 +89,13 @@ use something like:
 
     python -m bepasty.cli.object purge --dry-run --size 10 --age 14 ../config.py '*'
 
+
+If you upgraded bepasty, you might need to upgrade the stored metadata to the current bepasty metadata schema:
+
+::
+
+    python -m bepasty.cli.object migrate ../config.py '*'
+
+
 Note: the '*' needs to be quoted with single-quotes so the shell does not expand it. it tells the command to operate
 on all names in the storage (you could also give some specific names instead of '*').

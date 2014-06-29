@@ -22,7 +22,7 @@ class DeleteView(MethodView):
                 return render_template('file_not_found.html'), 404
             raise
 
-        if not item.meta.get('unlocked'):
+        if item.meta.get('locked'):
             error = 'File locked.'
         elif not item.meta.get('complete'):
             error = 'Upload incomplete. Try again later.'

@@ -51,7 +51,7 @@ class Upload(object):
         item.meta['timestamp-upload'] = int(time.time())
         item.meta['complete'] = False
 
-        item.meta['unlocked'] = current_app.config['UPLOAD_UNLOCKED']
+        item.meta['locked'] = current_app.config['UPLOAD_LOCKED']
 
     @classmethod
     def meta_complete(cls, item, file_hash):

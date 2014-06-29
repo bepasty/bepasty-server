@@ -14,9 +14,10 @@ class Main(object):
     argparser.add_argument('config', metavar='CONFIG')
     argparser.add_argument('names', metavar='NAME', nargs='+')
 
-    def do_purge(self, storage, name, args):
-        def _fix_meta(item, tnow):
-            # compatibility support for bepasty 0.0.1 and pre-0.0.2
+    def do_migrate(self, storage, name, args):
+        tnow = time.time()
+        with storage.openwrite(name) as item:
+            # compatibility support for bepasty 0.0.1 and pre-0.1.0
             # old items might have a 'timestamp' value which is not used any more
             # (superseded by 'timestamp-*') - delete it:
             item.meta.pop('timestamp', None)
@@ -25,10 +26,20 @@ class Main(object):
             for ts_key in ['timestamp-upload', 'timestamp-download', ]:
                 if ts_key not in item.meta:
                     item.meta[ts_key] = tnow
+            if 'locked' not in item.meta:
+                unlocked = item.meta.pop('unlocked', None)
+                if unlocked is not None:
+                    locked = not unlocked
+                else:
+                    locked = False
+                item.meta['locked'] = locked
 
+    _parser = _subparsers.add_parser('migrate', help='Migrate metadata to current schema')
+    _parser.set_defaults(func=do_migrate)
+
+    def do_purge(self, storage, name, args):
         tnow = time.time()
         with storage.openwrite(name) as item:
-            _fix_meta(item, tnow)
             file_name = item.meta['filename']
             file_size = item.meta['size']
             t_upload = item.meta['timestamp-upload']
@@ -132,18 +143,18 @@ class Main(object):
                     print '  set not complete'
                 item.meta['complete'] = args.flag_complete
 
-            if args.flag_unlocked is not None:
-                if args.flag_unlocked:
-                    print '  set unlocked'
+            if args.flag_locked is not None:
+                if args.flag_locked:
+                    print '  set locked'
                 else:
-                    print '  set not unlocked'
-                item.meta['unlocked'] = args.flag_unlocked
+                    print '  set not locked'
+                item.meta['locked'] = args.flag_locked
 
     _parser = _subparsers.add_parser('set', help='Set flags on objects')
     _parser.set_defaults(func=do_set)
     _group = _parser.add_mutually_exclusive_group()
-    _group.add_argument('-L', '--lock', dest='flag_unlocked', action='store_false', default=None)
-    _group.add_argument('-l', '--unlock', dest='flag_unlocked', action='store_true', default=None)
+    _group.add_argument('-L', '--lock', dest='flag_locked', action='store_true', default=None)
+    _group.add_argument('-l', '--unlock', dest='flag_locked', action='store_false', default=None)
     _group = _parser.add_mutually_exclusive_group()
     _group.add_argument('-C', '--uncomplete', dest='flag_complete', action='store_false', default=None)
     _group.add_argument('-c', '--complete', dest='flag_complete', action='store_true', default=None)

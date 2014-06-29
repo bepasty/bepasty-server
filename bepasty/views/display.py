@@ -36,7 +36,7 @@ class DisplayView(MethodView):
             if error:
                 return render_template('display_error.html', name=name, item=item, error=error), 409
             ct = item.meta['type']
-            if not item.meta.get('unlocked') and not may(ADMIN):
+            if item.meta.get('locked') and not may(ADMIN):
                 rendered_content = u"item is locked"
             elif ct.startswith('text/x-bepasty-'):
                 # special bepasty items

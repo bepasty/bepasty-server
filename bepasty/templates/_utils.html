@@ -22,7 +22,7 @@
                     <a href="{{ url_for('bepasty.inline', name=file['id']) }}">inline</a>
                     <a href="{{ url_for('bepasty.delete', name=file['id']) }}">delete</a>
                     {% if may(ADMIN) %}
-                    {% if file['unlocked'] %}
+                    {% if not file['locked'] %}
                         <a href="{{ url_for('bepasty.lock', name=file['id']) }}">lock</a>
                     {% else %}
                         <a href="{{ url_for('bepasty.unlock', name=file['id']) }}">unlock</a>
