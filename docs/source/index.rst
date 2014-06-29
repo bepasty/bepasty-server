@@ -5,12 +5,15 @@ bepasty is like a pastebin for every kind of file (text, image, audio, video, do
 
 You can upload multiple files at once, simply by drag and drop.
 
-Contents:
+Contents
+--------
 
 .. toctree::
    :maxdepth: 2
 
    user
-   project
    quickstart
    install-tutorial
+   changelog
+   project
+   license
