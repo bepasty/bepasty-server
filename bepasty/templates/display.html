@@ -10,6 +10,9 @@
                     <button id="dl-btn" type="button" class="btn btn-info">
                         <span class="glyphicon glyphicon-download-alt"></span> Download
                     </button>
+                    <button id="inline-btn" type="button" class="btn btn-info">
+                        <span class="glyphicon glyphicon-asterisk"></span> Inline
+                    </button>
                 {% endif %}
                 {% if may(DELETE) %}
                 <button id="del-btn" type="button" class="btn btn-danger">
@@ -56,6 +59,9 @@ $("#del-btn").click(function(){
 {% if not item.meta['locked'] or may(ADMIN) %}
 $("#dl-btn").click(function(){
     window.location.replace("{{ url_for('bepasty.download', name=name) }}");
+});
+$("#inline-btn").click(function(){
+    window.location.replace("{{ url_for('bepasty.inline', name=name) }}");
 });
 {% endif %}
 {% if may(ADMIN) %}
