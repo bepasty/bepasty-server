@@ -18,6 +18,9 @@ class Config(object):
     #:
     #: - 'filesystem'
     #: - 'ceph'
+    #:
+    #: Note: ceph storage currently lacks names-in-storage iteration, see
+    #:  issue #38. Thus we recommend using filesystem storage currently.
     STORAGE = 'filesystem'
 
     #: Filesystem storage path
