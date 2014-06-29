@@ -6,9 +6,11 @@
         <h1>
             {{ item.meta['filename'] }}
             <div class="btn-group pull-right">
-                <button id="dl-btn" type="button" class="btn btn-info">
-                    <span class="glyphicon glyphicon-download-alt"></span> Download
-                </button>
+                {% if item.meta['unlocked'] or may(ADMIN) %}
+                    <button id="dl-btn" type="button" class="btn btn-info">
+                        <span class="glyphicon glyphicon-download-alt"></span> Download
+                    </button>
+                {% endif %}
                 {% if may(DELETE) %}
                 <button id="del-btn" type="button" class="btn btn-danger">
                     <span class="glyphicon glyphicon-remove"></span> Delete
@@ -51,6 +53,11 @@ $("#del-btn").click(function(){
         }
     }); 
 });
+{% if item.meta['unlocked'] or may(ADMIN) %}
+$("#dl-btn").click(function(){
+    window.location.replace("{{ url_for('bepasty.download', name=name) }}");
+});
+{% endif %}
 {% if may(ADMIN) %}
 $("#lock-btn").click(function(){
     window.location.replace("{{ url_for('bepasty.lock', name=name) }}");
