@@ -23,29 +23,44 @@
         <div id="wrapper">
             <!-- Begin header -->
             <div id="header">
-                <div class="navbar navbar-default">
-                    <div class="container">
-                        <div class="navbar-header">
-                            <a class="navbar-brand" href="/">{{ config.SITENAME }}</a>
-                        </div>
-                        <div class="navbar-right">
-                            {% if logged_in() %}
-                            <form class="navbar-form" method="post" action="/+logout">
-                                <input class="btn btn-default navbar-btn" type="submit" value="Logout">
-                            </form>
-                            {% else %}
-                            <form class="navbar-form form-inline" method="post" action="/+login">
-                                <div class="form-group">
-                                    <input class="form-control" type="password" name="token" autofocus>
-                                </div>
-                                <input class="btn btn-default navbar-btn" type="submit" value="Login">
-                            </form>
-                            {% endif %}
-                        </div>
-                        <div class="navbar-right">
-                            <span class="label label-default">Permissions: {{ session[PERMISSIONS] }}</span>
-                        </div>
-                    </div>
+                <div class="container">
+                    <nav class="navbar navbar-default" role="navigation">
+                        <div class="container-fluid">
+                            <!-- Brand and toggle get grouped for better mobile display -->
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse">
+                                    <span class="sr-only">Toggle navigation</span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                                <a class="navbar-brand" href="/">
+                                    {{ config.SITENAME }} (Permissions: {{ session[PERMISSIONS] }})
+                                </a>
+                            </div>
+                            <!-- Collect the nav links, forms, and other content for toggling -->
+                            <div class="collapse navbar-collapse" id="navbar-collapse">
+                                <ul class="nav navbar-nav">
+                                    <li><a href="http://bepasty-server.readthedocs.org/en/latest/">Documentation</a></li>
+                                    {% if may(ADMIN) %}
+                                    <li><a href="{{ url_for('bepasty.filelist') }}">List all Items</a></li>
+                                    {% endif %}
+                                </ul>
+                                {% if logged_in() %}
+                                <form class="navbar-form navbar-right" role="form" method="post" action="/+logout">
+                                    <input class="btn btn-default" type="submit" value="Logout">
+                                </form>
+                                {% else %}
+                                <form class="navbar-form navbar-right form-inline" role="form" method="post" action="/+login">
+                                    <div class="form-group">
+                                        <input class="form-control" type="password" name="token" autofocus>
+                                    </div>
+                                    <button type="submit" class="btn btn-default">Login</button>
+                                </form>
+                                {% endif %}
+                            </div><!-- /.navbar-collapse -->
+                        </div><!-- /.container-fluid -->
+                    </nav>
                 </div>
             </div>
             <!-- /.header -->
