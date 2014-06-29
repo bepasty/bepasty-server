@@ -14,6 +14,17 @@
                     <span class="glyphicon glyphicon-remove"></span> Delete
                 </button>
                 {% endif %}
+                {% if may(ADMIN) %}
+                {% if item.meta['unlocked'] %}
+                    <button id="lock-btn" type="button" class="btn btn-danger">
+                        <span class="glyphicon glyphicon-lock"></span> Lock
+                    </button>
+                {% else %}
+                    <button id="unlock-btn" type="button" class="btn btn-info">
+                        <span class="glyphicon glyphicon-heart"></span> Unlock
+                    </button>
+                {% endif %}
+                {% endif %}
             </div>
         </h1>
     </div>
@@ -40,5 +51,13 @@ $("#del-btn").click(function(){
         }
     }); 
 });
+{% if may(ADMIN) %}
+$("#lock-btn").click(function(){
+    window.location.replace("{{ url_for('bepasty.lock', name=name) }}");
+});
+$("#unlock-btn").click(function(){
+    window.location.replace("{{ url_for('bepasty.unlock', name=name) }}");
+});
+{% endif %}
 </script>
 {% endblock extra_script %}

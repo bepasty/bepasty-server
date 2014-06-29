@@ -21,6 +21,13 @@
                     <a href="{{ url_for('bepasty.download', name=file['id']) }}">download</a>
                     <a href="{{ url_for('bepasty.inline', name=file['id']) }}">inline</a>
                     <a href="{{ url_for('bepasty.delete', name=file['id']) }}">delete</a>
+                    {% if may(ADMIN) %}
+                    {% if file['unlocked'] %}
+                        <a href="{{ url_for('bepasty.lock', name=file['id']) }}">lock</a>
+                    {% else %}
+                        <a href="{{ url_for('bepasty.unlock', name=file['id']) }}">unlock</a>
+                    {% endif %}
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}

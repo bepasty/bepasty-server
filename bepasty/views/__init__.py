@@ -11,5 +11,6 @@ from . import (
     display,
     download,
     upload,
+    lock,
     delete,
     login)
