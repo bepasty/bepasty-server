@@ -4,7 +4,7 @@
         <tr>
             <th>Filename</th>
             <th>Type</th>
-            <th>Size</th>
+            <th class="text-right">Size</th>
             <th>Uploaded</th>
             <th>Actions</th>
         </tr>
@@ -14,7 +14,7 @@
             <tr>
                 <td><a href="{{ url_for('bepasty.display', name=file['id']) }}">{{ file['filename'] }}</a></td>
                 <td>{{ file['type'] }}</td>
-                <td>{{ file['size'] }}</td>
+                <td class="text-right">{{ file['size'] }}</td>
                 <td>{{ file['timestamp-upload'] | datetime }}</td>
                 <td>
                     <a href="{{ url_for('bepasty.display', name=file['id']) }}">display</a>
