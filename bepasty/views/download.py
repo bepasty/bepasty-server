@@ -17,6 +17,8 @@ class DownloadView(MethodView):
     content_disposition = 'attachment'  # to trigger download
 
     def get(self, name):
+        if not may(READ):
+            abort(403)
         try:
             item = current_app.storage.openwrite(name)
         except OSError as e:
