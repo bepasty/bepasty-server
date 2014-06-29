@@ -4,11 +4,12 @@
 import errno
 import time
 
-from flask import Response, current_app, render_template, stream_with_context
+from flask import Response, current_app, render_template, stream_with_context, abort
 from flask.views import MethodView
 from werkzeug.exceptions import NotFound
 
 from ..utils.name import ItemName
+from ..utils.permissions import *
 from . import blueprint
 
 
@@ -23,9 +24,7 @@ class DownloadView(MethodView):
                 raise NotFound()
             raise
 
-        if not item.meta.get('unlocked'):
-            error = 'File Locked.'
-        elif not item.meta.get('complete'):
+        if not item.meta.get('complete'):
             error = 'Upload incomplete. Try again later.'
         else:
             error = None
@@ -34,6 +33,9 @@ class DownloadView(MethodView):
                 return render_template('display_error.html', name=name, item=item, error=error), 409
             finally:
                 item.close()
+
+        if not item.meta.get('unlocked') and not may(ADMIN):
+            abort(403)
 
         def stream():
             with item as _item:
