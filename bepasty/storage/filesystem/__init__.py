@@ -79,6 +79,8 @@ class Item(object):
         self.data.close()
         self.meta.close()
 
+    close = __exit__
+
 
 class Data(object):
     """
