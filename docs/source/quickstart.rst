@@ -29,14 +29,27 @@ Here is the documentation straight from its config:
    :members:
 
 
-Starting bepasty server
------------------------
-
-You can run the bepasty server with the following command.
+To create a local and non-default configuration, copy ``bepasty/config.py`` to e.g. ``/srv/bepasty/bepasty.conf``
+first, then modify it:
 
 ::
 
-    bepasty-server
+    # Note: no Config class required, just simple KEY = value lines:
+    SECRET_KEY = '........................'
+    STORAGE = 'filesystem'
+    STORAGE_FILESYSTEM_DIRECTORY = '/srv/bepasty/storage/'
+    # ...
+
+
+Starting bepasty server
+-----------------------
+
+You can run the bepasty server with your local configuration by pointing to it via the BEPASTY_CONFIG
+environment variable like this:
+
+::
+
+    BEPASTY_CONFIG=/srv/bepasty/bepasty.conf bepasty-server
 
 
 The builtin WSGI server is recommended only for development and non-production use.
