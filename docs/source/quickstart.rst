@@ -10,26 +10,34 @@ You can install bepasty either from PyPi (latest release) or from the git reposi
 
     # from PyPi:
     pip install bepasty-server
+
     # from git repo
     pip install -e git+https://github.com/bepasty/bepasty-server.git#egg=bepasty-server
+
+
+Configuring bepasty
+-------------------
+Before you can use bepasty, you need to carefully configure it (it won't work in default configuration and most of
+the configuration settings need your attention).
+
+When setting up permissions and giving out login secrets, carefully think about whom you give which permissions,
+especially when setting up the ``DEFAULT_PERMISSIONS`` (which apply to not-logged-in users).
+
+Here is the documentation straight from its config:
+
+.. autoclass:: bepasty.config.Config
+   :members:
 
 
 Starting bepasty server
 -----------------------
 
-You can run the bepasty server after installation with the following command.
+You can run the bepasty server with the following command.
 
 ::
 
     bepasty-server
 
-The default configuration is to use the filesystem as storage location in /tmp.
-
-.. warning::
-
-    The default setting is that all files are unlocked.
-    This means every user can upload and some other can download the file.
-    If you host bepasty publicly you should set ``UPLOAD_UNLOCKED=False`` to avoid copyright issues.
 
 The builtin WSGI server is recommended only for development and non-production use.
 

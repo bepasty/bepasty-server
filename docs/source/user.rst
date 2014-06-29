@@ -7,16 +7,16 @@ Logging in and Permissions
 
 You may need to log in to get enough permissions required for the misc. functions of bepasty.
 
+Your current permissions are shown on the web interface, near the login form.
+
 To log in, you need to know credentials - ask the admin who runs the site.
 
 The site admin can assign permissions to login credentials (and also to the anonymous, not logged-in user):
 
-* create: be able to upload files / create text pastebins
-* read: be able to read pastebins / download files
+* create: be able to create pastebins
+* read: be able to read / download pastebins
 * delete: be able to delete pastebins
-* admin: be able to list all pastebins / files
-
-Bepasty shows your current permissions on the web interface, near the login form.
+* admin: be able to list all pastebins
 
 Pasting text
 ============
@@ -57,24 +57,40 @@ communicate that one URL (not each individual file's URL).
 Viewing / Downloading files
 ===========================
 
-Just visit the file's unique URL to view or download it.
+Just visit the file's unique URL to view, download or delete it.
 
-bepasty will show you metadata like file name, precise file size, upload date/time (UTC), sha256 hash of the file
-contents (we compute this while or directly after the file upload) and, if possible, it shows you the file contents also.
+bepasty will show you metadata like:
 
-Checking hash / size: If you are looking at a file you just uploaded yourself, it might be interesting to compare the
-size and hash with the values you see for your local file to make sure the upload worked correctly. Same after you
-download a file: check whether size and hash match for the file on bepasty and your downloaded file.
+* file name
+* precise file size
+* upload date/time (UTC)
+* sha256 hash of the file contents
 
-bepasty can directly show you:
+bepasty also supports directly displaying the data, for these content types:
 
+* lists of files (if a list item was created at upload time)
 * text files (highlighted depending on the content-type)
 * PDFs (if you browser can render PDFs or has a plugin doing that)
 * image files, like jpeg, png and svg
 * audio/video files (using the html5 player widget, format support might depend on your browser and OS)
 * for other file types, you need to download them and open them with the appropriate application
 
-To download a file, click the download icon left of the filename.
+File hashes
+===========
+
+If you're unfamiliar with hashes like SHA256, you might wonder what they are good for and why we show them.
+
+A hash is something like a checksum or fingerprint of the file contents. We compute the hash while or directly
+after the file upload. If you have 2 files at different places and they have the same SHA256 hash, you can be
+pretty sure that they have completely identical contents.
+
+If you are looking at a file you just uploaded yourself, it might be interesting to compare the size and hash with
+the values you see for your local file to make sure the upload worked correctly.
+
+Same after you download a file: check whether the hash matches for the file on bepasty and your downloaded file.
+
+If you transfer a file from location A via bepasty (B) to location C, you can also compare the file hashes at locations
+A and C to make sure the file was not modified or corrupted while being transferred.
 
 Important stuff to remember
 ===========================

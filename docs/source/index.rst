@@ -13,5 +13,4 @@ Contents:
    user
    project
    quickstart
-   config
    install-tutorial

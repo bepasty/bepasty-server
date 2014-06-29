@@ -17,10 +17,11 @@ Features
   - on that view, we offer:
 
     + download link
+    + upload time (UTC)
     + file name we stored at upload time
     + file type we detected at upload time
     + precise size we computed at upload time
-    + SHA256 hash ("checksum") we computed at upload time (or later)
+    + SHA256 hash ("checksum")
 
   - if you uploaded multiple files, you can create a pastebin with the list
     of all these files - with a single click!
