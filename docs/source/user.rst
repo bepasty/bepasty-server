@@ -7,7 +7,7 @@ Logging in and Permissions
 
 You may need to log in to get enough permissions required for the misc. functions of bepasty.
 
-Your current permissions are shown on the web interface, near the login form.
+Your current permissions are shown on the web interface (in the navigation bar).
 
 To log in, you need to know credentials - ask the admin who runs the site.
 
@@ -16,7 +16,7 @@ The site admin can assign permissions to login credentials (and also to the anon
 * create: be able to create pastebins
 * read: be able to read / download pastebins
 * delete: be able to delete pastebins
-* admin: be able to list all pastebins
+* admin: be able to list all pastebins, to lock/unlock files
 
 Pasting text
 ============
@@ -28,7 +28,7 @@ Just start typing some letters of the type, e.g. if you pasted some python code,
 offers you some choices based on that. Based on that type, we will highlight your text (using the Pygments
 library, which supports a lot of text formats).
 
-File name: You can optionally give a filename for your paste. If someone later downloads it as file, the browser will
+File name: You can optionally give a filename for your paste. If someone later downloads it, the browser will
 use the filename you gave. If you don't give a filename, it will use "paste.txt".
 
 When finished, click on "Submit". bepasty will save your text using a unique ID and redirect you to the URL
