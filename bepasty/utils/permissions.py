@@ -14,14 +14,22 @@ PERMISSIONS = 'permissions'
 LOGGEDIN = 'loggedin'
 
 
-def may(permission):
+def get_permissions():
     """
-    check whether the current user has the permission <permission>
+    get the permissions for the current user (if logged in)
+    or the default permissions (if not logged in).
     """
     permissions = session.get(PERMISSIONS)
     if permissions is None:
         permissions = current_app.config['DEFAULT_PERMISSIONS']
-    permissions = permissions.split(',')
+    return permissions
+
+
+def may(permission):
+    """
+    check whether the current user has the permission <permission>
+    """
+    permissions = get_permissions().split(',')
     return permission in permissions
 
 

@@ -37,6 +37,7 @@ def create_app():
     app.jinja_env.filters['datetime'] = datetime_format
 
     app.jinja_env.globals['logged_in'] = logged_in
+    app.jinja_env.globals['get_permissions'] = get_permissions
     app.jinja_env.globals['may'] = may
     app.jinja_env.globals['PERMISSIONS'] = PERMISSIONS
     app.jinja_env.globals['ADMIN'] = ADMIN

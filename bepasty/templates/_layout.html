@@ -35,7 +35,7 @@
                                     <span class="icon-bar"></span>
                                 </button>
                                 <a class="navbar-brand" href="/">
-                                    {{ config.SITENAME }} (Permissions: {{ session[PERMISSIONS] }})
+                                    {{ config.SITENAME }} (Permissions: {{ get_permissions() }})
                                 </a>
                             </div>
                             <!-- Collect the nav links, forms, and other content for toggling -->
