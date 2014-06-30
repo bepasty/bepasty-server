@@ -17,9 +17,9 @@ class LockView(MethodView):
             abort(403)
         try:
             with current_app.storage.openwrite(name) as item:
-                if item.meta.get('locked'):
+                if item.meta['locked']:
                     error = 'File already locked.'
-                elif not item.meta.get('complete'):
+                elif not item.meta['complete']:
                     error = 'Upload incomplete. Try again later.'
                 else:
                     error = None
@@ -40,9 +40,9 @@ class UnlockView(MethodView):
             abort(403)
         try:
             with current_app.storage.openwrite(name) as item:
-                if not item.meta.get('locked'):
+                if not item.meta['locked']:
                     error = 'File already unlocked.'
-                elif not item.meta.get('complete'):
+                elif not item.meta['complete']:
                     error = 'Upload incomplete. Try again later.'
                 else:
                     error = None

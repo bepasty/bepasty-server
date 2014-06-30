@@ -137,7 +137,7 @@ class UploadAbortView(MethodView):
                 return 'No file found.', 404
             raise
 
-        if item.meta.get('complete'):
+        if item.meta['complete']:
             error = 'Upload complete. Cannot delete fileupload garbage.'
         else:
             error = None

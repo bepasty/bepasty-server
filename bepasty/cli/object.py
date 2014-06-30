@@ -40,6 +40,16 @@ class Main(object):
                 else:
                     locked = False
                 item.meta['locked'] = locked
+            if 'complete' not in item.meta:
+                item.meta['complete'] = True
+            if 'filename' not in item.meta:
+                item.meta['filename'] = 'missing'
+            if 'type' not in item.meta:
+                item.meta['type'] = 'application/octet-stream'
+            if 'size' not in item.meta:
+                item.meta['size'] = item.data.size
+            if 'hash' not in item.meta:
+                item.meta['hash'] = ''  # see do_consistency
 
     _parser = _subparsers.add_parser('migrate', help='Migrate metadata to current schema')
     _parser.set_defaults(func=do_migrate)

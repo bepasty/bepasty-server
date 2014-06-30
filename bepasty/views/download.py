@@ -26,7 +26,7 @@ class DownloadView(MethodView):
                 raise NotFound()
             raise
 
-        if not item.meta.get('complete'):
+        if not item.meta['complete']:
             error = 'Upload incomplete. Try again later.'
         else:
             error = None
@@ -36,7 +36,7 @@ class DownloadView(MethodView):
             finally:
                 item.close()
 
-        if item.meta.get('locked') and not may(ADMIN):
+        if item.meta['locked'] and not may(ADMIN):
             abort(403)
 
         def stream():

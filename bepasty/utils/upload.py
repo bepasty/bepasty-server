@@ -49,9 +49,9 @@ class Upload(object):
         item.meta['size'] = cls.filter_size(input_size)
         item.meta['type'] = cls.filter_type(input_type)
         item.meta['timestamp-upload'] = int(time.time())
-        item.meta['complete'] = False
-
         item.meta['locked'] = current_app.config['UPLOAD_LOCKED']
+        item.meta['complete'] = False
+        item.meta['hash'] = ''
 
     @classmethod
     def meta_complete(cls, item, file_hash):
