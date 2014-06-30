@@ -36,7 +36,8 @@ class FileListView(MethodView):
     def get(self):
         if not may(ADMIN):
             abort(403)
-        return render_template('filelist.html', files=file_infos())
+        files = sorted(file_infos(), key=lambda f: f['timestamp-upload'], reverse=True)
+        return render_template('filelist.html', files=files)
 
 
 blueprint.add_url_rule('/+list', view_func=FileListView.as_view('filelist'))

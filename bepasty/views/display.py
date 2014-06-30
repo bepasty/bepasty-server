@@ -42,7 +42,8 @@ class DisplayView(MethodView):
                 # special bepasty items
                 if ct == 'text/x-bepasty-list':
                     names = item.data.read(item.data.size, 0).splitlines()
-                    rendered_content = Markup(render_template('filelist_tableonly.html', files=file_infos(names)))
+                    files = sorted(file_infos(names), key=lambda f: f['filename'])
+                    rendered_content = Markup(render_template('filelist_tableonly.html', files=files))
                 else:
                     rendered_content = u"Can't render this content type."
             elif ct.startswith('text/'):
