@@ -24,7 +24,7 @@ class LockView(MethodView):
                 else:
                     error = None
                 if error:
-                    return render_template('display_error.html', heading=item.meta['filename'], body=error), 409
+                    return render_template('error.html', heading=item.meta['filename'], body=error), 409
                 item.meta['locked'] = True
             return redirect(url_for('bepasty.display', name=name))
 
@@ -47,7 +47,7 @@ class UnlockView(MethodView):
                 else:
                     error = None
                 if error:
-                    return render_template('display_error.html', heading=item.meta['filename'], body=error), 409
+                    return render_template('error.html', heading=item.meta['filename'], body=error), 409
                 item.meta['locked'] = False
             return redirect(url_for('bepasty.display', name=name))
 

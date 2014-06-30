@@ -22,7 +22,7 @@ class DeleteView(MethodView):
                 else:
                     error = None
                 if error:
-                    return render_template('display_error.html', heading=item.meta['filename'], body=error), 409
+                    return render_template('error.html', heading=item.meta['filename'], body=error), 409
 
                 if item.meta['locked'] and not may(ADMIN):
                     abort(403)
