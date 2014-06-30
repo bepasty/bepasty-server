@@ -64,6 +64,7 @@ bepasty will show you metadata like:
 * file name
 * precise file size
 * upload date/time (UTC)
+* (last) download date/time (UTC) - viewing the data also counts as download
 * sha256 hash of the file contents
 
 bepasty also supports directly displaying the data, for these content types:

@@ -14,15 +14,8 @@ Features
 
   - you can upload multiple files at once, simply by drag and drop
   - after upload, you get a unique link to a view of each file
-  - on that view, we offer:
-
-    + download link
-    + upload time (UTC)
-    + file name we stored at upload time
-    + file type we detected at upload time
-    + precise size we computed at upload time
-    + SHA256 hash ("checksum")
-
+  - on that view, we show actions you can do with the file, metadata of the
+    file and, if possible, we also render the file contents
   - if you uploaded multiple files, you can create a pastebin with the list
     of all these files - with a single click!
 
@@ -58,3 +51,4 @@ Features
   - assign permissions to users of login secrets
   - assign default permissions to not-logged-in users
   - you can purge files from storage by age, inactivity, size, type, ...
+  - you can do consistency checks on the storage
