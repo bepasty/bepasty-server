@@ -37,7 +37,8 @@
         <p>
         Type {{ item.meta['type'] }},
         Size {{ item.meta['size'] }} bytes,
-        uploaded {{ item.meta['timestamp-upload'] | datetime }} (UTC).
+        uploaded {{ item.meta['timestamp-upload'] | datetime }} (UTC),
+        downloaded {{ item.meta['timestamp-download'] | datetime }} (UTC).
         <br/>
         SHA256-Hash: {{ item.meta['hash'] }}
         </p>
