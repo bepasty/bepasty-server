@@ -1,12 +1,17 @@
 {% extends "_layout.html" %}
 
 {% block content %}
-<div class="page-header">
-    <h1>Not found</h1>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h1>Not found</h1>
+    </div>
+    <div class="panel-body">
+        <p>
+            The requested URL was not found on the server.
+        </p>
+        <p>
+            If you entered the URL manually please check your spelling and try again.
+        </p>
+    </div>
 </div>
-
-<p>
-    The requested URL was not found on the server.
-    If you entered the URL manually please check your spelling and try again.
-</p>
 {% endblock %}

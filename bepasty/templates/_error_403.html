@@ -1,13 +1,20 @@
 {% extends "_layout.html" %}
 
 {% block content %}
-<div class="page-header">
-    <h1>Forbidden</h1>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h1>Forbidden</h1>
+    </div>
+    <div class="panel-body">
+        <p>
+            You are not allowed to access the requested URL.
+        </p>
+        <p>
+            If you entered the URL manually please check your spelling and try again.
+        </p>
+        <p>
+            Also check if you maybe forgot to log in or if your permissions are insufficient for this.
+        </p>
+    </div>
 </div>
-
-<p>
-    You are not allowed to access the requested URL.
-    If you entered the URL manually please check your spelling and try again.
-    Also check if you maybe forgot to log in or if your permissions are insufficient for this.
-</p>
 {% endblock %}
