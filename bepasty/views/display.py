@@ -2,6 +2,7 @@
 # License: BSD 2-clause, see LICENSE for details.
 
 import errno
+import time
 
 from flask import current_app, render_template, Markup, request, url_for, abort
 from flask.views import MethodView
@@ -22,7 +23,7 @@ class DisplayView(MethodView):
         if not may(READ):
             abort(403)
         try:
-            item = current_app.storage.open(name)
+            item = current_app.storage.openwrite(name)
         except (OSError, IOError) as e:
             if e.errno == errno.ENOENT:
                 return render_template('file_not_found.html'), 404
@@ -35,20 +36,26 @@ class DisplayView(MethodView):
                 error = None
             if error:
                 return render_template('display_error.html', name=name, item=item, error=error), 409
+
+            def read_data(item):
+                # reading the item for rendering is registered like a download
+                data = item.data.read(item.data.size, 0)
+                item.meta['timestamp-download'] = int(time.time())
+                return data
+
             ct = item.meta['type']
             if item.meta['locked'] and not may(ADMIN):
                 rendered_content = u"item is locked"
             elif ct.startswith('text/x-bepasty-'):
                 # special bepasty items
                 if ct == 'text/x-bepasty-list':
-                    names = item.data.read(item.data.size, 0).splitlines()
+                    names = read_data(item).splitlines()
                     files = sorted(file_infos(names), key=lambda f: f['filename'])
                     rendered_content = Markup(render_template('filelist_tableonly.html', files=files))
                 else:
                     rendered_content = u"Can't render this content type."
             elif ct.startswith('text/'):
-                code = item.data.read(item.data.size, 0)
-                code = code.decode('utf-8')  # TODO we don't have the coding in metadata
+                code = read_data(item).decode('utf-8')  # TODO we don't have the coding in metadata
                 lexer = get_lexer_for_mimetype(ct)
                 formatter = HtmlFormatter(linenos='table', lineanchors="L", anchorlinenos=True)
                 rendered_content = Markup(highlight(code, lexer, formatter))
