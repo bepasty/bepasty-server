@@ -43,10 +43,11 @@ class DisplayView(MethodView):
                 item.meta['timestamp-download'] = int(time.time())
                 return data
 
-            ct = item.meta['type']
             if item.meta['locked'] and not may(ADMIN):
-                rendered_content = u"item is locked"
-            elif ct.startswith('text/x-bepasty-'):
+                abort(403)
+
+            ct = item.meta['type']
+            if ct.startswith('text/x-bepasty-'):
                 # special bepasty items
                 if ct == 'text/x-bepasty-list':
                     names = read_data(item).splitlines()
