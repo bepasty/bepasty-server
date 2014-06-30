@@ -12,6 +12,9 @@ from .lowlevel.rbd import Rbd
 
 
 class Storage(object):
+    """
+    Ceph storage
+    """
     def __init__(self, app):
         config_file = app.config['STORAGE_CEPH_CONFIG_FILE']
         self.pool_data = app.config['STORAGE_CEPH_POOL_DATA']
@@ -101,7 +104,6 @@ class Item(object):
 
     :ivar data: Open file-like object to data.
     """
-
     def __init__(self, rbd_data, object_meta):
         self.data = Data(rbd_data)
         self.meta = Meta(object_meta)
@@ -118,9 +120,8 @@ class Item(object):
 
 class Data(object):
     """
-    Data of item."
+    Data of item.
     """
-
     def __init__(self, rbd_data):
         self._rbd = rbd_data
         rbd_data.open()

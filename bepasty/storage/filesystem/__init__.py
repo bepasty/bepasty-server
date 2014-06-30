@@ -10,6 +10,9 @@ logger = logging.getLogger(__name__)
 
 
 class Storage(object):
+    """
+    Filesystem storage - store meta and data into separate files in a directory.
+    """
     def __init__(self, app):
         self.directory = app.config['STORAGE_FILESYSTEM_DIRECTORY']
         app.storage = self
@@ -43,7 +46,6 @@ class Storage(object):
         except OSError as e:
             logger.error("Could not delete file: %s\n %s" % (file_data, str(e)))
             raise
-
         try:
             os.remove(file_meta)
         except OSError as e:
@@ -63,7 +65,6 @@ class Item(object):
 
     :ivar data: Open file-like object to data.
     """
-
     def __init__(self, file_data, file_meta):
         """
         :param file_data: Open file-like object to data file.
@@ -84,9 +85,8 @@ class Item(object):
 
 class Data(object):
     """
-    Data of item."
+    Data of item.
     """
-
     def __init__(self, file_data):
         self._file = file_data
 
@@ -113,7 +113,6 @@ class Meta(collections.MutableMapping):
     """
     def __init__(self, file_meta):
         self._file = file_meta
-
         data = file_meta.read()
         if data:
             self._data = pickle.loads(data)
