@@ -11,21 +11,26 @@ from . import blueprint
 from ..utils.permissions import *
 
 
-class LockView(MethodView):
+class SetKeyValueView(MethodView):
+    # overwrite these in subclasses:
+    REQUIRED_PERMISSION = None
+    KEY = None
+    NEXT_VALUE = None
+
     def get(self, name):
-        if not may(ADMIN):
+        if self.REQUIRED_PERMISSION is not None and not may(self.REQUIRED_PERMISSION):
             abort(403)
         try:
             with current_app.storage.openwrite(name) as item:
-                if item.meta['locked']:
-                    error = 'File already locked.'
+                if item.meta[self.KEY] == self.NEXT_VALUE:
+                    error = '%s already is %r.' % (self.KEY, self.NEXT_VALUE)
                 elif not item.meta['complete']:
                     error = 'Upload incomplete. Try again later.'
                 else:
                     error = None
                 if error:
                     return render_template('error.html', heading=item.meta['filename'], body=error), 409
-                item.meta['locked'] = True
+                item.meta[self.KEY] = self.NEXT_VALUE
             return redirect(url_for('bepasty.display', name=name))
 
         except (OSError, IOError) as e:
@@ -34,27 +39,16 @@ class LockView(MethodView):
             raise
 
 
-class UnlockView(MethodView):
-    def get(self, name):
-        if not may(ADMIN):
-            abort(403)
-        try:
-            with current_app.storage.openwrite(name) as item:
-                if not item.meta['locked']:
-                    error = 'File already unlocked.'
-                elif not item.meta['complete']:
-                    error = 'Upload incomplete. Try again later.'
-                else:
-                    error = None
-                if error:
-                    return render_template('error.html', heading=item.meta['filename'], body=error), 409
-                item.meta['locked'] = False
-            return redirect(url_for('bepasty.display', name=name))
+class LockView(SetKeyValueView):
+    REQUIRED_PERMISSION = ADMIN
+    KEY = 'locked'
+    NEXT_VALUE = True
 
-        except (OSError, IOError) as e:
-            if e.errno == errno.ENOENT:
-                abort(404)
-            raise
+
+class UnlockView(SetKeyValueView):
+    REQUIRED_PERMISSION = ADMIN
+    KEY = 'locked'
+    NEXT_VALUE = False
 
 
 blueprint.add_url_rule('/<itemname:name>/+lock', view_func=LockView.as_view('lock'))
