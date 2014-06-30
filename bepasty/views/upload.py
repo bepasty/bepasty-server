@@ -148,7 +148,8 @@ class UploadAbortView(MethodView):
             item = current_app.storage.remove(name)
         except (OSError, IOError) as e:
             if e.errno == errno.ENOENT:
-                return render_template('file_not_found.html'), 404
+                abort(404)
+            raise
         return 'Upload aborted'
 
 blueprint.add_url_rule('/+upload', view_func=UploadView.as_view('upload'))

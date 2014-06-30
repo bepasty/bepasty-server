@@ -30,7 +30,7 @@ class DeleteView(MethodView):
 
         except (OSError, IOError) as e:
             if e.errno == errno.ENOENT:
-                return render_template('file_not_found.html'), 404
+                abort(404)
             raise
 
         return redirect(url_for('bepasty.display', name=name))

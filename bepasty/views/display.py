@@ -26,7 +26,7 @@ class DisplayView(MethodView):
             item = current_app.storage.openwrite(name)
         except (OSError, IOError) as e:
             if e.errno == errno.ENOENT:
-                return render_template('file_not_found.html'), 404
+                abort(404)
             raise
 
         with item as item:
