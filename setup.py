@@ -52,7 +52,10 @@ setup(
     include_package_data=True,
     zip_safe=False,
     entry_points={
-        'console_scripts': ['bepasty-server = bepasty.app:server_cli'],
+        'console_scripts': [
+            'bepasty-server = bepasty.cli.server:main',
+            'bepasty-object = bepasty.cli.object:main',
+        ],
     },
     install_requires=install_requires,
     classifiers=[

@@ -72,14 +72,14 @@ To get help about the object command, use:
 
 ::
 
-    python -m bepasty.cli.object --help
+    bepasty-object --help
 
 
 To get help about the object purge subcommand, use:
 
 ::
 
-    python -m bepasty.cli.object purge --help
+    bepasty-object purge --help
 
 
 To run the object purge subcommand (here: dry-run == do not remove anything, files >= 10MiB AND age >= 14 days),
@@ -87,14 +87,14 @@ use something like:
 
 ::
 
-    python -m bepasty.cli.object purge --dry-run --size 10 --age 14 ../config.py '*'
+    bepasty-object purge --dry-run --size 10 --age 14 ../config.py '*'
 
 
 If you upgraded bepasty, you might need to upgrade the stored metadata to the current bepasty metadata schema:
 
 ::
 
-    python -m bepasty.cli.object migrate ../config.py '*'
+    bepasty-object migrate ../config.py '*'
 
 
 Note: the '*' needs to be quoted with single-quotes so the shell does not expand it. it tells the command to operate

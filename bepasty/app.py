@@ -45,26 +45,3 @@ def create_app():
     app.jinja_env.globals['DELETE'] = DELETE
 
     return app
-
-
-def server_cli():
-    """Create command-line interface for bepasty server"""
-
-    import argparse
-
-    parser = argparse.ArgumentParser(
-        description="The free and open-source pastebin for your stuff.")
-    parser.add_argument('--host', help='Host to listen on')
-    parser.add_argument('--port', type=int, help='Port to listen on')
-    parser.add_argument('--debug', help='Activate debug mode',
-                        action='store_true')
-    args = parser.parse_args()
-
-    app = create_app()
-
-    print " * Starting bepasty server..."
-    app.run(
-        host=args.host,
-        port=args.port,
-        debug=args.debug
-    )

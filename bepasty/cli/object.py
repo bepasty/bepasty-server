@@ -1,3 +1,10 @@
+# Copyright: 2013 Bastian Blank <bastian@waldi.eu.org>
+# License: BSD 2-clause, see LICENSE for details.
+
+"""
+bepasty-object commandline interface
+"""
+
 import argparse
 import logging
 import time
@@ -185,6 +192,10 @@ class Main(object):
                     logging.exception('Failed to handle item %s', name)
 
 
-if __name__ == '__main__':
+def main():
     logging.basicConfig()
     Main()()
+
+
+if __name__ == '__main__':
+    main()
