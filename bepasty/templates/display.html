@@ -35,7 +35,7 @@
     </div>
     <div class="panel-body">
         <p>
-        Type {{ item.meta.get('type') or 'undefined' }}, Size {{ item.meta['size'] }} bytes, uploaded {{ item.meta['timestamp-upload'] | datetime }}.
+        Type {{ item.meta.get('type') or 'undefined' }}, Size {{ item.meta['size'] }} bytes, uploaded {{ item.meta['timestamp-upload'] | datetime }} (UTC).
         <br/>
         SHA256-Hash: {{ item.meta.get('hash')}}
         </p>

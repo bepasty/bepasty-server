@@ -30,9 +30,11 @@ def create_app():
 
     def datetime_format(ts):
         """
-        takes a unix timestamp and outputs a iso 8601 formatted string
+        takes a unix timestamp and outputs a iso8601-like formatted string.
+        times are always UTC, but we don't include the TZ here for brevity.
+        it should be made clear (e.g. in the template) that the date/time is UTC.
         """
-        return time.strftime("%Y-%m-%d %H:%M:%S (UTC)", time.gmtime(ts))
+        return time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(ts))
 
     app.jinja_env.filters['datetime'] = datetime_format
 
