@@ -49,7 +49,7 @@ class Upload(object):
         item.meta['size'] = cls.filter_size(input_size)
         item.meta['type'] = cls.filter_type(input_type)
         item.meta['timestamp-upload'] = int(time.time())
-        item.meta['timestamp-download'] = None
+        item.meta['timestamp-download'] = 0
         item.meta['locked'] = current_app.config['UPLOAD_LOCKED']
         item.meta['complete'] = False
         item.meta['hash'] = ''

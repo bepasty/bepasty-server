@@ -38,7 +38,7 @@ def create_app():
         times are always UTC, but we don't include the TZ here for brevity.
         it should be made clear (e.g. in the template) that the date/time is UTC.
         """
-        if ts is None:
+        if not ts:  # we use 0 to indicate undefined time
             return 'undefined'
         return time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(ts))
 
