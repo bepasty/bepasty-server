@@ -11,6 +11,6 @@ from . import (
     display,
     download,
     upload,
-    lock,
+    setkv,
     delete,
     login)

@@ -1,6 +1,10 @@
 # Copyright: 2014 Thomas Waldmann <tw@waldmann-edv.de>
 # License: BSD 2-clause, see LICENSE for details.
 
+"""
+Set metadata keys to specific values
+"""
+
 import errno
 
 from flask import current_app, redirect, url_for, render_template, abort
