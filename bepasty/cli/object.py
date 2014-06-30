@@ -163,7 +163,7 @@ class Main(object):
     _group.add_argument('-L', '--lock', dest='flag_locked', action='store_true', default=None)
     _group.add_argument('-l', '--unlock', dest='flag_locked', action='store_false', default=None)
     _group = _parser.add_mutually_exclusive_group()
-    _group.add_argument('-C', '--uncomplete', dest='flag_complete', action='store_false', default=None)
+    _group.add_argument('-C', '--incomplete', dest='flag_complete', action='store_false', default=None)
     _group.add_argument('-c', '--complete', dest='flag_complete', action='store_true', default=None)
 
     def __call__(self):
