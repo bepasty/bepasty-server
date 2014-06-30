@@ -15,15 +15,16 @@ class LoginView(MethodView):
             if permissions is not None:
                 session[PERMISSIONS] = permissions
                 session[LOGGEDIN] = True
-            else:
-                session[PERMISSIONS] = current_app.config['DEFAULT_PERMISSIONS']
         return redirect(url_for('bepasty.index'))
 
 
 class LogoutView(MethodView):
     def post(self):
-        session[LOGGEDIN] = False
-        session[PERMISSIONS] = current_app.config['DEFAULT_PERMISSIONS']
+        # note: remove all session entries that are not needed for logged-out
+        # state (because the code has defaults for them if they are missing).
+        # if the session is empty. flask will automatically remove the cookie.
+        session.pop(LOGGEDIN, None)
+        session.pop(PERMISSIONS, None)
         return redirect(url_for('bepasty.index'))
 
 
