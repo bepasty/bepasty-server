@@ -17,14 +17,15 @@ class DeleteView(MethodView):
             abort(403)
         try:
             with current_app.storage.open(name) as item:
-                if item.meta['locked']:
-                    error = 'File locked.'
-                elif not item.meta['complete']:
+                if not item.meta['complete']:
                     error = 'Upload incomplete. Try again later.'
                 else:
                     error = None
                 if error:
                     return render_template('display_error.html', name=name, item=item, error=error), 409
+
+                if item.meta['locked'] and not may(ADMIN):
+                    abort(403)
 
             current_app.storage.remove(name)
 

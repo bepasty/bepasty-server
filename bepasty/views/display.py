@@ -37,14 +37,14 @@ class DisplayView(MethodView):
             if error:
                 return render_template('display_error.html', name=name, item=item, error=error), 409
 
+            if item.meta['locked'] and not may(ADMIN):
+                abort(403)
+
             def read_data(item):
                 # reading the item for rendering is registered like a download
                 data = item.data.read(item.data.size, 0)
                 item.meta['timestamp-download'] = int(time.time())
                 return data
-
-            if item.meta['locked'] and not may(ADMIN):
-                abort(403)
 
             ct = item.meta['type']
             if ct.startswith('text/x-bepasty-'):
