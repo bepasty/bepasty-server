@@ -32,7 +32,7 @@ class DownloadView(MethodView):
             error = None
         if error:
             try:
-                return render_template('display_error.html', name=name, item=item, error=error), 409
+                return render_template('display_error.html', heading=item.meta['filename'], body=error), 409
             finally:
                 item.close()
 
