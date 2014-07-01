@@ -8,7 +8,7 @@ from StringIO import StringIO
 from flask import abort, current_app, jsonify, redirect, request, url_for, session, render_template, abort
 from flask.views import MethodView
 
-from ..utils.http import ContentRange
+from ..utils.http import ContentRange, redirect_next
 from ..utils.name import ItemName
 from ..utils.upload import Upload, background_compute_hash
 from ..utils.permissions import *
@@ -54,7 +54,7 @@ class UploadView(MethodView):
             Upload.meta_new(item, size, filename, content_type)
             Upload.meta_complete(item, file_hash)
 
-        return redirect(url_for('bepasty.display', name=name))
+        return redirect_next('bepasty.display', name=name)
 
 
 class UploadNewView(MethodView):

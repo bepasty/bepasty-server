@@ -5,6 +5,7 @@ from flask.views import MethodView
 
 from . import blueprint
 from ..utils.permissions import *
+from ..utils.http import redirect_next_referrer
 
 
 class LoginView(MethodView):
@@ -15,7 +16,7 @@ class LoginView(MethodView):
             if permissions is not None:
                 session[PERMISSIONS] = permissions
                 session[LOGGEDIN] = True
-        return redirect(url_for('bepasty.index'))
+        return redirect_next_referrer('bepasty.index')
 
 
 class LogoutView(MethodView):
@@ -25,7 +26,7 @@ class LogoutView(MethodView):
         # if the session is empty. flask will automatically remove the cookie.
         session.pop(LOGGEDIN, None)
         session.pop(PERMISSIONS, None)
-        return redirect(url_for('bepasty.index'))
+        return redirect_next_referrer('bepasty.index')
 
 
 blueprint.add_url_rule('/+login', view_func=LoginView.as_view('login'))

@@ -55,7 +55,7 @@
 $("#del-btn").click(function(){
     bootbox.confirm("Are you sure you want to delete this file?", function(result) {
         if (result == true){
-            window.location.replace("{{ url_for('bepasty.delete', name=name) }}");
+            window.location.replace("{{ url_for('bepasty.delete', name=name, next=url_for('bepasty.index')) }}");
         }
     }); 
 });
