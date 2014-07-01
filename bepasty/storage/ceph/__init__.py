@@ -12,6 +12,9 @@ from .lowlevel.rbd import Rbd
 
 
 class Storage(object):
+    """
+    Ceph storage
+    """
     def __init__(self, app):
         config_file = app.config['STORAGE_CEPH_CONFIG_FILE']
         self.pool_data = app.config['STORAGE_CEPH_POOL_DATA']
@@ -85,6 +88,15 @@ class Storage(object):
         if e_data and e_meta:
             raise KeyError(name)
 
+    def __iter__(self):
+        # XXX rbd.list() not implemented yet
+        # rbd = Rbd(g.ceph_ioctx_data)
+        # names = [img[8:] for img in rbd.list()
+        #          if img.startswith('bepasty.')]
+        names = []
+        for name in names:
+            yield name
+
 
 class Item(object):
     """
@@ -92,7 +104,6 @@ class Item(object):
 
     :ivar data: Open file-like object to data.
     """
-
     def __init__(self, rbd_data, object_meta):
         self.data = Data(rbd_data)
         self.meta = Meta(object_meta)
@@ -109,9 +120,8 @@ class Item(object):
 
 class Data(object):
     """
-    Data of item."
+    Data of item.
     """
-
     def __init__(self, rbd_data):
         self._rbd = rbd_data
         rbd_data.open()

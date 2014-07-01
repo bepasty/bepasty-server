@@ -2,127 +2,65 @@
 # License: BSD 2-clause, see LICENSE for details.
 
 import os
-import re
-import hashlib
+import errno
+from StringIO import StringIO
 
-from flask import abort, current_app, jsonify, redirect, request, url_for
+from flask import abort, current_app, jsonify, redirect, request, url_for, session, render_template, abort
 from flask.views import MethodView
 
-from ..utils.http import ContentRange
+from ..utils.http import ContentRange, redirect_next
 from ..utils.name import ItemName
+from ..utils.upload import Upload, background_compute_hash
+from ..utils.permissions import *
 from . import blueprint
-
-
-class Upload(object):
-    _filename_re = re.compile(r'[^a-zA-Z0-9 \*+:;.,_-]+')
-    _type_re = re.compile(r'[^a-zA-Z0-9/+.-]+')
-
-    @classmethod
-    def filter_size(cls, i):
-        """
-        Filter size.
-        Check for advertised size.
-        """
-        i = int(i)
-        if i >= current_app.config['MAX_CONTENT_LENGTH']:  # 4 GiB
-            abort(413)
-        return i
-
-    @classmethod
-    def filter_filename(cls, i):
-        """
-        Filter filename.
-        Only allow some basic characters and shorten to 50 characters.
-        """
-        return cls._filename_re.sub('', i)[:50]
-
-    @classmethod
-    def filter_type(cls, i):
-        """
-        Filter Content-Type
-        Only allow some basic characters and shorten to 50 characters.
-        """
-        if not i:
-            return 'application/octet-stream'
-        return cls._type_re.sub('', i)[:50]
-
-    @classmethod
-    def meta_new(cls, item, input_size, input_filename, input_type):
-        item.meta['filename'] = cls.filter_filename(input_filename)
-        item.meta['size'] = cls.filter_size(input_size)
-        item.meta['type'] = cls.filter_type(input_type)
-
-        item.meta['complete'] = False
-
-        item.meta['unlocked'] = current_app.config['UPLOAD_UNLOCKED']
-
-    @classmethod
-    def meta_complete(cls, item, file_hash):
-        item.meta['complete'] = True
-        item.meta['hash'] = file_hash
-
-    @staticmethod
-    def data(item, f, size_input, offset=0):
-        """
-        Copy data from temp file into storage.
-        """
-        read_length = 16 * 1024
-        size_written = 0
-        hasher = hashlib.sha256()
-
-        while True:
-            read_length = min(read_length, size_input)
-            if size_input == 0:
-                break
-
-            buf = f.read(read_length)
-            if not buf:
-                # Should not happen, we already checked the size
-                raise RuntimeError
-
-            item.data.write(buf, offset + size_written)
-            hasher.update(buf)
-
-            len_buf = len(buf)
-            size_written += len_buf
-            size_input -= len_buf
-
-        return size_written, hasher.hexdigest()
-
 
 class UploadView(MethodView):
     def post(self):
-        f = request.files['file']
-        if not f:
+        if not may(CREATE):
+            abort(403)
+        f = request.files.get('file')
+        t = request.form.get('text')
+        if f:
+            # Check Content-Range, disallow its usage
+            if ContentRange.from_request():
+                abort(416)
+
+            # Check Content-Type, default to application/octet-stream
+            content_type = (
+                f.headers.get('Content-Type') or
+                request.headers.get('Content-Type'))
+            filename = f.filename
+
+            # Get size of temporary file
+            f.seek(0, os.SEEK_END)
+            size = f.tell()
+            f.seek(0)
+        elif t is not None:
+            # t is already unicode, but we want utf-8 for storage
+            t = t.encode('utf-8')
+            content_type = request.form.get('contenttype') or 'text/plain'  # TODO: add coding
+            size = len(t)
+            f = StringIO(t)
+            filename = request.form.get('filename') or 'paste.txt'
+        else:
             raise NotImplementedError
-
-        # Check Content-Range, disallow its usage
-        if ContentRange.from_request():
-            abort(416)
-
-        # Check Content-Type, default to application/octet-stream
-        content_type = (
-            f.headers.get('Content-Type') or
-            request.headers.get('Content-Type'))
-
-        # Get size of temporary file
-        f.seek(0, os.SEEK_END)
-        size = f.tell()
-        f.seek(0)
 
         # Create new name
         name = ItemName.create()
 
         with current_app.storage.create(name, size) as item:
             size_written, file_hash = Upload.data(item, f, size)
-            Upload.meta_new(item, size, f.filename, content_type)
+            Upload.meta_new(item, size, filename, content_type)
             Upload.meta_complete(item, file_hash)
 
-        return redirect(url_for('bepasty.display', name=name))
+        return redirect_next('bepasty.display', name=name)
 
 
 class UploadNewView(MethodView):
     def post(self):
+        if not may(CREATE):
+            abort(403)
+
         data = request.get_json()
 
         data_filename = data['filename']
@@ -142,6 +80,9 @@ class UploadNewView(MethodView):
 
 class UploadContinueView(MethodView):
     def post(self, name):
+        if not may(CREATE):
+            abort(403)
+
         f = request.files['file']
         if not f:
             raise NotImplementedError
@@ -151,10 +92,13 @@ class UploadContinueView(MethodView):
 
         with current_app.storage.openwrite(name) as item:
             if content_range:
-                size_written, file_hash = Upload.data(item, f, content_range.size, content_range.begin)
+                # note: we ignore the hash as it is only for 1 chunk, not for the whole upload.
+                # also, we can not continue computing the hash as we can't save the internal
+                # state of the hash object
+                size_written, _ = Upload.data(item, f, content_range.size, content_range.begin)
+                file_hash = ''
+                is_complete = content_range.is_complete
 
-                if content_range.is_complete:
-                    Upload.meta_complete(item, file_hash)
             else:
                 # Get size of temporary file
                 f.seek(0, os.SEEK_END)
@@ -162,24 +106,37 @@ class UploadContinueView(MethodView):
                 f.seek(0)
 
                 size_written, file_hash = Upload.data(item, f, size)
+                is_complete = True
+
+            if is_complete:
                 Upload.meta_complete(item, file_hash)
 
-            return jsonify({'files': [{
+            result = jsonify({'files': [{
+                'name': name,
                 'filename': item.meta['filename'],
                 'size': item.meta['size'],
                 'url': url_for('bepasty.display', name=name),
             }]})
 
+        if is_complete and not file_hash:
+            background_compute_hash(current_app.storage, name)
+
+        return result
+
 
 class UploadAbortView(MethodView):
     def get(self, name):
+        if not may(CREATE):
+            abort(403)
+
         try:
             item = current_app.storage.open(name)
         except (OSError, IOError) as e:
             if e.errno == errno.ENOENT:
                 return 'No file found.', 404
+            raise
 
-        if item.meta.get('complete'):
+        if item.meta['complete']:
             error = 'Upload complete. Cannot delete fileupload garbage.'
         else:
             error = None
@@ -190,7 +147,8 @@ class UploadAbortView(MethodView):
             item = current_app.storage.remove(name)
         except (OSError, IOError) as e:
             if e.errno == errno.ENOENT:
-                return render_template('file_not_found.html'), 404
+                abort(404)
+            raise
         return 'Upload aborted'
 
 blueprint.add_url_rule('/+upload', view_func=UploadView.as_view('upload'))

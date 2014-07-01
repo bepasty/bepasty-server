@@ -1,28 +1,59 @@
 {% extends "_layout.html" %}
 
 {% block content %}
-<div class="page-header">
-    <h1>
-        <a href="{{ url_for('bepasty.download', name=name) }}">
-            <span class="glyphicon glyphicon-download-alt"></span>
-        </a>
-        {{ item.meta['filename'] }}
-    </h1>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h1>
+            {{ item.meta['filename'] }}
+            <div class="btn-group pull-right">
+                {% if not item.meta['locked'] or may(ADMIN) %}
+                    <button id="dl-btn" type="button" class="btn btn-info">
+                        <span class="glyphicon glyphicon-download-alt"></span> Download
+                    </button>
+                    <button id="inline-btn" type="button" class="btn btn-info">
+                        <span class="glyphicon glyphicon-asterisk"></span> Inline
+                    </button>
+                {% endif %}
+                {% if may(DELETE) %}
+                    <form id="del-frm" action="{{ url_for('bepasty.delete', name=name) }}" method="post" class="btn">
+                        <button id="del-btn" type="button" class="btn btn-danger">
+                            <span class="glyphicon glyphicon-remove"></span> Delete
+                        </button>
+                        <input type="hidden" name="next" value="{{ url_for('bepasty.index') }}">
+                    </form>
+                {% endif %}
+                {% if may(ADMIN) %}
+                {% if not item.meta['locked'] %}
+                    <form id="lock-frm" action="{{ url_for('bepasty.lock', name=name) }}" method="post" class="btn">
+                        <button id="lock-btn" type="submit" class="btn btn-danger">
+                            <span class="glyphicon glyphicon-lock"></span> Lock
+                        </button>
+                    </form>
+                {% else %}
+                    <form id="unlock-frm" action="{{ url_for('bepasty.unlock', name=name) }}" method="post" class="btn">
+                        <button id="unlock-btn" type="submit" class="btn btn-info">
+                            <span class="glyphicon glyphicon-heart"></span> Unlock
+                        </button>
+                    </form>
+                {% endif %}
+                {% endif %}
+            </div>
+        </h1>
+    </div>
+    <div class="panel-body">
+        <p>
+        Type {{ item.meta['type'] }},
+        Size {{ item.meta['size'] }} bytes,
+        uploaded {{ item.meta['timestamp-upload'] | datetime }} (UTC),
+        downloaded {{ item.meta['timestamp-download'] | datetime }} (UTC).
+        <br/>
+        SHA256-Hash: {{ item.meta['hash'] }}
+        </p>
+        <div class="data">
+            {{ rendered_content }}
+        </div>
+    </div>
 </div>
-
-<div class="meta">
-    <p>
-        Type {{ item.meta.get('type') or 'undefined' }}, Size {{ item.meta['size'] }} bytes.<br/>
-        SHA256-Hash: {{ item.meta.get('hash')}}
-        <button id="del-btn" type="button" class="btn btn-danger pull-right">Delete File from Server</button>
-    </p>
-    
-</div>
-
-<div class="data">
-    {{ rendered_content }}
-</div>
-
 {% endblock content %}
 
 {% block extra_script %}
@@ -31,9 +62,17 @@
 $("#del-btn").click(function(){
     bootbox.confirm("Are you sure you want to delete this file?", function(result) {
         if (result == true){
-            window.location.replace("{{ url_for('bepasty.delete', name=name) }}");
+            $("#del-frm").submit();
         }
     }); 
 });
+{% if not item.meta['locked'] or may(ADMIN) %}
+$("#dl-btn").click(function(){
+    window.location.replace("{{ url_for('bepasty.download', name=name) }}");
+});
+$("#inline-btn").click(function(){
+    window.location.replace("{{ url_for('bepasty.inline', name=name) }}");
+});
+{% endif %}
 </script>
 {% endblock extra_script %}

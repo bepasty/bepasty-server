@@ -55,7 +55,7 @@ $(function () {
                             //Delete file garbage on server
                             $.ajax({
                                 type: 'GET',
-                                url: data.url+'/abort',
+                                url: data.url+'/abort'
                             });
                         });
                     }
@@ -70,8 +70,9 @@ $(function () {
                 $(data.context.children()[index])
                     .wrapInner($('<a target="_blank" class="alert-link">')
                         .prop('href', file.url));
-                $('<li>').text(document.location.origin + file.url).appendTo('#file-list>ul');
+                $('#filelist').append(file.name + "\n");
             });
+            $('#filelist-form').show();
             jqXHR = null;
         })
 

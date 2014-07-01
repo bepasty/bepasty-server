@@ -2,12 +2,14 @@
 # License: BSD 2-clause, see LICENSE for details.
 
 import errno
+import time
 
-from flask import Response, current_app, render_template, stream_with_context
+from flask import Response, current_app, render_template, stream_with_context, abort
 from flask.views import MethodView
 from werkzeug.exceptions import NotFound
 
 from ..utils.name import ItemName
+from ..utils.permissions import *
 from . import blueprint
 
 
@@ -15,24 +17,27 @@ class DownloadView(MethodView):
     content_disposition = 'attachment'  # to trigger download
 
     def get(self, name):
+        if not may(READ):
+            abort(403)
         try:
-            item = current_app.storage.open(name)
+            item = current_app.storage.openwrite(name)
         except OSError as e:
             if e.errno == errno.ENOENT:
                 raise NotFound()
-            # XXX item is undefined here, but we proceed... XXX
+            raise
 
-        if not item.meta.get('unlocked'):
-            error = 'File Locked.'
-        elif not item.meta.get('complete'):
+        if not item.meta['complete']:
             error = 'Upload incomplete. Try again later.'
         else:
             error = None
         if error:
             try:
-                return render_template('display_error.html', name=name, item=item, error=error), 409
+                return render_template('error.html', heading=item.meta['filename'], body=error), 409
             finally:
                 item.close()
+
+        if item.meta['locked'] and not may(ADMIN):
+            abort(403)
 
         def stream():
             with item as _item:
@@ -43,6 +48,7 @@ class DownloadView(MethodView):
                     buf = _item.data.read(16 * 1024, offset)
                     offset += len(buf)
                     yield buf
+                item.meta['timestamp-download'] = int(time.time())
 
         ret = Response(stream_with_context(stream()))
         ret.headers['Content-Disposition'] = '{}; filename="{}"'.format(

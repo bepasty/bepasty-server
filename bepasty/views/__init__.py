@@ -7,7 +7,10 @@ blueprint = Blueprint('bepasty', __name__)
 
 from . import (
     index,
+    filelist,
     display,
     download,
     upload,
-    delete)
+    setkv,
+    delete,
+    login)

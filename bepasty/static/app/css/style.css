@@ -12,8 +12,25 @@ body {
 }
 
 #footer {
-    height: 2em;
+    height: 30px;
     position: relative;
+}
+
+#formupload {
+    height: 400px;
+    width: 100%;
+    font-family: monospace;
+}
+
+#filelist {
+    height: auto;
+    width: 100%;
+    font-family: monospace;
+}
+
+.dropzone {
+    width: 100%;
+    padding: 3em;
 }
 
 #wrapper {
@@ -23,7 +40,11 @@ body {
 }
 
 #wrapper > .container {
-    padding: 80px 15px 60px;
+    padding: 0 15px 60px;
+}
+
+.jumbotron .glyphicon {
+    font-size: 80px;
 }
 
 .jumbotron {

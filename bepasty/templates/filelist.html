@@ -1,0 +1,10 @@
+{% import "_utils.html" as utils %}
+{% extends "_layout.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-12">
+        {{ utils.filelist(files) }}
+    </div>
+</div>
+{% endblock content %}

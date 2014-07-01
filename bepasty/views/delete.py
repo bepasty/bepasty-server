@@ -3,39 +3,39 @@
 
 import errno
 
-from flask import current_app, redirect, url_for, render_template
+from flask import current_app, redirect, url_for, render_template, abort
 from flask.views import MethodView
 from werkzeug.exceptions import NotFound
 
 from . import blueprint
+from ..utils.permissions import *
+from ..utils.http import redirect_next_referrer
 
 
 class DeleteView(MethodView):
-    def get(self, name):
+    def post(self, name):
+        if not may(DELETE):
+            abort(403)
         try:
-            item = current_app.storage.open(name)
+            with current_app.storage.open(name) as item:
+                if not item.meta['complete']:
+                    error = 'Upload incomplete. Try again later.'
+                else:
+                    error = None
+                if error:
+                    return render_template('error.html', heading=item.meta['filename'], body=error), 409
+
+                if item.meta['locked'] and not may(ADMIN):
+                    abort(403)
+
+            current_app.storage.remove(name)
+
         except (OSError, IOError) as e:
             if e.errno == errno.ENOENT:
-                return render_template('file_not_found.html'), 404
+                abort(404)
+            raise
 
-        if not item.meta.get('unlocked'):
-            error = 'File locked.'
-        elif not item.meta.get('complete'):
-            error = 'Upload incomplete. Try again later.'
-        else:
-            error = None
-        if error:
-            try:
-                return render_template('display_error.html', name=name, item=item, error=error), 409
-            finally:
-                item.close()
+        return redirect_next_referrer('bepasty.index')
 
-        try:
-            item = current_app.storage.remove(name)
-        except (OSError, IOError) as e:
-            if e.errno == errno.ENOENT:
-                return render_template('file_not_found.html'), 404
-
-        return redirect(url_for('bepasty.display', name=name))
 
 blueprint.add_url_rule('/<itemname:name>/+delete', view_func=DeleteView.as_view('delete'))

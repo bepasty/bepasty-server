@@ -36,10 +36,10 @@ commands to run
 
 config file for bepasty -- ``/home/bepasty/bepasty.conf``:
 
+Copy ``bepasty/config.py`` to ``/home/bepasty/bepasty.conf`` first, then modify it:
+
 ::
 
-  UPLOAD_UNLOCKED = True
-  MAX_CONTENT_LENGTH = 16 * 1024 * 1024
   STORAGE = 'filesystem'
   STORAGE_FILESYSTEM_DIRECTORY = '/home/bepasty/storage/'
 
@@ -61,7 +61,7 @@ add this content to ``/home/bepasty/bin/gunicorn_bepasty``:
 
   cd $HOME/src
 
-  exec gunicorn bepasty/wsgi.py \
+  exec gunicorn bepasty.wsgi \
     --name $NAME \
     --workers $NUM_WORKERS \
     --log-level=info \
@@ -107,3 +107,4 @@ Supervisord config i.e. in ``/etc/supervisor/conf.d/bepasty.conf``:
   user = bepasty                                                ; User to run as
   stdout_logfile = /home/bepasty/logs/gunicorn_supervisor.log   ; Where to write log messages
   redirect_stderr = true                                        ; Save stderr in the same log
+
