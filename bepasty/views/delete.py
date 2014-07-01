@@ -9,11 +9,11 @@ from werkzeug.exceptions import NotFound
 
 from . import blueprint
 from ..utils.permissions import *
-from ..utils.http import get_redirect_target_referrer
+from ..utils.http import redirect_next_referrer
 
 
 class DeleteView(MethodView):
-    def get(self, name):
+    def post(self, name):
         if not may(DELETE):
             abort(403)
         try:
@@ -35,7 +35,7 @@ class DeleteView(MethodView):
                 abort(404)
             raise
 
-        return redirect(get_redirect_target_referrer('bepasty.index'))
+        return redirect_next_referrer('bepasty.index')
 
 
 blueprint.add_url_rule('/<itemname:name>/+delete', view_func=DeleteView.as_view('delete'))

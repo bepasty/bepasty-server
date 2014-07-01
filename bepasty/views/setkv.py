@@ -13,7 +13,7 @@ from werkzeug.exceptions import NotFound
 
 from . import blueprint
 from ..utils.permissions import *
-from ..utils.http import get_redirect_target_referrer
+from ..utils.http import redirect_next_referrer
 
 
 class SetKeyValueView(MethodView):
@@ -22,7 +22,7 @@ class SetKeyValueView(MethodView):
     KEY = None
     NEXT_VALUE = None
 
-    def get(self, name):
+    def post(self, name):
         if self.REQUIRED_PERMISSION is not None and not may(self.REQUIRED_PERMISSION):
             abort(403)
         try:
@@ -36,7 +36,7 @@ class SetKeyValueView(MethodView):
                 if error:
                     return render_template('error.html', heading=item.meta['filename'], body=error), 409
                 item.meta[self.KEY] = self.NEXT_VALUE
-            return redirect(get_redirect_target_referrer('bepasty.display', name=name))
+            return redirect_next_referrer('bepasty.display', name=name)
 
         except (OSError, IOError) as e:
             if e.errno == errno.ENOENT:

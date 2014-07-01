@@ -19,15 +19,29 @@
                 <td>{{ file['timestamp-upload'] | datetime }}</td>
                 <td>{{ file['timestamp-download'] | datetime }}</td>
                 <td>
-                    <a href="{{ url_for('bepasty.display', name=file['id']) }}">display</a>
-                    <a href="{{ url_for('bepasty.download', name=file['id']) }}">download</a>
-                    <a href="{{ url_for('bepasty.inline', name=file['id']) }}">inline</a>
-                    <a href="{{ url_for('bepasty.delete', name=file['id']) }}">delete</a>
+                    <a href="{{ url_for('bepasty.display', name=file['id']) }}" class="btn btn-xs btn-info">display</a>
+                    <a href="{{ url_for('bepasty.download', name=file['id']) }}" class="btn btn-xs btn-info">download</a>
+                    <a href="{{ url_for('bepasty.inline', name=file['id']) }}" class="btn btn-xs btn-info">inline</a>
+                    {% if may(DELETE) %}
+                        <form id="del-frm" action="{{ url_for('bepasty.delete', name=file['id']) }}" method="post" class="btn btn-xs">
+                            <button id="del-btn" type="submit" class="btn btn-xs btn-danger">
+                                delete
+                            </button>
+                        </form>
+                    {% endif %}
                     {% if may(ADMIN) %}
                     {% if not file['locked'] %}
-                        <a href="{{ url_for('bepasty.lock', name=file['id']) }}">lock</a>
+                        <form id="lock-frm" action="{{ url_for('bepasty.lock', name=file['id']) }}" method="post" class="btn btn-xs">
+                            <button id="lock-btn" type="submit" class="btn btn-xs btn-danger">
+                                lock
+                            </button>
+                        </form>
                     {% else %}
-                        <a href="{{ url_for('bepasty.unlock', name=file['id']) }}">unlock</a>
+                        <form id="unlock-frm" action="{{ url_for('bepasty.unlock', name=file['id']) }}" method="post" class="btn btn-xs">
+                            <button id="unlock-btn" type="submit" class="btn btn-xs btn-info">
+                                unlock
+                            </button>
+                        </form>
                     {% endif %}
                     {% endif %}
                 </td>
