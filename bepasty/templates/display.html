@@ -56,6 +56,11 @@
 </div>
 {% endblock content %}
 
+{% block extra_link %}
+<!-- Pygments styles -->
+<link rel="stylesheet" href="{{ url_for('static', filename='pygments/pygments.css' ) }}" type="text/css">
+{% endblock %}
+
 {% block extra_script %}
 <script src="{{ url_for('static', filename='bootbox/bootbox.min.js') }}" type="text/javascript"></script>
 <script type="text/javascript">
