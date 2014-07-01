@@ -90,6 +90,8 @@
 {% endblock content %}
 
 {% block extra_link %}
+<!-- fileinput-button styles -->
+<link rel="stylesheet" href="{{ url_for('static', filename='jquery.fileupload/css/jquery.fileupload.css') }}" type="text/css">
 <!-- Fileupload ui styles -->
 <link rel="stylesheet" href="{{ url_for('static', filename='jquery.fileupload/css/jquery.fileupload-ui.css') }}" type="text/css">
 {% endblock %}
