@@ -6,7 +6,7 @@ import time
 
 from flask import Response, current_app, render_template, stream_with_context, abort
 from flask.views import MethodView
-from werkzeug.exceptions import NotFound
+from werkzeug.exceptions import NotFound, Forbidden
 
 from ..utils.name import ItemName
 from ..utils.permissions import *
@@ -18,7 +18,7 @@ class DownloadView(MethodView):
 
     def get(self, name):
         if not may(READ):
-            abort(403)
+            raise Forbidden()
         try:
             item = current_app.storage.openwrite(name)
         except OSError as e:
@@ -37,7 +37,7 @@ class DownloadView(MethodView):
                 item.close()
 
         if item.meta['locked'] and not may(ADMIN):
-            abort(403)
+            raise Forbidden()
 
         def stream():
             with item as _item:

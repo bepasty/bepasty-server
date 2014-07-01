@@ -9,7 +9,7 @@ import errno
 
 from flask import current_app, redirect, url_for, render_template, abort
 from flask.views import MethodView
-from werkzeug.exceptions import NotFound
+from werkzeug.exceptions import NotFound, Forbidden
 
 from . import blueprint
 from ..utils.permissions import *
@@ -24,7 +24,7 @@ class SetKeyValueView(MethodView):
 
     def post(self, name):
         if self.REQUIRED_PERMISSION is not None and not may(self.REQUIRED_PERMISSION):
-            abort(403)
+            raise Forbidden()
         try:
             with current_app.storage.openwrite(name) as item:
                 if item.meta[self.KEY] == self.NEXT_VALUE:
@@ -40,7 +40,7 @@ class SetKeyValueView(MethodView):
 
         except (OSError, IOError) as e:
             if e.errno == errno.ENOENT:
-                abort(404)
+                raise NotFound()
             raise
 
 

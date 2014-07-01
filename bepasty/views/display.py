@@ -6,7 +6,7 @@ import time
 
 from flask import current_app, render_template, Markup, request, url_for, abort
 from flask.views import MethodView
-from werkzeug.exceptions import NotFound
+from werkzeug.exceptions import NotFound, Forbidden
 from pygments import highlight
 from pygments.lexers import get_lexer_for_mimetype
 from pygments.formatters import HtmlFormatter
@@ -21,12 +21,12 @@ from .filelist import file_infos
 class DisplayView(MethodView):
     def get(self, name):
         if not may(READ):
-            abort(403)
+            raise Forbidden()
         try:
             item = current_app.storage.openwrite(name)
         except (OSError, IOError) as e:
             if e.errno == errno.ENOENT:
-                abort(404)
+                raise NotFound()
             raise
 
         with item as item:
@@ -38,7 +38,7 @@ class DisplayView(MethodView):
                 return render_template('error.html', heading=item.meta['filename'], body=error), 409
 
             if item.meta['locked'] and not may(ADMIN):
-                abort(403)
+                raise Forbidden()
 
             def read_data(item):
                 # reading the item for rendering is registered like a download
