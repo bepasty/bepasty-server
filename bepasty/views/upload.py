@@ -42,12 +42,21 @@ class UploadView(MethodView):
             content_type = request.form.get('contenttype') or 'text/plain'  # TODO: add coding
             size = len(t)
             f = StringIO(t)
-            filename = request.form.get('filename') or 'paste.txt'
+            filename = request.form.get('filename')
         else:
             raise NotImplementedError
 
         # Create new name
         name = ItemName.create()
+
+        # Make up filename if we don't have one
+        if not filename:
+            # note: stdlib mimetypes.guess_extension is total crap
+            if content_type.startswith("text/"):
+                ext = ".txt"
+            else:
+                ext = ".bin"
+            filename = name + ext
 
         with current_app.storage.create(name, size) as item:
             size_written, file_hash = Upload.data(item, f, size)
