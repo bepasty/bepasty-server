@@ -50,11 +50,19 @@ class DownloadView(MethodView):
                     yield buf
                 item.meta['timestamp-download'] = int(time.time())
 
+        ct = item.meta['type']
+        dispo = self.content_disposition
+        if dispo != 'attachment':
+            # no simple download, so we must be careful about XSS
+            if ct.startswith("text/"):
+                ct = 'text/plain'  # only send simple plain text
+
         ret = Response(stream_with_context(stream()))
         ret.headers['Content-Disposition'] = '{}; filename="{}"'.format(
-            self.content_disposition, item.meta['filename'])
+            dispo, item.meta['filename'])
         ret.headers['Content-Length'] = item.meta['size']
-        ret.headers['Content-Type'] = item.meta['type']  # 'application/octet-stream'
+        ret.headers['Content-Type'] = ct
+        ret.headers['X-Content-Type-Options'] = 'nosniff'  # yes, we really mean it
         return ret
 
 
