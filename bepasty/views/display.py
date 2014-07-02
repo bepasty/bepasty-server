@@ -55,10 +55,16 @@ class DisplayView(MethodView):
                 else:
                     rendered_content = u"Can't render this content type."
             elif ct.startswith('text/'):
-                code = read_data(item).decode('utf-8')  # TODO we don't have the coding in metadata
+                text = read_data(item)
+                # TODO we don't have the coding in metadata
+                try:
+                    text = text.decode('utf-8')
+                except UnicodeDecodeError:
+                    # well, it is not utf-8 or ascii, so we can only guess...
+                    text = text.decode('iso-8859-1')
                 lexer = get_lexer_for_mimetype(ct)
                 formatter = HtmlFormatter(linenos='table', lineanchors="L", anchorlinenos=True)
-                rendered_content = Markup(highlight(code, lexer, formatter))
+                rendered_content = Markup(highlight(text, lexer, formatter))
             elif ct.startswith('image/'):
                 src = url_for('bepasty.download', name=name)
                 rendered_content = Markup(u'<img src="%s" width="800">' % src)
