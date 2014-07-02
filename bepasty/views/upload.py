@@ -5,7 +5,7 @@ import os
 import errno
 from StringIO import StringIO
 
-from flask import abort, current_app, jsonify, redirect, request, url_for, session, render_template, abort
+from flask import abort, current_app, jsonify, request, url_for
 from flask.views import MethodView
 from werkzeug.exceptions import NotFound, Forbidden
 

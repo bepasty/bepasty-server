@@ -4,7 +4,7 @@
 import os
 import time
 
-from flask import Flask, render_template
+from flask import Flask, render_template, Markup
 
 from .storage import create_storage
 from .views import blueprint

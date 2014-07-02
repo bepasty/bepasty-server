@@ -7,7 +7,7 @@ Set metadata keys to specific values
 
 import errno
 
-from flask import current_app, redirect, url_for, render_template, abort
+from flask import current_app, render_template
 from flask.views import MethodView
 from werkzeug.exceptions import NotFound, Forbidden
 

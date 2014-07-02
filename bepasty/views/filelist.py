@@ -3,7 +3,7 @@
 
 import errno
 
-from flask import current_app, render_template, abort
+from flask import current_app, render_template
 from flask.views import MethodView
 from werkzeug.exceptions import Forbidden
 

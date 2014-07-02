@@ -4,7 +4,7 @@
 import errno
 import time
 
-from flask import current_app, render_template, Markup, request, url_for, abort
+from flask import current_app, render_template, Markup, url_for
 from flask.views import MethodView
 from werkzeug.exceptions import NotFound, Forbidden
 from pygments import highlight
@@ -12,7 +12,6 @@ from pygments.lexers import get_lexer_for_mimetype
 from pygments.formatters import HtmlFormatter
 
 
-from ..utils.name import ItemName
 from ..utils.permissions import *
 from . import blueprint
 from .filelist import file_infos

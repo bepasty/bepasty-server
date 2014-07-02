@@ -4,11 +4,10 @@
 import errno
 import time
 
-from flask import Response, current_app, render_template, stream_with_context, abort
+from flask import Response, current_app, render_template, stream_with_context
 from flask.views import MethodView
 from werkzeug.exceptions import NotFound, Forbidden
 
-from ..utils.name import ItemName
 from ..utils.permissions import *
 from . import blueprint
 
