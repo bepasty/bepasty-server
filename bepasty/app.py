@@ -26,11 +26,32 @@ def create_app():
 
     @app.errorhandler(403)
     def page_not_found(e):
-        return render_template('_error_403.html'), 403
+        heading = 'Forbidden'
+        body = Markup("""\
+            <p>
+                You are not allowed to access the requested URL.
+            </p>
+            <p>
+                If you entered the URL manually please check your spelling and try again.
+            </p>
+            <p>
+                Also check if you maybe forgot to log in or if your permissions are insufficient for this.
+            </p>
+""")
+        return render_template('error.html', heading=heading, body=body), 403
 
     @app.errorhandler(404)
     def page_not_found(e):
-        return render_template('_error_404.html'), 404
+        heading = 'Not found'
+        body = Markup("""\
+            <p>
+                The requested URL was not found on the server.
+            </p>
+            <p>
+                If you entered the URL manually please check your spelling and try again.
+            </p>
+""")
+        return render_template('error.html', heading=heading, body=body), 404
 
     def datetime_format(ts):
         """
