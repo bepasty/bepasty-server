@@ -58,5 +58,5 @@ class Config(object):
     #:         'uploadersecret': 'create,read',
     #:     }
     PERMISSIONS = {
-         #'foo': 'admin,create,read,delete',
+        # 'foo': 'admin,create,read,delete',
     }

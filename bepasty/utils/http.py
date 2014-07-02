@@ -7,6 +7,7 @@ from urlparse import urlparse, urljoin
 from flask import request, abort, redirect, url_for
 from werkzeug.exceptions import BadRequest
 
+
 # safely and comfortably redirect
 # some stuff taken from / inspired by http://flask.pocoo.org/snippets/62/
 
