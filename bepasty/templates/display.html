@@ -20,7 +20,7 @@
                 {% endif %}
                 {% if may(DELETE) %}
                     <form id="del-frm" action="{{ url_for('bepasty.delete', name=name) }}" method="post" class="btn-group">
-                        <button id="del-btn" type="button" class="btn btn-danger">
+                        <button id="del-btn" type="submit" class="btn btn-danger">
                             <span class="glyphicon glyphicon-remove"></span> Delete
                         </button>
                         <input type="hidden" name="next" value="{{ url_for('bepasty.index') }}">
