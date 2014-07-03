@@ -19,9 +19,21 @@
                 <td>{{ file['timestamp-upload'] | datetime }}</td>
                 <td>{{ file['timestamp-download'] | datetime }}</td>
                 <td>
-                    <a href="{{ url_for('bepasty.display', name=file['id']) }}" class="btn btn-xs btn-info">display</a>
-                    <a href="{{ url_for('bepasty.download', name=file['id']) }}" class="btn btn-xs btn-info">download</a>
-                    <a href="{{ url_for('bepasty.inline', name=file['id']) }}" class="btn btn-xs btn-info">inline</a>
+                    <form id="display-frm" action="{{ url_for('bepasty.display', name=file['id']) }}" method="get" class="btn-group">
+                        <button id="display-btn" type="submit" class="btn btn-xs btn-info">
+                            display
+                        </button>
+                    </form>
+                    <form id="download-frm" action="{{ url_for('bepasty.download', name=file['id']) }}" method="get" class="btn-group">
+                        <button id="download-btn" type="submit" class="btn btn-xs btn-info">
+                            download
+                        </button>
+                    </form>
+                    <form id="inline-frm" action="{{ url_for('bepasty.inline', name=file['id']) }}" method="get" class="btn-group">
+                        <button id="inline-btn" type="submit" class="btn btn-xs btn-info">
+                            inline
+                        </button>
+                    </form>
                     {% if may(DELETE) %}
                         <form id="del-frm" action="{{ url_for('bepasty.delete', name=file['id']) }}" method="post" class="btn-group">
                             <button id="del-btn" type="submit" class="btn btn-xs btn-danger">
