@@ -15,7 +15,7 @@
                     </button>
                 {% endif %}
                 {% if may(DELETE) %}
-                    <form id="del-frm" action="{{ url_for('bepasty.delete', name=name) }}" method="post" class="btn">
+                    <form id="del-frm" action="{{ url_for('bepasty.delete', name=name) }}" method="post" class="btn-group">
                         <button id="del-btn" type="button" class="btn btn-danger">
                             <span class="glyphicon glyphicon-remove"></span> Delete
                         </button>
@@ -24,13 +24,13 @@
                 {% endif %}
                 {% if may(ADMIN) %}
                 {% if not item.meta['locked'] %}
-                    <form id="lock-frm" action="{{ url_for('bepasty.lock', name=name) }}" method="post" class="btn">
+                    <form id="lock-frm" action="{{ url_for('bepasty.lock', name=name) }}" method="post" class="btn-group">
                         <button id="lock-btn" type="submit" class="btn btn-danger">
                             <span class="glyphicon glyphicon-lock"></span> Lock
                         </button>
                     </form>
                 {% else %}
-                    <form id="unlock-frm" action="{{ url_for('bepasty.unlock', name=name) }}" method="post" class="btn">
+                    <form id="unlock-frm" action="{{ url_for('bepasty.unlock', name=name) }}" method="post" class="btn-group">
                         <button id="unlock-btn" type="submit" class="btn btn-info">
                             <span class="glyphicon glyphicon-heart"></span> Unlock
                         </button>
