@@ -51,7 +51,7 @@
         uploaded {{ item.meta['timestamp-upload'] | datetime }} (UTC),
         downloaded {{ item.meta['timestamp-download'] | datetime }} (UTC).
         <br/>
-        SHA256-Hash: {{ item.meta['hash'] }}
+        SHA256-Hash: <code>{{ item.meta['hash'] }}</code>
         </p>
         <div class="data">
             {{ rendered_content }}
