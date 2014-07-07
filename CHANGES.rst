@@ -8,14 +8,14 @@ New features:
 
 * support http basic auth header (it just reads the password from there, the
   user name is ignored). this is useful for scripting, e.g. you can do now:
-  $ curl -F 'file=@somefile;type=text/plain' http://user:password@localhost:5000
-* you can set the filename for the list items now
+  $ curl -F 'file=@somefile;type=text/plain' http://user:password@localhost:5000/+upload
+* you can give the filename for the list items now
+* do not use paste.txt as default filename, but <uuid>.txt or <uuid>.bin
+  (this is less pretty, but avoids collisions if you download multiple files)
 * allow uploading of multiple files via the fileselector of the browser
 * display download (view) timestamp
 * sorting of file lists
 * use iso-8859-1 if decoding with utf-8 fails
-* do not use paste.txt as default filename, but <uuid>.txt or <uuid>.bin
-  (this is less pretty, but avoids collisions if you download multiple files)
 * let admin directly delete locked files, without having to unlock first
 * new bepasty-object cli command
 
