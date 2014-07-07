@@ -16,6 +16,14 @@ PERMISSIONS = 'permissions'
 LOGGEDIN = 'loggedin'
 
 
+def lookup_permissions(token):
+    """
+    look up the permissions string for the secret <token> in the configuration.
+    if no such secret is configured, return None
+    """
+    return current_app.config['PERMISSIONS'].get(token)
+
+
 def get_permissions():
     """
     get the permissions for the current user (if logged in)
@@ -24,7 +32,7 @@ def get_permissions():
     auth = request.authorization
     if auth:
         # http basic auth header present
-        permissions = current_app.config['PERMISSIONS'].get(auth.password)
+        permissions = lookup_permissions(auth.password)
     else:
         # look into session, login might have put something there
         permissions = session.get(PERMISSIONS)

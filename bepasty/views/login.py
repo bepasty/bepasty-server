@@ -1,6 +1,6 @@
 # License: BSD 2-clause, see LICENSE for details.
 
-from flask import current_app, request, session
+from flask import request, session
 from flask.views import MethodView
 
 from . import blueprint
@@ -12,7 +12,7 @@ class LoginView(MethodView):
     def post(self):
         token = request.form.get('token')
         if token is not None:
-            permissions = current_app.config['PERMISSIONS'].get(token)
+            permissions = lookup_permissions(token)
             if permissions is not None:
                 session[PERMISSIONS] = permissions
                 session[LOGGEDIN] = True
