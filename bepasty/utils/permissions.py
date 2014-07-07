@@ -1,7 +1,7 @@
 # Copyright: 2014 Thomas Waldmann <tw@waldmann-edv.de>
 # License: BSD 2-clause, see LICENSE for details.
 
-from flask import session, current_app
+from flask import request, session, current_app
 
 # in the code, please always use this constants for permission values:
 ADMIN = 'admin'
@@ -19,7 +19,13 @@ def get_permissions():
     get the permissions for the current user (if logged in)
     or the default permissions (if not logged in).
     """
-    permissions = session.get(PERMISSIONS)
+    auth = request.authorization
+    if auth:
+        # http basic auth header present
+        permissions = current_app.config['PERMISSIONS'].get(auth.password)
+    else:
+        # look into session, login might have put something there
+        permissions = session.get(PERMISSIONS)
     if permissions is None:
         permissions = current_app.config['DEFAULT_PERMISSIONS']
     return permissions
