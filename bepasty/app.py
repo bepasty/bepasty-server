@@ -6,6 +6,9 @@ import time
 
 from flask import Flask, render_template, Markup
 
+# searching for 1 letter name "g" isn't nice, thus we use flaskg.
+from flask import g as flaskg
+
 from .storage import create_storage
 from .views import blueprint
 from .utils.name import setup_werkzeug_routing
@@ -53,6 +56,15 @@ def create_app():
 """)
         return render_template('error.html', heading=heading, body=body), 404
 
+    @app.before_request
+    def before_request():
+        """
+        before the request is handled (by its view function), we compute some
+        stuff here and make it easily available.
+        """
+        flaskg.logged_in = logged_in()
+        flaskg.permissions = get_permissions()
+
     def datetime_format(ts):
         """
         takes a unix timestamp and outputs a iso8601-like formatted string.
@@ -65,10 +77,8 @@ def create_app():
 
     app.jinja_env.filters['datetime'] = datetime_format
 
-    app.jinja_env.globals['logged_in'] = logged_in
-    app.jinja_env.globals['get_permissions'] = get_permissions
+    app.jinja_env.globals['flaskg'] = flaskg
     app.jinja_env.globals['may'] = may
-    app.jinja_env.globals['PERMISSIONS'] = PERMISSIONS
     app.jinja_env.globals['ADMIN'] = ADMIN
     app.jinja_env.globals['CREATE'] = CREATE
     app.jinja_env.globals['READ'] = READ

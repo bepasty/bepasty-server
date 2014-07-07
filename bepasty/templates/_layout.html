@@ -33,7 +33,7 @@
                                     <span class="icon-bar"></span>
                                 </button>
                                 <a class="navbar-brand" href="/">
-                                    {{ config.SITENAME }} (Permissions: {{ get_permissions() }})
+                                    {{ config.SITENAME }} (Permissions: {{ flaskg.permissions }})
                                 </a>
                             </div>
                             <!-- Collect the nav links, forms, and other content for toggling -->
@@ -44,7 +44,7 @@
                                     <li><a href="{{ url_for('bepasty.filelist') }}">List all Items</a></li>
                                     {% endif %}
                                 </ul>
-                                {% if logged_in() %}
+                                {% if flaskg.logged_in %}
                                 <form class="navbar-form navbar-right" role="form" method="post" action="/+logout">
                                     <input class="btn btn-default" type="submit" value="Logout">
                                 </form>

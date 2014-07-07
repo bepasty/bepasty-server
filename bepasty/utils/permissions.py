@@ -2,6 +2,8 @@
 # License: BSD 2-clause, see LICENSE for details.
 
 from flask import request, session, current_app
+from flask import g as flaskg
+
 
 # in the code, please always use this constants for permission values:
 ADMIN = 'admin'
@@ -35,7 +37,7 @@ def may(permission):
     """
     check whether the current user has the permission <permission>
     """
-    permissions = get_permissions().split(',')
+    permissions = flaskg.permissions.split(',')
     return permission in permissions
 
 
