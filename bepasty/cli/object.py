@@ -5,6 +5,7 @@
 bepasty-object commandline interface
 """
 
+import os
 import argparse
 import logging
 import time
@@ -18,7 +19,7 @@ from ..storage import create_storage
 class Main(object):
     argparser = argparse.ArgumentParser(prog='bepasty-object')
     _subparsers = argparser.add_subparsers()
-    argparser.add_argument('config', metavar='CONFIG')
+    argparser.add_argument('--config', dest='config', metavar='CONFIG', help='bepasty configuration file')
     argparser.add_argument('names', metavar='NAME', nargs='+')
 
     def do_migrate(self, storage, name, args):
@@ -182,7 +183,11 @@ class Main(object):
         # Setup minimal application
         app = Flask(__name__)
         app.config.from_object('bepasty.config.Config')
-        app.config.from_pyfile(args.config)
+        if os.environ.get('BEPASTY_CONFIG'):
+            app.config.from_envvar('BEPASTY_CONFIG')
+        if args.config is not None:
+            cfg_path = os.path.abspath(args.config)
+            app.config.from_pyfile(cfg_path)
         storage = create_storage(app)
 
         # Setup application context
