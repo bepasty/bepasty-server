@@ -30,6 +30,7 @@ def get_permissions():
         permissions = session.get(PERMISSIONS)
     if permissions is None:
         permissions = current_app.config['DEFAULT_PERMISSIONS']
+    permissions = set(permissions.split(','))
     return permissions
 
 
@@ -37,8 +38,7 @@ def may(permission):
     """
     check whether the current user has the permission <permission>
     """
-    permissions = flaskg.permissions.split(',')
-    return permission in permissions
+    return permission in flaskg.permissions
 
 
 def logged_in():

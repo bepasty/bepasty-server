@@ -33,7 +33,7 @@
                                     <span class="icon-bar"></span>
                                 </button>
                                 <a class="navbar-brand" href="/">
-                                    {{ config.SITENAME }} (Permissions: {{ flaskg.permissions }})
+                                    {{ config.SITENAME }} (Permissions: {{ flaskg.permissions | join(',') }})
                                 </a>
                             </div>
                             <!-- Collect the nav links, forms, and other content for toggling -->
