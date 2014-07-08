@@ -4,15 +4,14 @@
 import errno
 import time
 
-from flask import current_app, render_template, Markup, request, url_for, abort
+from flask import current_app, render_template, Markup, url_for
 from flask.views import MethodView
-from werkzeug.exceptions import NotFound
+from werkzeug.exceptions import NotFound, Forbidden
 from pygments import highlight
 from pygments.lexers import get_lexer_for_mimetype
 from pygments.formatters import HtmlFormatter
 
 
-from ..utils.name import ItemName
 from ..utils.permissions import *
 from . import blueprint
 from .filelist import file_infos
@@ -21,12 +20,12 @@ from .filelist import file_infos
 class DisplayView(MethodView):
     def get(self, name):
         if not may(READ):
-            abort(403)
+            raise Forbidden()
         try:
             item = current_app.storage.openwrite(name)
         except (OSError, IOError) as e:
             if e.errno == errno.ENOENT:
-                abort(404)
+                raise NotFound()
             raise
 
         with item as item:
@@ -38,7 +37,7 @@ class DisplayView(MethodView):
                 return render_template('error.html', heading=item.meta['filename'], body=error), 409
 
             if item.meta['locked'] and not may(ADMIN):
-                abort(403)
+                raise Forbidden()
 
             def read_data(item):
                 # reading the item for rendering is registered like a download
@@ -56,10 +55,16 @@ class DisplayView(MethodView):
                 else:
                     rendered_content = u"Can't render this content type."
             elif ct.startswith('text/'):
-                code = read_data(item).decode('utf-8')  # TODO we don't have the coding in metadata
+                text = read_data(item)
+                # TODO we don't have the coding in metadata
+                try:
+                    text = text.decode('utf-8')
+                except UnicodeDecodeError:
+                    # well, it is not utf-8 or ascii, so we can only guess...
+                    text = text.decode('iso-8859-1')
                 lexer = get_lexer_for_mimetype(ct)
                 formatter = HtmlFormatter(linenos='table', lineanchors="L", anchorlinenos=True)
-                rendered_content = Markup(highlight(code, lexer, formatter))
+                rendered_content = Markup(highlight(text, lexer, formatter))
             elif ct.startswith('image/'):
                 src = url_for('bepasty.download', name=name)
                 rendered_content = Markup(u'<img src="%s" width="800">' % src)
@@ -71,7 +76,7 @@ class DisplayView(MethodView):
                 src = url_for('bepasty.download', name=name)
                 alt_msg = u'html5 video element not supported by your browser.'
                 rendered_content = Markup(u'<video controls src="%s">%s</video>' % (src, alt_msg))
-            elif ct == 'application/pdf':
+            elif ct in ['application/pdf', 'application/x-pdf', ]:
                 src = url_for('bepasty.inline', name=name)
                 link_txt = u'Click to see PDF'
                 rendered_content = Markup(u'<a href="%s">%s</a>' % (src, link_txt))

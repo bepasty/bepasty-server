@@ -14,8 +14,6 @@
         <link rel="stylesheet" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css" type="text/css">
         <!-- Bepasty styles -->
         <link rel="stylesheet" href="{{ url_for('static', filename='app/css/style.css' ) }}" type="text/css">
-        <!-- Pygments styles -->
-        <link rel="stylesheet" href="{{ url_for('static', filename='pygments/pygments.css' ) }}" type="text/css">
         {% block extra_link %}{% endblock %}
     </head>
 
@@ -35,7 +33,7 @@
                                     <span class="icon-bar"></span>
                                 </button>
                                 <a class="navbar-brand" href="/">
-                                    {{ config.SITENAME }} (Permissions: {{ get_permissions() }})
+                                    {{ config.SITENAME }} (Permissions: {{ flaskg.permissions | join(',') }})
                                 </a>
                             </div>
                             <!-- Collect the nav links, forms, and other content for toggling -->
@@ -46,7 +44,7 @@
                                     <li><a href="{{ url_for('bepasty.filelist') }}">List all Items</a></li>
                                     {% endif %}
                                 </ul>
-                                {% if logged_in() %}
+                                {% if flaskg.logged_in %}
                                 <form class="navbar-form navbar-right" role="form" method="post" action="/+logout">
                                     <input class="btn btn-default" type="submit" value="Logout">
                                 </form>

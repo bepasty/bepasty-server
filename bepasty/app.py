@@ -4,7 +4,10 @@
 import os
 import time
 
-from flask import Flask, render_template
+from flask import Flask, render_template, Markup
+
+# searching for 1 letter name "g" isn't nice, thus we use flaskg.
+from flask import g as flaskg
 
 
 from .storage import create_storage
@@ -29,11 +32,41 @@ def create_app():
 
     @app.errorhandler(403)
     def page_not_found(e):
-        return render_template('_error_403.html'), 403
+        heading = 'Forbidden'
+        body = Markup("""\
+            <p>
+                You are not allowed to access the requested URL.
+            </p>
+            <p>
+                If you entered the URL manually please check your spelling and try again.
+            </p>
+            <p>
+                Also check if you maybe forgot to log in or if your permissions are insufficient for this.
+            </p>
+""")
+        return render_template('error.html', heading=heading, body=body), 403
 
     @app.errorhandler(404)
     def page_not_found(e):
-        return render_template('_error_404.html'), 404
+        heading = 'Not found'
+        body = Markup("""\
+            <p>
+                The requested URL was not found on the server.
+            </p>
+            <p>
+                If you entered the URL manually please check your spelling and try again.
+            </p>
+""")
+        return render_template('error.html', heading=heading, body=body), 404
+
+    @app.before_request
+    def before_request():
+        """
+        before the request is handled (by its view function), we compute some
+        stuff here and make it easily available.
+        """
+        flaskg.logged_in = logged_in()
+        flaskg.permissions = get_permissions()
 
     def datetime_format(ts):
         """
@@ -47,10 +80,8 @@ def create_app():
 
     app.jinja_env.filters['datetime'] = datetime_format
 
-    app.jinja_env.globals['logged_in'] = logged_in
-    app.jinja_env.globals['get_permissions'] = get_permissions
+    app.jinja_env.globals['flaskg'] = flaskg
     app.jinja_env.globals['may'] = may
-    app.jinja_env.globals['PERMISSIONS'] = PERMISSIONS
     app.jinja_env.globals['ADMIN'] = ADMIN
     app.jinja_env.globals['CREATE'] = CREATE
     app.jinja_env.globals['READ'] = READ

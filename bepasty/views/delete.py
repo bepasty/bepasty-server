@@ -3,9 +3,9 @@
 
 import errno
 
-from flask import current_app, redirect, url_for, render_template, abort
+from flask import current_app, render_template
 from flask.views import MethodView
-from werkzeug.exceptions import NotFound
+from werkzeug.exceptions import NotFound, Forbidden
 
 from . import blueprint
 from ..utils.permissions import *
@@ -15,7 +15,7 @@ from ..utils.http import redirect_next_referrer
 class DeleteView(MethodView):
     def post(self, name):
         if not may(DELETE):
-            abort(403)
+            raise Forbidden()
         try:
             with current_app.storage.open(name) as item:
                 if not item.meta['complete']:
@@ -26,13 +26,13 @@ class DeleteView(MethodView):
                     return render_template('error.html', heading=item.meta['filename'], body=error), 409
 
                 if item.meta['locked'] and not may(ADMIN):
-                    abort(403)
+                    raise Forbidden()
 
             current_app.storage.remove(name)
 
         except (OSError, IOError) as e:
             if e.errno == errno.ENOENT:
-                abort(404)
+                raise NotFound()
             raise
 
         return redirect_next_referrer('bepasty.index')

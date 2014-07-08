@@ -87,6 +87,7 @@ class Upload(object):
 
         return size_written, hasher.hexdigest()
 
+
 @async
 def background_compute_hash(storage, name):
         with storage.openwrite(name) as item:

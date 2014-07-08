@@ -3,8 +3,9 @@
 
 import errno
 
-from flask import current_app, render_template, abort
+from flask import current_app, render_template
 from flask.views import MethodView
+from werkzeug.exceptions import Forbidden
 
 from . import blueprint
 from ..utils.permissions import *
@@ -35,7 +36,7 @@ def file_infos(names=None):
 class FileListView(MethodView):
     def get(self):
         if not may(ADMIN):
-            abort(403)
+            raise Forbidden()
         files = sorted(file_infos(), key=lambda f: f['timestamp-upload'], reverse=True)
         return render_template('filelist.html', files=files)
 

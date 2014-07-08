@@ -4,11 +4,10 @@
 import errno
 import time
 
-from flask import Response, current_app, render_template, stream_with_context, abort
+from flask import Response, current_app, render_template, stream_with_context
 from flask.views import MethodView
-from werkzeug.exceptions import NotFound
+from werkzeug.exceptions import NotFound, Forbidden
 
-from ..utils.name import ItemName
 from ..utils.permissions import *
 from . import blueprint
 
@@ -18,7 +17,7 @@ class DownloadView(MethodView):
 
     def get(self, name):
         if not may(READ):
-            abort(403)
+            raise Forbidden()
         try:
             item = current_app.storage.openwrite(name)
         except OSError as e:
@@ -37,7 +36,7 @@ class DownloadView(MethodView):
                 item.close()
 
         if item.meta['locked'] and not may(ADMIN):
-            abort(403)
+            raise Forbidden()
 
         def stream():
             with item as _item:
@@ -50,11 +49,19 @@ class DownloadView(MethodView):
                     yield buf
                 item.meta['timestamp-download'] = int(time.time())
 
+        ct = item.meta['type']
+        dispo = self.content_disposition
+        if dispo != 'attachment':
+            # no simple download, so we must be careful about XSS
+            if ct.startswith("text/"):
+                ct = 'text/plain'  # only send simple plain text
+
         ret = Response(stream_with_context(stream()))
         ret.headers['Content-Disposition'] = '{}; filename="{}"'.format(
-            self.content_disposition, item.meta['filename'])
+            dispo, item.meta['filename'])
         ret.headers['Content-Length'] = item.meta['size']
-        ret.headers['Content-Type'] = item.meta['type']  # 'application/octet-stream'
+        ret.headers['Content-Type'] = ct
+        ret.headers['X-Content-Type-Options'] = 'nosniff'  # yes, we really mean it
         return ret
 
 

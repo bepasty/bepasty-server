@@ -5,8 +5,9 @@ import os
 import errno
 from StringIO import StringIO
 
-from flask import abort, current_app, jsonify, redirect, request, url_for, session, render_template, abort
+from flask import abort, current_app, jsonify, request, url_for
 from flask.views import MethodView
+from werkzeug.exceptions import NotFound, Forbidden
 
 from ..utils.http import ContentRange, redirect_next
 from ..utils.name import ItemName
@@ -17,7 +18,7 @@ from . import blueprint
 class UploadView(MethodView):
     def post(self):
         if not may(CREATE):
-            abort(403)
+            raise Forbidden()
         f = request.files.get('file')
         t = request.form.get('text')
         if f:
@@ -41,12 +42,21 @@ class UploadView(MethodView):
             content_type = request.form.get('contenttype') or 'text/plain'  # TODO: add coding
             size = len(t)
             f = StringIO(t)
-            filename = request.form.get('filename') or 'paste.txt'
+            filename = request.form.get('filename')
         else:
             raise NotImplementedError
 
         # Create new name
         name = ItemName.create()
+
+        # Make up filename if we don't have one
+        if not filename:
+            # note: stdlib mimetypes.guess_extension is total crap
+            if content_type.startswith("text/"):
+                ext = ".txt"
+            else:
+                ext = ".bin"
+            filename = name + ext
 
         with current_app.storage.create(name, size) as item:
             size_written, file_hash = Upload.data(item, f, size)
@@ -59,7 +69,7 @@ class UploadView(MethodView):
 class UploadNewView(MethodView):
     def post(self):
         if not may(CREATE):
-            abort(403)
+            raise Forbidden()
 
         data = request.get_json()
 
@@ -81,7 +91,7 @@ class UploadNewView(MethodView):
 class UploadContinueView(MethodView):
     def post(self, name):
         if not may(CREATE):
-            abort(403)
+            raise Forbidden()
 
         f = request.files['file']
         if not f:
@@ -127,7 +137,7 @@ class UploadContinueView(MethodView):
 class UploadAbortView(MethodView):
     def get(self, name):
         if not may(CREATE):
-            abort(403)
+            raise Forbidden()
 
         try:
             item = current_app.storage.open(name)
@@ -147,7 +157,7 @@ class UploadAbortView(MethodView):
             item = current_app.storage.remove(name)
         except (OSError, IOError) as e:
             if e.errno == errno.ENOENT:
-                abort(404)
+                raise NotFound()
             raise
         return 'Upload aborted'
 

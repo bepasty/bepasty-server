@@ -64,6 +64,9 @@ For production, you should use a WSGI server like gunicorn, apache+mod-wsgi, ngi
 Invoking CLI commands
 ---------------------
 
+All bepasty commands expect either a --config <configfilename> argument or that the BEPASTY_CONFIG environment
+variable points to your configuration file.
+
 The "object" command operates on objects stored in the storage. You can get infos about them ("info" subcommand),
 you can set some flags on them ("set"), you can remove all or some ("purge"), you can check the consistency
 ("consistency"), etc...
@@ -87,14 +90,14 @@ use something like:
 
 ::
 
-    bepasty-object purge --dry-run --size 10 --age 14 ../config.py '*'
+    bepasty-object purge --dry-run --size 10 --age 14 '*'
 
 
 If you upgraded bepasty, you might need to upgrade the stored metadata to the current bepasty metadata schema:
 
 ::
 
-    bepasty-object migrate ../config.py '*'
+    bepasty-object migrate '*'
 
 
 Note: the '*' needs to be quoted with single-quotes so the shell does not expand it. it tells the command to operate

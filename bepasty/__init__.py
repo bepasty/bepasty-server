@@ -5,8 +5,9 @@
 
 version = u"0.1.0"
 
-project = u"bepasty"  # == python package name, pypi package name,
-                      # but: repo name is "bepasty-server"
+# python package name, pypi package name,
+# but: repo name is "bepasty-server"
+project = u"bepasty"
 
 description = u"a binary pastebin / file upload service"
 

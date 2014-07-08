@@ -29,7 +29,7 @@ offers you some choices based on that. Based on that type, we will highlight you
 library, which supports a lot of text formats).
 
 File name: You can optionally give a filename for your paste. If someone later downloads it, the browser will
-use the filename you gave. If you don't give a filename, it will use "paste.txt".
+use the filename you gave. If you don't give a filename, bepasty will make something up.
 
 When finished, click on "Submit". bepasty will save your text using a unique ID and redirect you to the URL
 where you can view or download your pasted text.

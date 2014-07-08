@@ -7,30 +7,34 @@
             {{ item.meta['filename'] }}
             <div class="btn-group pull-right">
                 {% if not item.meta['locked'] or may(ADMIN) %}
-                    <button id="dl-btn" type="button" class="btn btn-info">
-                        <span class="glyphicon glyphicon-download-alt"></span> Download
-                    </button>
-                    <button id="inline-btn" type="button" class="btn btn-info">
-                        <span class="glyphicon glyphicon-asterisk"></span> Inline
-                    </button>
+                    <form id="download-frm" action="{{ url_for('bepasty.download', name=name) }}" method="get" class="btn-group">
+                        <button id="download-btn" type="submit" class="btn btn-info">
+                            <span class="glyphicon glyphicon-download-alt"></span> Download
+                        </button>
+                    </form>
+                    <form id="inline-frm" action="{{ url_for('bepasty.inline', name=name) }}" method="get" class="btn-group">
+                        <button id="inline-btn" type="submit" class="btn btn-info">
+                            <span class="glyphicon glyphicon-asterisk"></span> Inline
+                        </button>
+                    </form>
                 {% endif %}
                 {% if may(DELETE) %}
-                    <form id="del-frm" action="{{ url_for('bepasty.delete', name=name) }}" method="post" class="btn">
+                    <form id="del-frm" action="{{ url_for('bepasty.delete', name=name) }}" method="post" class="btn-group">
+                        <input type="hidden" name="next" value="{{ url_for('bepasty.index') }}">
                         <button id="del-btn" type="button" class="btn btn-danger">
                             <span class="glyphicon glyphicon-remove"></span> Delete
                         </button>
-                        <input type="hidden" name="next" value="{{ url_for('bepasty.index') }}">
                     </form>
                 {% endif %}
                 {% if may(ADMIN) %}
                 {% if not item.meta['locked'] %}
-                    <form id="lock-frm" action="{{ url_for('bepasty.lock', name=name) }}" method="post" class="btn">
+                    <form id="lock-frm" action="{{ url_for('bepasty.lock', name=name) }}" method="post" class="btn-group">
                         <button id="lock-btn" type="submit" class="btn btn-danger">
                             <span class="glyphicon glyphicon-lock"></span> Lock
                         </button>
                     </form>
                 {% else %}
-                    <form id="unlock-frm" action="{{ url_for('bepasty.unlock', name=name) }}" method="post" class="btn">
+                    <form id="unlock-frm" action="{{ url_for('bepasty.unlock', name=name) }}" method="post" class="btn-group">
                         <button id="unlock-btn" type="submit" class="btn btn-info">
                             <span class="glyphicon glyphicon-heart"></span> Unlock
                         </button>
@@ -47,7 +51,7 @@
         uploaded {{ item.meta['timestamp-upload'] | datetime }} (UTC),
         downloaded {{ item.meta['timestamp-download'] | datetime }} (UTC).
         <br/>
-        SHA256-Hash: {{ item.meta['hash'] }}
+        SHA256-Hash: <code>{{ item.meta['hash'] }}</code>
         </p>
         <div class="data">
             {{ rendered_content }}
@@ -55,6 +59,11 @@
     </div>
 </div>
 {% endblock content %}
+
+{% block extra_link %}
+<!-- Pygments styles -->
+<link rel="stylesheet" href="{{ url_for('static', filename='pygments/pygments.css' ) }}" type="text/css">
+{% endblock %}
 
 {% block extra_script %}
 <script src="{{ url_for('static', filename='bootbox/bootbox.min.js') }}" type="text/javascript"></script>
@@ -66,13 +75,5 @@ $("#del-btn").click(function(){
         }
     }); 
 });
-{% if not item.meta['locked'] or may(ADMIN) %}
-$("#dl-btn").click(function(){
-    window.location.replace("{{ url_for('bepasty.download', name=name) }}");
-});
-$("#inline-btn").click(function(){
-    window.location.replace("{{ url_for('bepasty.inline', name=name) }}");
-});
-{% endif %}
 </script>
 {% endblock extra_script %}
