@@ -118,7 +118,7 @@ class DownloadRange(collections.namedtuple('DownloadRange', ('begin', 'end'))):
         Format is "bytes=0-524287".
         """
         range_type, range_count = content_range.split('=', 1)
-        # There are no other types then "bytes"
+        # There are no other types than "bytes"
         if range_type != 'bytes':
             raise BadRequest(description='Range Header is incorrect')
 

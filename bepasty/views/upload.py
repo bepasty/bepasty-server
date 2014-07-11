@@ -15,6 +15,7 @@ from ..utils.upload import Upload, background_compute_hash
 from ..utils.permissions import *
 from . import blueprint
 
+
 class UploadView(MethodView):
     def post(self):
         if not may(CREATE):

@@ -10,11 +10,11 @@ from flask import Response, current_app, request, make_response, url_for, jsonif
 
 from ..utils.name import ItemName
 from ..utils.http import ContentRange, DownloadRange
-from ..views.upload import Upload
+from ..utils.upload import Upload
+from ..utils.permissions import *
 
 
 class ItemUploadView(MethodView):
-
     def post(self):
         """
         Upload file via REST-API. Chunked Upload is supported.
@@ -42,6 +42,9 @@ class ItemUploadView(MethodView):
         If the file size exceeds the permitted size, the upload will be aborted. This will be checked twice.
         The first check is the provided Content-Length. The second is the actual file size on the server.
         """
+        if not may(CREATE):
+            return 'Missing Permissions', 403
+
         # Collect all expected data from the Request
         file_type = request.headers.get("Content-Type")
         file_size = request.headers.get("Content-Length")
@@ -57,9 +60,11 @@ class ItemUploadView(MethodView):
             item = current_app.storage.create(name, 0)
 
             # Fill meta with data from Request
-            item.meta['filename'] = Upload.filter_filename(file_name)
-            item.meta['timestamp'] = int(time.time())
-            item.meta['type'] = Upload.filter_type(file_type)
+            Upload.meta_new(item, file_size, file_name, file_type)
+
+            #item.meta['filename'] = Upload.filter_filename(file_name)
+            #item.meta['timestamp'] = int(time.time())
+            #item.meta['type'] = Upload.filter_type(file_type)
         else:
             # Get file name from Transaction-ID and open from Storage
             name = base64.b64decode(request.headers.get("Transaction-Id"))
@@ -92,21 +97,22 @@ class ItemUploadView(MethodView):
 
         # Check if file is completely uploaded and set meta
         if file_range.is_complete:
-            item.meta['complete'] = True
-            item.meta['unlocked'] = current_app.config['UPLOAD_UNLOCKED']
+            Upload.meta_complete(item, '')
             item.meta['size'] = item.data.size
+            background_compute_hash(current_app.storage, name)
             # Set status 'sucessfull' and return the new URL for the uploaded file
             response.status = '201'
             response.headers["Content-Location"] = url_for('bepasty_rest.items_detail', name=name)
 
-        try:
-            return response
-        finally:
-            item.__exit__()
+        item.close()
+        return response
 
 
 class ItemDetailView(MethodView):
     def get(self, name):
+        if not may(READ):
+            return 'Missing Permissions', 403
+
         with current_app.storage.open(name) as item:
             return jsonify({'uri': url_for('bepasty_rest.items_detail', name=name),
                             'file-meta': dict(item.meta)})
@@ -116,6 +122,9 @@ class ItemDownloadView(MethodView):
     content_disposition = 'attachment'
 
     def get(self, name):
+        if not may(READ):
+            return 'Missing Permissions', 403
+
         try:
             item = current_app.storage.open(name)
         except (OSError, IOError) as e:
@@ -129,10 +138,8 @@ class ItemDownloadView(MethodView):
         else:
             error = None
         if error:
-            try:
-                return error, 400
-            finally:
-                item.close()
+            item.close()
+            return error, 403
 
         request_range = DownloadRange.from_request()
         if not request_range:
@@ -146,13 +153,10 @@ class ItemDownloadView(MethodView):
                 range_end = min(request_range.end, item.data.size)
             range_begin = request_range.begin
 
-        print range_begin, range_end
-
         def stream(begin, end):
             offset = max(0, begin)
             with item as _item:
                 while offset < end:
-                    print offset
                     buf = _item.data.read(16 * 1024, offset)
                     offset += len(buf)
                     yield buf
@@ -164,7 +168,6 @@ class ItemDownloadView(MethodView):
         ret.headers['Content-Type'] = item.meta['type']  # 'application/octet-stream'
         ret.status = '200'
         ret.headers['Content-Range'] = ('bytes %d-%d/%d' % (range_begin, range_end, item.data.size))
-        print ret
         return ret
 
 
