@@ -14,6 +14,12 @@ class Config(object):
     #: uploaded file, set this to True.
     UPLOAD_LOCKED = False
 
+    #: Set max content length to 4 GB
+    #: This is the maximum size a uploaded file can have
+    MAX_CONTENT_LENGTH = 4 * 1024 * 1024 * 1024
+
+    EXPECTED_CHUNK_SIZE = 1 * 1024 * 1024
+
     #: Define storage backend, choose from:
     #:
     #: - 'filesystem'
