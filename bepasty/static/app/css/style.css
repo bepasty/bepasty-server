@@ -22,6 +22,10 @@ body {
     font-family: monospace;
 }
 
+#files p {
+    word-break: break-all;
+}
+
 #filelist {
     height: auto;
     width: 100%;
