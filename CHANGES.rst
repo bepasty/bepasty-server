@@ -18,6 +18,7 @@ New features:
 * use iso-8859-1 if decoding with utf-8 fails
 * let admin directly delete locked files, without having to unlock first
 * new bepasty-object cli command
+* added REST api for bepasty-client-cli
 
 Removed features:
 
