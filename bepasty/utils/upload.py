@@ -14,6 +14,10 @@ from .hashing import compute_hash, hash_new
 # also take more (or less).
 MAX_FILENAME_LENGTH = 250
 
+# limit max. file size
+# TODO: it is unknown whether we have some specific reason to limit to exactly 4GiB
+MAX_FILE_SIZE = 4 * 1024 * 1024 * 1024  # 4GiB
+
 
 class Upload(object):
     _filename_re = re.compile(r'[^a-zA-Z0-9 \*+:;.,_-]+')
@@ -26,7 +30,7 @@ class Upload(object):
         Check for advertised size.
         """
         i = int(i)
-        if i >= 4 * 1024 * 1024 * 1024:  # 4 GiB
+        if i >= MAX_FILE_SIZE:
             abort(413)
         return i
 
