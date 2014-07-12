@@ -26,12 +26,20 @@ class Upload(object):
         return i
 
     @classmethod
-    def filter_filename(cls, i):
+    def filter_filename(cls, filename, storage_name, content_type):
         """
         Filter filename.
         Only allow some basic characters and shorten to 50 characters.
         """
-        return cls._filename_re.sub('', i)[:50]
+        # Make up filename if we don't have one
+        if not filename:
+            # note: stdlib mimetypes.guess_extension is total crap
+            if content_type.startswith("text/"):
+                ext = ".txt"
+            else:
+                ext = ".bin"
+            filename = storage_name + ext
+        return cls._filename_re.sub('', filename)[:50]
 
     @classmethod
     def filter_type(cls, i):
@@ -44,8 +52,8 @@ class Upload(object):
         return cls._type_re.sub('', i)[:50]
 
     @classmethod
-    def meta_new(cls, item, input_size, input_filename, input_type):
-        item.meta['filename'] = cls.filter_filename(input_filename)
+    def meta_new(cls, item, input_size, input_filename, input_type, storage_name):
+        item.meta['filename'] = cls.filter_filename(input_filename, storage_name, input_type)
         item.meta['size'] = cls.filter_size(input_size)
         item.meta['type'] = cls.filter_type(input_type)
         item.meta['timestamp-upload'] = int(time.time())

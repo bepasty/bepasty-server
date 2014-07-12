@@ -47,21 +47,10 @@ class UploadView(MethodView):
         else:
             raise NotImplementedError
 
-        # Create new name
         name = ItemName.create()
-
-        # Make up filename if we don't have one
-        if not filename:
-            # note: stdlib mimetypes.guess_extension is total crap
-            if content_type.startswith("text/"):
-                ext = ".txt"
-            else:
-                ext = ".bin"
-            filename = name + ext
-
         with current_app.storage.create(name, size) as item:
             size_written, file_hash = Upload.data(item, f, size)
-            Upload.meta_new(item, size, filename, content_type)
+            Upload.meta_new(item, size, filename, content_type, name)
             Upload.meta_complete(item, file_hash)
 
         return redirect_next('bepasty.display', name=name)
@@ -78,12 +67,10 @@ class UploadNewView(MethodView):
         data_size = int(data['size'])
         data_type = data['type']
 
-        # Create new name
         name = ItemName.create()
-
         with current_app.storage.create(name, data_size) as item:
             # Save meta-data
-            Upload.meta_new(item, data_size, data_filename, data_type)
+            Upload.meta_new(item, data_size, data_filename, data_type, name)
 
             return jsonify({'url': url_for('bepasty.upload_continue', name=name),
                             'name': name})

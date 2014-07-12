@@ -60,11 +60,7 @@ class ItemUploadView(MethodView):
             item = current_app.storage.create(name, 0)
 
             # Fill meta with data from Request
-            Upload.meta_new(item, file_size, file_name, file_type)
-
-            #item.meta['filename'] = Upload.filter_filename(file_name)
-            #item.meta['timestamp'] = int(time.time())
-            #item.meta['type'] = Upload.filter_type(file_type)
+            Upload.meta_new(item, file_size, file_name, file_type, name)
         else:
             # Get file name from Transaction-ID and open from Storage
             name = base64.b64decode(request.headers.get("Transaction-Id"))
