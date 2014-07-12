@@ -39,7 +39,7 @@ Uploading files
 
 See that big box below the text input box - you can:
 
-* click it to upload a single file (via the file selection dialogue of your browser). repeat if you have multiple files.
+* click it to upload files via the file selection dialogue of your browser
 * drag files from your desktop and drop them there
 
 Note: some features require a modern browser, like a current Firefox or Chrome/Chromium with Javascript enabled.
