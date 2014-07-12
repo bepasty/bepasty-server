@@ -67,7 +67,7 @@ class DisplayView(MethodView):
                 rendered_content = Markup(highlight(text, lexer, formatter))
             elif ct.startswith('image/'):
                 src = url_for('bepasty.download', name=name)
-                rendered_content = Markup(u'<img src="%s" width="800">' % src)
+                rendered_content = Markup(u'<img src="%s" alt="the image" width="800">' % src)
             elif ct.startswith('audio/'):
                 src = url_for('bepasty.download', name=name)
                 alt_msg = u'html5 audio element not supported by your browser.'
