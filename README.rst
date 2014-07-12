@@ -42,8 +42,9 @@ Features
 
   - filesystem storage (just use a filesystem directory to store
     <uuid>.meta and <uuid>.data files)
-  - ceph cluster storage (distributed & fault-tolerant - uses RADOS Block
-    Devices via librbd and librados)
+  - currently there are no other storage implementations in master branch
+    and releases. The "ceph cluster" storage implementation has issues and
+    currently lives in branch "ceph-storage" until these issues are fixed.
 
 * Keeping some control:
 

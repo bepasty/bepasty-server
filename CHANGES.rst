@@ -19,6 +19,14 @@ New features:
 * let admin directly delete locked files, without having to unlock first
 * new bepasty-object cli command
 
+Removed features:
+
+* removed ceph-storage implementation due to bugs, missing features and general
+  lack of maintenance. it is still in the repo in branch ceph-storage, waiting
+  to be merged back after these issues have been fixed:
+  https://github.com/bepasty/bepasty-server/issues/13
+  https://github.com/bepasty/bepasty-server/issues/38
+
 Fixes:
 
 * security fix: when showing potentially dangerous text/* types, force the
