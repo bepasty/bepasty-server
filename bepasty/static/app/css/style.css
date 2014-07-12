@@ -73,3 +73,9 @@ body {
 .alert-processing .alert-link {
     color: #959595;
 }
+
+/* if data is too wide, show scrollbars */
+.data {
+   width: 100%;
+   overflow: auto;
+}
