@@ -33,13 +33,15 @@ class Upload(object):
         return i
 
     @classmethod
-    def filter_filename(cls, filename, storage_name, content_type):
+    def filter_filename(cls, filename, storage_name, content_type, content_type_hint):
         """
         Filter filename.
         Only allow some basic characters and shorten to 50 characters.
         """
         # Make up filename if we don't have one
         if not filename:
+            if not content_type:
+                content_type = content_type_hint
             # note: stdlib mimetypes.guess_extension is total crap
             if content_type.startswith("text/"):
                 ext = ".txt"
@@ -49,7 +51,7 @@ class Upload(object):
         return cls._filename_re.sub('', filename)[:MAX_FILENAME_LENGTH]
 
     @classmethod
-    def filter_type(cls, ct, filename=None):
+    def filter_type(cls, ct, ct_hint, filename=None):
         """
         Filter Content-Type
         Only allow some basic characters and shorten to 50 characters.
@@ -57,14 +59,14 @@ class Upload(object):
         if not ct and filename:
             ct, encoding = mimetypes.guess_type(filename)
         if not ct:
-            return 'application/octet-stream'
+            return ct_hint
         return cls._type_re.sub('', ct)[:50]
 
     @classmethod
-    def meta_new(cls, item, input_size, input_filename, input_type, storage_name):
-        item.meta['filename'] = cls.filter_filename(input_filename, storage_name, input_type)
+    def meta_new(cls, item, input_size, input_filename, input_type, input_type_hint, storage_name):
+        item.meta['filename'] = cls.filter_filename(input_filename, storage_name, input_type, input_type_hint)
         item.meta['size'] = cls.filter_size(input_size)
-        item.meta['type'] = cls.filter_type(input_type, input_filename)
+        item.meta['type'] = cls.filter_type(input_type, input_type_hint, input_filename)
         item.meta['timestamp-upload'] = int(time.time())
         item.meta['timestamp-download'] = 0
         item.meta['locked'] = current_app.config['UPLOAD_LOCKED']

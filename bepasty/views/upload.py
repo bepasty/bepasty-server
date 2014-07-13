@@ -31,6 +31,7 @@ class UploadView(MethodView):
             content_type = (
                 f.headers.get('Content-Type') or
                 request.headers.get('Content-Type'))
+            content_type_hint = 'application/octet-stream'
             filename = f.filename
 
             # Get size of temporary file
@@ -41,6 +42,7 @@ class UploadView(MethodView):
             # t is already unicode, but we want utf-8 for storage
             t = t.encode('utf-8')
             content_type = request.form.get('contenttype')  # TODO: add coding
+            content_type_hint = 'text/plain'
             size = len(t)
             f = StringIO(t)
             filename = request.form.get('filename')
@@ -50,7 +52,7 @@ class UploadView(MethodView):
         name = ItemName.create()
         with current_app.storage.create(name, size) as item:
             size_written, file_hash = Upload.data(item, f, size)
-            Upload.meta_new(item, size, filename, content_type, name)
+            Upload.meta_new(item, size, filename, content_type, content_type_hint, name)
             Upload.meta_complete(item, file_hash)
 
         return redirect_next('bepasty.display', name=name)
@@ -70,7 +72,7 @@ class UploadNewView(MethodView):
         name = ItemName.create()
         with current_app.storage.create(name, data_size) as item:
             # Save meta-data
-            Upload.meta_new(item, data_size, data_filename, data_type, name)
+            Upload.meta_new(item, data_size, data_filename, data_type, 'application/octet-stream', name)
 
             return jsonify({'url': url_for('bepasty.upload_continue', name=name),
                             'name': name})
