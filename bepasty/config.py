@@ -70,6 +70,15 @@ class Config(object):
     #: otherwise bepasty will not work (and crash when trying to log in)!
     SECRET_KEY = ''
 
+    #: transmit cookie only over https (if you use http, set this to False)
+    SESSION_COOKIE_SECURE = True
+    #: use a permanent session (True, cookie will expire after the given
+    #: time, see below) or not (False, cookie will get removed when browser
+    #: is closed)
+    PERMANENT_SESSION = False
+    #: lifetime of the permanent session (in seconds)
+    PERMANENT_SESSION_LIFETIME = 31 * 24 * 3600
+
     #: not-logged-in users get these permissions -
     #: usually they are either no permissions ('') or read-only ('read').
     DEFAULT_PERMISSIONS = ''

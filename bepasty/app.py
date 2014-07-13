@@ -69,6 +69,8 @@ def create_app():
         """
         flaskg.logged_in = logged_in()
         flaskg.permissions = get_permissions()
+        if flaskg.logged_in:
+            session.permanent = current_app.config['PERMANENT_SESSION']
 
     def datetime_format(ts):
         """
