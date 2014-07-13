@@ -18,11 +18,8 @@ class DeleteView(MethodView):
             raise Forbidden()
         try:
             with current_app.storage.open(name) as item:
-                if not item.meta['complete']:
+                if not item.meta['complete'] and not may(ADMIN):
                     error = 'Upload incomplete. Try again later.'
-                else:
-                    error = None
-                if error:
                     return render_template('error.html', heading=item.meta['filename'], body=error), 409
 
                 if item.meta['locked'] and not may(ADMIN):

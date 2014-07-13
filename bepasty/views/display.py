@@ -17,12 +17,15 @@ from . import blueprint
 from .filelist import file_infos
 
 
-def rendering_allowed(item_type, item_size, use_pygments):
+def rendering_allowed(item_type, item_size, use_pygments, complete):
     """
     check if rendering is allowed, checks for:
 
+    * whether the item is completely uploaded
     * whether the size is within the configured limits for the content-type
     """
+    if not complete:
+        return False
     if use_pygments:
         # if we use pygments, special restrictions apply
         item_type = 'HIGHLIGHT_TYPES'
@@ -48,11 +51,9 @@ class DisplayView(MethodView):
             raise
 
         with item as item:
-            if not item.meta['complete']:
+            complete =  item.meta['complete']
+            if not complete and not may(ADMIN):
                 error = 'Upload incomplete. Try again later.'
-            else:
-                error = None
-            if error:
                 return render_template('error.html', heading=item.meta['filename'], body=error), 409
 
             if item.meta['locked'] and not may(ADMIN):
@@ -79,7 +80,7 @@ class DisplayView(MethodView):
                 else:
                     use_pygments = False
 
-            if rendering_allowed(ct, size, use_pygments):
+            if rendering_allowed(ct, size, use_pygments, complete):
                 if ct.startswith('text/x-bepasty-'):
                     # special bepasty items - must be first, don't feed to pygments
                     if ct == 'text/x-bepasty-list':
@@ -117,7 +118,10 @@ class DisplayView(MethodView):
                 else:
                     rendered_content = u"Can't render this content type."
             else:
-                rendered_content = u"Rendering not allowed (too big) - use download."
+                if not complete:
+                    rendered_content = u"Rendering not allowed (not complete). Is it still being uploaded?"
+                else:
+                    rendered_content = u"Rendering not allowed (too big?). Try download"
 
             return render_template('display.html', name=name, item=item,
                                    rendered_content=rendered_content)
