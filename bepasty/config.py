@@ -1,6 +1,10 @@
 # Copyright: 2013 Bastian Blank <bastian@waldi.eu.org>
 # License: BSD 2-clause, see LICENSE for details.
 
+K = 1000
+M = 1000 * K
+G = 1000 * M
+
 
 class Config(object):
     """This is the basic configuration class for bepasty."""
@@ -22,6 +26,28 @@ class Config(object):
     #: Smaller chunks increase transmission saftey and cpu
     #: Bigger chunks decrease transmission saftey and cpu
     EXPECTED_CHUNK_SIZE = 1 * 1024 * 1024
+
+    #: Setup maximum file sizes for specific content-types. If an item is
+    #: beyond the limit set for its type, it will not be rendered, but just
+    #: offered for download. Lookup within MAX_RENDER_SIZE is done by
+    #: first-match and it is automatically sorted for longer content-type-
+    #: prefixes first.
+    #:
+    #: Format of entries: content-type-prefix: max_size
+    MAX_RENDER_SIZE = {
+        # DEFAULT - matches everything not matched otherwise:
+        '': 1000 * K,
+        # we render text with pygments, expensive for server and client:
+        'text/': 100 * K,
+        # the in-browser pdf reader is sometimes rather slow and should
+        # rather not be used for big PDFs:
+        'application/pdf': 10 * M,
+        'application/x-pdf': 10 * M,
+        # images / audio / video can be rather big, we do not process them:
+        'image/': 10 * M,
+        'audio/': 1 * G,
+        'video/': 5 * G,
+    }
 
     #: Define storage backend, choose from:
     #:
