@@ -11,7 +11,7 @@ from werkzeug.exceptions import NotFound, Forbidden
 
 from ..utils.http import ContentRange, redirect_next
 from ..utils.name import ItemName
-from ..utils.upload import Upload, background_compute_hash
+from ..utils.upload import Upload, create_item, background_compute_hash
 from ..utils.permissions import *
 from . import blueprint
 
@@ -48,13 +48,7 @@ class UploadView(MethodView):
             filename = request.form.get('filename')
         else:
             raise NotImplementedError
-
-        name = ItemName.create()
-        with current_app.storage.create(name, size) as item:
-            size_written, file_hash = Upload.data(item, f, size)
-            Upload.meta_new(item, size, filename, content_type, content_type_hint, name)
-            Upload.meta_complete(item, file_hash)
-
+        name = create_item(f, filename, size, content_type, content_type_hint)
         return redirect_next('bepasty.display', name=name)
 
 

@@ -7,6 +7,7 @@ import mimetypes
 
 from flask import abort, current_app
 
+from .name import ItemName
 from .decorators import async
 from .hashing import compute_hash, hash_new
 
@@ -105,6 +106,18 @@ class Upload(object):
             size_input -= len_buf
 
         return size_written, hasher.hexdigest()
+
+
+def create_item(f, filename, size, content_type, content_type_hint):
+    """
+    create an item from open file <f> with the given metadata, return the item name.
+    """
+    name = ItemName.create()
+    with current_app.storage.create(name, size) as item:
+        size_written, file_hash = Upload.data(item, f, size)
+        Upload.meta_new(item, size, filename, content_type, content_type_hint, name)
+        Upload.meta_complete(item, file_hash)
+    return name
 
 
 @async
