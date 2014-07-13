@@ -16,8 +16,11 @@ class Config(object):
 
     #: Set max content length to 4 GB
     #: This is the maximum size a uploaded file can have
-    MAX_CONTENT_LENGTH = 4 * 1024 * 1024 * 1024
+    MAX_FILE_SIZE = 4 * 1024 * 1024 * 1024
 
+    #: The expected chunk size that is sent by clients using the rest api
+    #: Smaller chunks increase transmission saftey and cpu
+    #: Bigger chunks decrease transmission saftey and cpu
     EXPECTED_CHUNK_SIZE = 1 * 1024 * 1024
 
     #: Define storage backend, choose from:
