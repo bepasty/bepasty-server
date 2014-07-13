@@ -12,6 +12,7 @@ from flask import g as flaskg
 
 from .storage import create_storage
 from .views import blueprint
+from .apis import blueprint as blueprint_apis
 from .rest_api import rest_api
 from .utils.name import setup_werkzeug_routing
 from .utils.permissions import *
@@ -28,6 +29,7 @@ def create_app():
     setup_werkzeug_routing(app)
 
     app.register_blueprint(blueprint)
+    app.register_blueprint(blueprint_apis)
     app.register_blueprint(rest_api)
 
     @app.errorhandler(403)
