@@ -26,21 +26,11 @@ class Config(object):
     #: Define storage backend, choose from:
     #:
     #: - 'filesystem'
-    #: - 'ceph'
     #:
-    #: Note: ceph storage currently lacks names-in-storage iteration, see
-    #: issue #38. Thus we recommend using filesystem storage currently.
     STORAGE = 'filesystem'
 
     #: Filesystem storage path
     STORAGE_FILESYSTEM_DIRECTORY = '/tmp/'
-
-    #: Config file for CEPH storage
-    STORAGE_CEPH_CONFIG_FILE = '/etc/ceph/ceph.conf'
-    #: CEPH pool name for actually data
-    STORAGE_CEPH_POOL_DATA = 'bepasty-data'
-    #: CEPH pool name for meta data
-    STORAGE_CEPH_POOL_META = 'bepasty-meta'
 
     #: server secret key needed for secure cookies.
     #: you must set a very long, very random, very secret string here,

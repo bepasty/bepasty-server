@@ -1,7 +1,7 @@
 ChangeLog
 =========
 
-Release <TBD>
+Release 0.2.0
 -------------
 
 New features:
@@ -18,6 +18,15 @@ New features:
 * use iso-8859-1 if decoding with utf-8 fails
 * let admin directly delete locked files, without having to unlock first
 * new bepasty-object cli command
+* added REST api for bepasty-client-cli
+
+Removed features:
+
+* removed ceph-storage implementation due to bugs, missing features and general
+  lack of maintenance. it is still in the repo in branch ceph-storage, waiting
+  to be merged back after these issues have been fixed:
+  https://github.com/bepasty/bepasty-server/issues/13
+  https://github.com/bepasty/bepasty-server/issues/38
 
 Fixes:
 

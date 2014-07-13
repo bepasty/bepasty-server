@@ -22,6 +22,10 @@ body {
     font-family: monospace;
 }
 
+#files p {
+    word-break: break-all;
+}
+
 #filelist {
     height: auto;
     width: 100%;
@@ -68,4 +72,10 @@ body {
 
 .alert-processing .alert-link {
     color: #959595;
+}
+
+/* if data is too wide, show scrollbars */
+.data {
+   width: 100%;
+   overflow: auto;
 }

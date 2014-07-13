@@ -33,7 +33,7 @@ setup(
     description=description,
     long_description=long_description,
     url='http://github.com/bepasty/bepasty-server/',
-    keywords="text image audio video binary pastebin upload download service wsgi flask ceph",
+    keywords="text image audio video binary pastebin upload download service wsgi flask",
     packages=find_packages(),
     package_data={
         'bepasty': [

@@ -9,6 +9,12 @@ from flask import abort, current_app
 from .decorators import async
 from .hashing import compute_hash, hash_new
 
+# we limit to 250 characters as we do not want to accept arbitrarily long
+# filenames. other than that, there is no specific reason we could not
+# also take more (or less).
+MAX_FILENAME_LENGTH = 250
+
+
 
 class Upload(object):
     _filename_re = re.compile(r'[^a-zA-Z0-9 \*+:;.,_-]+')
@@ -39,7 +45,7 @@ class Upload(object):
             else:
                 ext = ".bin"
             filename = storage_name + ext
-        return cls._filename_re.sub('', filename)[:50]
+        return cls._filename_re.sub('', filename)[:MAX_FILENAME_LENGTH]
 
     @classmethod
     def filter_type(cls, i):

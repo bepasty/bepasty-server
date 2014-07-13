@@ -31,7 +31,7 @@ def create_app():
     app.register_blueprint(rest_api)
 
     @app.errorhandler(403)
-    def page_not_found(e):
+    def url_forbidden(e):
         heading = 'Forbidden'
         body = Markup("""\
             <p>
@@ -47,7 +47,7 @@ def create_app():
         return render_template('error.html', heading=heading, body=body), 403
 
     @app.errorhandler(404)
-    def page_not_found(e):
+    def url_not_found(e):
         heading = 'Not found'
         body = Markup("""\
             <p>
