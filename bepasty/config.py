@@ -35,8 +35,8 @@ class Config(object):
     #:
     #: Format of entries: content-type-prefix: max_size
     MAX_RENDER_SIZE = {
-        # DEFAULT - matches everything not matched otherwise:
-        '': 1000 * K,
+        # each list entry has 38 bytes, do not render > 1000 items
+        'text/x-bepasty-list': 1000 * 38,
         # we render text with pygments, expensive for server and client:
         'text/': 100 * K,
         # the in-browser pdf reader is sometimes rather slow and should
@@ -47,6 +47,11 @@ class Config(object):
         'image/': 10 * M,
         'audio/': 1 * G,
         'video/': 5 * G,
+        # DEFAULT - matches everything not matched otherwise.
+        # As we have catched everything we are able to render already,
+        # this maybe should be a medium size, just for the case we forget
+        # something:
+        '': 1 * M,
     }
 
     #: Define storage backend, choose from:
