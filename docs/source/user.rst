@@ -1,6 +1,6 @@
-=============
-Using bepasty
-=============
+=============================
+Using bepasty's web interface
+=============================
 
 Logging in and Permissions
 ==========================

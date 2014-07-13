@@ -13,6 +13,7 @@ Contents
 
    intro
    user
+   user-cli
    quickstart
    install-tutorial
    changelog
