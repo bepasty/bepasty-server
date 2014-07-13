@@ -33,6 +33,9 @@ def get_permissions():
     if auth:
         # http basic auth header present
         permissions = lookup_permissions(auth.password)
+    elif 'token' in request.values:
+        # token present in query args or post form (can be used by cli clients)
+        permissions = lookup_permissions(request.values['token'])
     else:
         # look into session, login might have put something there
         permissions = session.get(PERMISSIONS)
