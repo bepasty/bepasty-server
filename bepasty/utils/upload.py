@@ -3,6 +3,7 @@
 
 import re
 import time
+import mimetypes
 
 from flask import abort, current_app
 
@@ -48,20 +49,22 @@ class Upload(object):
         return cls._filename_re.sub('', filename)[:MAX_FILENAME_LENGTH]
 
     @classmethod
-    def filter_type(cls, i):
+    def filter_type(cls, ct, filename=None):
         """
         Filter Content-Type
         Only allow some basic characters and shorten to 50 characters.
         """
-        if not i:
+        if not ct and filename:
+            ct, encoding = mimetypes.guess_type(filename)
+        if not ct:
             return 'application/octet-stream'
-        return cls._type_re.sub('', i)[:50]
+        return cls._type_re.sub('', ct)[:50]
 
     @classmethod
     def meta_new(cls, item, input_size, input_filename, input_type, storage_name):
         item.meta['filename'] = cls.filter_filename(input_filename, storage_name, input_type)
         item.meta['size'] = cls.filter_size(input_size)
-        item.meta['type'] = cls.filter_type(input_type)
+        item.meta['type'] = cls.filter_type(input_type, input_filename)
         item.meta['timestamp-upload'] = int(time.time())
         item.meta['timestamp-download'] = 0
         item.meta['locked'] = current_app.config['UPLOAD_LOCKED']
