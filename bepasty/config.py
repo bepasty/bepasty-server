@@ -37,8 +37,10 @@ class Config(object):
     MAX_RENDER_SIZE = {
         # each list entry has 38 bytes, do not render > 1000 items
         'text/x-bepasty-list': 1000 * 38,
-        # we render text with pygments, expensive for server and client:
-        'text/': 100 * K,
+        # stuff rendered with syntax highlighting (expensive for server and
+        # client) and also used for other text/* types as we use same code to
+        # get a (non-highlighted) display with line numbers:
+        'HIGHLIGHT_TYPES': 100 * K,
         # the in-browser pdf reader is sometimes rather slow and should
         # rather not be used for big PDFs:
         'application/pdf': 10 * M,

@@ -10,19 +10,22 @@ from werkzeug.exceptions import NotFound, Forbidden
 from pygments import highlight
 from pygments.lexers import get_lexer_for_mimetype
 from pygments.formatters import HtmlFormatter
-
+from pygments.util import ClassNotFound as NoPygmentsLexer
 
 from ..utils.permissions import *
 from . import blueprint
 from .filelist import file_infos
 
 
-def rendering_allowed(item_type, item_size):
+def rendering_allowed(item_type, item_size, use_pygments):
     """
     check if rendering is allowed, checks for:
 
     * whether the size is within the configured limits for the content-type
     """
+    if use_pygments:
+        # if we use pygments, special restrictions apply
+        item_type = 'HIGHLIGHT_TYPES'
     # create a tuple list [(content_type_prefix, max_size), ...] with long prefixes first
     ct_size = sorted(current_app.config['MAX_RENDER_SIZE'].iteritems(),
                       key=lambda e: len(e[0]), reverse=True)
@@ -63,16 +66,29 @@ class DisplayView(MethodView):
 
             size = item.meta['size']
             ct = item.meta['type']
-            if rendering_allowed(ct, size):
+            try:
+                get_lexer_for_mimetype(ct)
+                use_pygments = True
+                ct_pygments = ct
+            except NoPygmentsLexer:
+                if ct.startswith('text/'):
+                    # seems like we found a text type not supported by pygments
+                    # use text/plain so we get a display with line numbers
+                    use_pygments = True
+                    ct_pygments = 'text/plain'
+                else:
+                    use_pygments = False
+
+            if rendering_allowed(ct, size, use_pygments):
                 if ct.startswith('text/x-bepasty-'):
-                    # special bepasty items
+                    # special bepasty items - must be first, don't feed to pygments
                     if ct == 'text/x-bepasty-list':
                         names = read_data(item).splitlines()
                         files = sorted(file_infos(names), key=lambda f: f['filename'])
                         rendered_content = Markup(render_template('filelist_tableonly.html', files=files))
                     else:
                         rendered_content = u"Can't render this content type."
-                elif ct.startswith('text/'):
+                elif use_pygments:
                     text = read_data(item)
                     # TODO we don't have the coding in metadata
                     try:
@@ -80,7 +96,7 @@ class DisplayView(MethodView):
                     except UnicodeDecodeError:
                         # well, it is not utf-8 or ascii, so we can only guess...
                         text = text.decode('iso-8859-1')
-                    lexer = get_lexer_for_mimetype(ct)
+                    lexer = get_lexer_for_mimetype(ct_pygments)
                     formatter = HtmlFormatter(linenos='table', lineanchors="L", anchorlinenos=True)
                     rendered_content = Markup(highlight(text, lexer, formatter))
                 elif ct.startswith('image/'):
