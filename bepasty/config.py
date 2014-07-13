@@ -1,10 +1,6 @@
 # Copyright: 2013 Bastian Blank <bastian@waldi.eu.org>
 # License: BSD 2-clause, see LICENSE for details.
 
-K = 1000
-M = 1000 * K
-G = 1000 * M
-
 
 class Config(object):
     """This is the basic configuration class for bepasty."""
@@ -40,20 +36,20 @@ class Config(object):
         # stuff rendered with syntax highlighting (expensive for server and
         # client) and also used for other text/* types as we use same code to
         # get a (non-highlighted) display with line numbers:
-        'HIGHLIGHT_TYPES': 100 * K,
+        'HIGHLIGHT_TYPES': 100 * 1000,
         # the in-browser pdf reader is sometimes rather slow and should
         # rather not be used for big PDFs:
-        'application/pdf': 10 * M,
-        'application/x-pdf': 10 * M,
+        'application/pdf': 10 * 1000 * 1000,
+        'application/x-pdf': 10 * 1000 * 1000,
         # images / audio / video can be rather big, we do not process them:
-        'image/': 10 * M,
-        'audio/': 1 * G,
-        'video/': 5 * G,
+        'image/': 10 * 1000 * 1000,
+        'audio/': 1 * 1000 * 1000 * 1000,
+        'video/': 5 * 1000 * 1000 * 1000,
         # DEFAULT - matches everything not matched otherwise.
         # As we have catched everything we are able to render already,
         # this maybe should be a medium size, just for the case we forget
         # something:
-        '': 1 * M,
+        '': 1 * 1000 * 1000,
     }
 
     #: Define storage backend, choose from:
