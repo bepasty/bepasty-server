@@ -16,6 +16,9 @@ class Config(object):
 
     #: The site admin can set some maximum allowed file size he wants to
     #: accept here. This is the maximum size an uploaded file may have.
+    #:
+    #: Keep this in sync with bepasty/static/app/js/fileuploader.js:
+    #: maxFileSize: 5 * 1000 * 1000 * 1000
     MAX_ALLOWED_FILE_SIZE = 5 * 1000 * 1000 * 1000
 
     #: The maximum http request body size.

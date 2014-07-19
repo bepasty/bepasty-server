@@ -7,7 +7,7 @@ $(function () {
             autoUpload: true,
             singleFileUploads: true,
             maxChunkSize: 1 * 1024 * 1024, // 1 MiB
-            maxFileSize: 4 * 1024 * 1024 * 1024 // 4 GiB
+            maxFileSize: 5 * 1000 * 1000 * 1000 // 5 GB
         })
 
         .on('fileuploadadd', function (e, data) {
