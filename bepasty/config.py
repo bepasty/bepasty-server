@@ -18,10 +18,19 @@ class Config(object):
     #: accept here. This is the maximum size an uploaded file may have.
     MAX_ALLOWED_FILE_SIZE = 5 * 1000 * 1000 * 1000
 
-    #: The expected chunk size that is sent by clients using the rest api
-    #: Smaller chunks increase transmission saftey and cpu
-    #: Bigger chunks decrease transmission saftey and cpu
-    EXPECTED_CHUNK_SIZE = 1 * 1024 * 1024
+    #: The maximum http request body size.
+    #: This is an information given to rest api clients so they can adjust
+    #: their chunk size accordingly.
+    #:
+    #: This needs to be in sync with (or at least not beyond) the web server
+    #: settings:
+    #: apache:  LimitRequestBody 1048576 # apache default is 0 (unlimited)
+    #: nginx:  client_max_body_size 1m; # nginx default (== 1048576)
+    #:
+    #: Also, bepasty/static/app/js/fileuploader.js needs to be in sync (or
+    #: at least not beyond the web server setting) , too:
+    #: maxChunkSize: 1 * 1024 * 1024
+    MAX_BODY_SIZE = 1 * 1024 * 1024
 
     #: Setup maximum file sizes for specific content-types. If an item is
     #: beyond the limit set for its type, it will not be rendered, but just

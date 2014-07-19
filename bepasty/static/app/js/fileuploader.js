@@ -6,7 +6,7 @@ $(function () {
             dataType: 'json',
             autoUpload: true,
             singleFileUploads: true,
-            maxChunkSize: 10 * 1024 * 1024, // 10 MiB
+            maxChunkSize: 1 * 1024 * 1024, // 1 MiB
             maxFileSize: 4 * 1024 * 1024 * 1024 // 4 GiB
         })
 
