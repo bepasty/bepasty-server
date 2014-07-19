@@ -29,7 +29,7 @@ class Upload(object):
         Check for advertised size.
         """
         i = int(i)
-        if i >= current_app.config['MAX_FILE_SIZE']:
+        if i > current_app.config['MAX_ALLOWED_FILE_SIZE']:
             abort(413)
         return i
 

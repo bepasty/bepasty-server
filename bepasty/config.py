@@ -14,9 +14,9 @@ class Config(object):
     #: uploaded file, set this to True.
     UPLOAD_LOCKED = False
 
-    #: Set max content length to 4 GB
-    #: This is the maximum size a uploaded file can have
-    MAX_FILE_SIZE = 4 * 1024 * 1024 * 1024
+    #: The site admin can set some maximum allowed file size he wants to
+    #: accept here. This is the maximum size an uploaded file may have.
+    MAX_ALLOWED_FILE_SIZE = 5 * 1000 * 1000 * 1000
 
     #: The expected chunk size that is sent by clients using the rest api
     #: Smaller chunks increase transmission saftey and cpu
