@@ -38,16 +38,13 @@ class DownloadView(MethodView):
         if item.meta['locked'] and not may(ADMIN):
             raise Forbidden()
         # check if maxlife is over, if maxlife exists
-        if 'timestamp-max-life' in item.meta:
-            if (item.meta['timestamp-max-life'] > 0
-                    and
-                    item.meta['timestamp-max-life'] < time.time()):
-                # delete the file if it exists
-                try:
-                    current_app.storage.remove(name)
-                except (OSError, IOError) as e:
-                    pass
-                raise NotFound()
+        if 0 < item.meta['timestamp-max-life'] < time.time():
+            # delete the file if it exists
+            try:
+                current_app.storage.remove(name)
+            except (OSError, IOError) as e:
+                pass
+            raise NotFound()
 
         def stream():
             with item as _item:

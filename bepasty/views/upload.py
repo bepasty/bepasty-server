@@ -16,6 +16,7 @@ from ..utils.name import ItemName
 from ..utils.upload import Upload, create_item, background_compute_hash
 from ..utils.permissions import *
 from . import blueprint
+from ..utils.date_funcs import time_unit_to_sec
 
 
 class UploadView(MethodView):
@@ -51,19 +52,9 @@ class UploadView(MethodView):
         else:
             raise NotImplementedError
         # set max lifetime
-        maxlife_unit = request.form.get('maxlife-unit')
+        maxlife_unit = request.form.get('maxlife-unit').upper()
         maxlife_value = int(request.form.get('maxlife-value'))
-        units = {
-            'minutes': 60,
-            'hours': 60 * 60,
-            'days': 60 * 60 * 24,
-            'weeks': 60 * 60 * 24 * 7,
-            'months': 60 * 60 * 24 * 30,
-            'years': 60 * 60 * 24 * 365,
-            'forever': -1
-        }
-        maxlife_timestamp = int(time.time()) + units[maxlife_unit] * maxlife_value\
-            if units[maxlife_unit] > 0 else units[maxlife_unit]
+        maxlife_timestamp = int(time.time()) + time_unit_to_sec(maxlife_value, maxlife_unit)
         name = create_item(f, filename, size, content_type, content_type_hint, maxlife_stamp=maxlife_timestamp)
         return redirect_next('bepasty.display', name=name, _anchor=url_quote(filename))
 
@@ -81,18 +72,9 @@ class UploadNewView(MethodView):
 
         # set max lifetime
         maxlife_value = int(data['maxlife_value'])
-        maxlife_unit = data['maxlife_unit']
-        units = {
-            'minutes': 60,
-            'hours': 60 * 60,
-            'days': 60 * 60 * 24,
-            'weeks': 60 * 60 * 24 * 7,
-            'months': 60 * 60 * 24 * 30,
-            'years': 60 * 60 * 24 * 365,
-            'forever': -1
-        }
-        maxlife_timestamp = int(time.time()) + units[maxlife_unit] * maxlife_value\
-            if units[maxlife_unit] > 0 else units[maxlife_unit]
+        maxlife_unit = data['maxlife_unit'].upper()
+
+        maxlife_timestamp = int(time.time()) + time_unit_to_sec(maxlife_value, maxlife_unit)
 
         name = ItemName.create()
         with current_app.storage.create(name, data_size) as item:

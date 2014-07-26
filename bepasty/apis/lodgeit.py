@@ -11,6 +11,7 @@ from pygments.lexers import get_lexer_by_name, get_all_lexers
 
 from . import blueprint
 from werkzeug.urls import url_quote
+from ..utils.date_funcs import time_unit_to_sec
 from ..utils.permissions import *
 from ..utils.http import redirect_next
 from ..utils.name import ItemName
@@ -54,7 +55,7 @@ class LodgeitUpload(MethodView):
         size = len(t)
         f = StringIO(t)
         # set max lifetime
-        maxlife_unit = request.form.get('maxlife-unit')
+        maxlife_unit = request.form.get('maxlife-unit').upper()
         maxlife_value = int(request.form.get('maxlife-value'))
         units = {
             'minutes': 60,
@@ -65,9 +66,7 @@ class LodgeitUpload(MethodView):
             'years': 60 * 60 * 24 * 365,
             'forever': -1
         }
-        maxlife_timestamp = int(time.time() + units[maxlife_unit]
-                                * maxlife_value) \
-            if units[maxlife_unit] > 0 else units[maxlife_unit]
+        maxlife_timestamp = int(time.time()) + time_unit_to_sec(maxlife_value, maxlife_unit)
         name = create_item(f, filename, size, content_type, content_type_hint,
                            maxlife_stamp=maxlife_timestamp)
         return redirect_next('bepasty.display', name=name, _anchor=url_quote(filename))

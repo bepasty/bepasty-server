@@ -51,6 +51,8 @@ class Main(object):
                 item.meta['size'] = item.data.size
             if 'hash' not in item.meta:
                 item.meta['hash'] = ''  # see do_consistency
+            if 'timestamp-max-life' not in item.meta:
+                item.meta['timestamp-max-life'] = -1
 
     _parser = _subparsers.add_parser('migrate', help='Migrate metadata to current schema')
     _parser.set_defaults(func=do_migrate)
