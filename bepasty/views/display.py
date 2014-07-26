@@ -9,10 +9,10 @@ from flask.views import MethodView
 from werkzeug.exceptions import NotFound, Forbidden
 from pygments import highlight
 from pygments.lexers import get_lexer_for_mimetype
-from pygments.formatters import HtmlFormatter
 from pygments.util import ClassNotFound as NoPygmentsLexer
 
 from ..utils.permissions import *
+from ..utils.formatters import CustomHtmlFormatter
 from . import blueprint
 from .filelist import file_infos
 
@@ -112,7 +112,8 @@ class DisplayView(MethodView):
                         # well, it is not utf-8 or ascii, so we can only guess...
                         text = text.decode('iso-8859-1')
                     lexer = get_lexer_for_mimetype(ct_pygments)
-                    formatter = HtmlFormatter(linenos='table', lineanchors="L", anchorlinenos=True)
+                    formatter = CustomHtmlFormatter(linenos='table', lineanchors="L",
+                                                    lineparagraphs="L", anchorlinenos=True)
                     rendered_content = Markup(highlight(text, lexer, formatter))
                 else:
                     rendered_content = u"Can't render this content type."
