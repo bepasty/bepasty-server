@@ -53,3 +53,21 @@ Features
   - assign default permissions to not-logged-in users
   - you can purge files from storage by age, inactivity, size, type, ...
   - you can do consistency checks on the storage
+
+Development
+-----------
+
+::
+
+    # Clone the official bepasty-server (or your fork, if you want to send PULL requests)
+    git clone https://github.com/bepasty/bepasty-server.git
+    cd bepasty-server
+    # Create a new virtualenv
+    virtualenv ~/bepasty
+    # Activate the virtualenv
+    source ~/bepasty/bin/activate
+    # This will use the current directory for the installed package
+    # Very useful during development! It will also autoreload when files are changed
+    pip install -e .
+    # Run the bepasty-server in debug mode. The server is reachable in http://127.0.0.1:5000
+    bepasty-server --debug
