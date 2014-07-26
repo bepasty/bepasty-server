@@ -79,3 +79,37 @@ body {
    width: 100%;
    overflow: auto;
 }
+
+.line-highlight {
+    background-color: #ffc;
+}
+
+/* override pygments table highlighting style */
+table.highlighttable {
+    width: 100%;
+}
+
+.linenodiv pre, .highlight pre {
+    margin-bottom: 0;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
+}
+
+.highlight p {
+    margin: 0;
+    padding: 0 0.7em;
+}
+
+.linenodiv pre {
+    border-right-style: none;
+}
+
+.linenodiv pre a:hover {
+    text-decoration: none;
+}
+
+.highlight pre {
+    padding-left: 0;
+    padding-right: 0;
+}
