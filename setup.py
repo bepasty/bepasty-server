@@ -15,6 +15,8 @@ with open(readme_path) as f:
 install_requires = [
     'flask>=0.10',
     'Pygments',
+    'xstatic',
+    'xstatic-pygments',
 ]
 
 try:
