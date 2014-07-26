@@ -10,6 +10,7 @@ from werkzeug.exceptions import Forbidden
 from pygments.lexers import get_lexer_by_name, get_all_lexers
 
 from . import blueprint
+from werkzeug.urls import url_quote
 from ..utils.permissions import *
 from ..utils.http import redirect_next
 from ..utils.name import ItemName
@@ -69,7 +70,7 @@ class LodgeitUpload(MethodView):
             if units[maxlife_unit] > 0 else units[maxlife_unit]
         name = create_item(f, filename, size, content_type, content_type_hint,
                            maxlife_stamp=maxlife_timestamp)
-        return redirect_next('bepasty.display', name=name)
+        return redirect_next('bepasty.display', name=name, _anchor=url_quote(filename))
 
 
 blueprint.add_url_rule('/lodgeit/', view_func=LodgeitUpload.as_view('lodgeit'))

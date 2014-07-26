@@ -9,6 +9,7 @@ import time
 from flask import abort, current_app, jsonify, request, url_for
 from flask.views import MethodView
 from werkzeug.exceptions import NotFound, Forbidden
+from werkzeug.urls import url_quote
 
 from ..utils.http import ContentRange, redirect_next
 from ..utils.name import ItemName
@@ -64,7 +65,7 @@ class UploadView(MethodView):
         maxlife_timestamp = int(time.time()) + units[maxlife_unit] * maxlife_value\
             if units[maxlife_unit] > 0 else units[maxlife_unit]
         name = create_item(f, filename, size, content_type, content_type_hint, maxlife_stamp=maxlife_timestamp)
-        return redirect_next('bepasty.display', name=name)
+        return redirect_next('bepasty.display', name=name, _anchor=url_quote(filename))
 
 
 class UploadNewView(MethodView):
@@ -140,7 +141,8 @@ class UploadContinueView(MethodView):
                 'name': name,
                 'filename': item.meta['filename'],
                 'size': item.meta['size'],
-                'url': url_for('bepasty.display', name=name),
+                'url': "{}#{}".format(url_for('bepasty.display', name=name),
+                                      item.meta['filename']),
             }]})
 
         if is_complete and not file_hash:
