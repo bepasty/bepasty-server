@@ -30,8 +30,7 @@ def rendering_allowed(item_type, item_size, use_pygments, complete):
         # if we use pygments, special restrictions apply
         item_type = 'HIGHLIGHT_TYPES'
     # create a tuple list [(content_type_prefix, max_size), ...] with long prefixes first
-    ct_size = sorted(current_app.config['MAX_RENDER_SIZE'].iteritems(),
-                      key=lambda e: len(e[0]), reverse=True)
+    ct_size = sorted(current_app.config['MAX_RENDER_SIZE'].iteritems(), key=lambda e: len(e[0]), reverse=True)
     for ct, size in ct_size:
         if item_type.startswith(ct):
             return item_size <= size
@@ -51,7 +50,7 @@ class DisplayView(MethodView):
             raise
 
         with item as item:
-            complete =  item.meta['complete']
+            complete = item.meta['complete']
             if not complete and not may(ADMIN):
                 error = 'Upload incomplete. Try again later.'
                 return render_template('error.html', heading=item.meta['filename'], body=error), 409

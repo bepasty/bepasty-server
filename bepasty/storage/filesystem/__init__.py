@@ -5,6 +5,7 @@ import collections
 import os
 import pickle
 import logging
+import tempfile
 
 logger = logging.getLogger(__name__)
 
@@ -14,8 +15,17 @@ class Storage(object):
     Filesystem storage - store meta and data into separate files in a directory.
     """
     def __init__(self, app):
-        self.directory = app.config['STORAGE_FILESYSTEM_DIRECTORY']
-        app.storage = self
+        storage_dir = app.config['STORAGE_FILESYSTEM_DIRECTORY']
+        try:
+            f, fname = tempfile.mkstemp(dir=storage_dir)
+        except OSError as e:
+            logger.error("Could write file in storage directory: %s\n %s", storage_dir, e)
+            raise
+        else:
+            f.close()
+            os.remove(fname)
+            self.directory = storage_dir
+            app.storage = self
 
     def _filename(self, name):
         if '/' in name:
