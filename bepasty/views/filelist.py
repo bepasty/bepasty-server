@@ -5,6 +5,7 @@ import errno
 
 from flask import current_app, render_template
 from flask.views import MethodView
+import time
 from werkzeug.exceptions import Forbidden
 
 from . import blueprint
@@ -26,6 +27,15 @@ def file_infos(names=None):
         try:
             with storage.open(name) as item:
                 meta = dict(item.meta)
+                if 'timestamp-max-life' in item.meta:
+                    if (item.meta['timestamp-max-life'] > 0
+                            and
+                            item.meta['timestamp-max-life'] < time.time()):
+                        # delete the file if it exists
+                        try:
+                            current_app.storage.remove(name)
+                        except (OSError, IOError) as e:
+                            pass
                 meta['id'] = name
                 yield meta
         except (OSError, IOError) as e:

@@ -18,6 +18,7 @@ Features
     file and, if possible, we also render the file contents
   - if you uploaded multiple files, you can create a pastebin with the list
     of all these files - with a single click!
+  - Set an expiration date for your files
 
 * Text files:
 

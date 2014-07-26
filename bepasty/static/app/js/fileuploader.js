@@ -44,7 +44,9 @@ $(function () {
                 data: JSON.stringify({
                     filename: data.files[0].name,
                     size: data.files[0].size,
-                    type: data.files[0].type
+                    type: data.files[0].type,
+                    maxlife_unit: $("select[name=maxlife-unit] option:selected").val(),
+                    maxlife_value: $("input[name=maxlife-value]").val()
                 }),
                 contentType: 'application/json',
                 success: function (result) {

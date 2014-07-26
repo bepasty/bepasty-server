@@ -3,6 +3,7 @@
 
 import errno
 import base64
+import time
 from io import BytesIO
 
 from . import rest_api
@@ -54,14 +55,31 @@ class ItemUploadView(MethodView):
         # Check the file size from Request
         Upload.filter_size(file_size)
 
+
+
         # Check if Transaction-ID is available for continued upload
         if not request.headers.get("Transaction-Id"):
             # Create ItemName and empty file in Storage
             name = ItemName.create()
             item = current_app.storage.create(name, 0)
 
+            # set max lifetime
+            maxlife_unit = request.form.get('maxlife-unit')
+            maxlife_value = int(request.form.get('maxlife-value'))
+            units = {
+                'forever': -1,
+                'minutes': maxlife_value * 60,
+                'hours': maxlife_value * 60 * 60,
+                'days': maxlife_value * 60 * 60 * 24,
+                'weeks': maxlife_value * 60 * 60 * 24 * 7,
+                'years': maxlife_value * 60 * 60 * 24 * 365
+            }
+            maxlife_timestamp = time.time() + units[maxlife_unit]\
+                if units[maxlife_unit] > 0 else units[maxlife_unit]
             # Fill meta with data from Request
-            Upload.meta_new(item, 0, file_name, file_type, 'application/octet-stream', name)
+            Upload.meta_new(item, 0, file_name, file_type,
+                            'application/octet-stream',
+                            name, maxlife_stamp=maxlife_timestamp)
         else:
             # Get file name from Transaction-ID and open from Storage
             name = base64.b64decode(request.headers.get("Transaction-Id"))

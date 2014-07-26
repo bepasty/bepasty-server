@@ -2,6 +2,7 @@
 # License: BSD 2-clause, see LICENSE for details.
 
 from StringIO import StringIO
+import time
 
 from flask import request
 from flask.views import MethodView
@@ -51,7 +52,20 @@ class LodgeitUpload(MethodView):
         t = t.encode('utf-8')
         size = len(t)
         f = StringIO(t)
-        name = create_item(f, filename, size, content_type, content_type_hint)
+        # set max lifetime
+        maxlife_unit = request.form.get('maxlife-unit')
+        maxlife_value = int(request.form.get('maxlife-value'))
+        units = {
+            'forever': -1,
+            'minutes': maxlife_value * 60,
+            'hours': maxlife_value * 60 * 60,
+            'days': maxlife_value * 60 * 60 * 24,
+            'weeks': maxlife_value * 60 * 60 * 24 * 7,
+            'years': maxlife_value * 60 * 60 * 24 * 365
+        }
+        maxlife_timestamp = time.time() + units[maxlife_unit]\
+            if units[maxlife_unit] > 0 else units[maxlife_unit]
+        name = create_item(f, filename, size, content_type, content_type_hint, maxlife_stamp=maxlife_timestamp)
         return redirect_next('bepasty.display', name=name)
 
 

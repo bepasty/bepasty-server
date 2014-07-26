@@ -50,6 +50,9 @@
         Size {{ item.meta['size'] }} bytes,
         uploaded {{ item.meta['timestamp-upload'] | datetime }} (UTC),
         downloaded {{ item.meta['timestamp-download'] | datetime }} (UTC).
+        {% if item.meta['timestamp-max-life'] > 0 %}
+        until {{ item.meta['timestamp-max-life'] | datetime }} (UTC).
+        {% endif %}
         <br/>
         SHA256-Hash: <code>{{ item.meta['hash'] }}</code>
         </p>

@@ -64,7 +64,7 @@ class Upload(object):
         return cls._type_re.sub('', ct)[:50]
 
     @classmethod
-    def meta_new(cls, item, input_size, input_filename, input_type, input_type_hint, storage_name):
+    def meta_new(cls, item, input_size, input_filename, input_type, input_type_hint, storage_name, maxlife_stamp=0):
         item.meta['filename'] = cls.filter_filename(input_filename, storage_name, input_type, input_type_hint)
         item.meta['size'] = cls.filter_size(input_size)
         item.meta['type'] = cls.filter_type(input_type, input_type_hint, input_filename)
@@ -73,6 +73,7 @@ class Upload(object):
         item.meta['locked'] = current_app.config['UPLOAD_LOCKED']
         item.meta['complete'] = False
         item.meta['hash'] = ''
+        item.meta['timestamp-max-life'] = maxlife_stamp
 
     @classmethod
     def meta_complete(cls, item, file_hash):
@@ -108,14 +109,15 @@ class Upload(object):
         return size_written, hasher.hexdigest()
 
 
-def create_item(f, filename, size, content_type, content_type_hint):
+def create_item(f, filename, size, content_type, content_type_hint,
+                maxlife_stamp=-1):
     """
     create an item from open file <f> with the given metadata, return the item name.
     """
     name = ItemName.create()
     with current_app.storage.create(name, size) as item:
         size_written, file_hash = Upload.data(item, f, size)
-        Upload.meta_new(item, size, filename, content_type, content_type_hint, name)
+        Upload.meta_new(item, size, filename, content_type, content_type_hint, name, maxlife_stamp=maxlife_stamp)
         Upload.meta_complete(item, file_hash)
     return name
 
