@@ -9,13 +9,14 @@ from bepasty import (project, version, license, description,
 
 readme_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                            'README.rst')
+
 with open(readme_path) as f:
     long_description = f.read()
 
-install_requires = [
-    'flask>=0.10',
-    'Pygments',
-]
+# Read the requirements from the filesystem
+req_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                        'requirements.d', 'all.txt')
+install_requires = open(req_file).read().split()
 
 try:
     import importlib
