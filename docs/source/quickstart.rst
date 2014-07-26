@@ -41,6 +41,19 @@ first, then modify it:
     # ...
 
 
+Important notes:
+
+* if you copied the file from the ``bepasty/config.py`` it will have
+  a "class Config" in it and all the settings are inside that class. This is
+  **not** what you need. Due to how flask config files work, you need to
+  remove the class statement and outdent all the settings, so you just have
+  global KEY = VALUE statements left on the top level of the config file.
+* if you run over http (like for trying it locally / for development), you
+  need to change the configuration to use SESSION_SECURE_COOKIE = False
+  (otherwise you can not login as it won't transmit the cookie over unsecure
+  http).
+
+
 Starting bepasty server
 -----------------------
 
