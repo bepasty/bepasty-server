@@ -7,16 +7,17 @@ from setuptools import setup, find_packages
 from bepasty import (project, version, license, description,
                      author, author_email, maintainer, maintainer_email)
 
-readme_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                           'README.rst')
+this_dir = os.path.dirname(os.path.abspath(__file__))
+
+readme_path = os.path.join(this_dir, 'README.rst')
 
 with open(readme_path) as f:
     long_description = f.read()
 
 # Read the requirements from the filesystem
-req_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                        'requirements.d', 'all.txt')
-install_requires = open(req_file).read().split()
+req_file = os.path.join(this_dir, 'requirements.d', 'all.txt')
+with open(req_file) as f:
+    install_requires = f.read().splitlines()
 
 try:
     import importlib
