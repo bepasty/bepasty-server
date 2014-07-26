@@ -89,17 +89,6 @@ class DisplayView(MethodView):
                         rendered_content = Markup(render_template('filelist_tableonly.html', files=files))
                     else:
                         rendered_content = u"Can't render this content type."
-                elif use_pygments:
-                    text = read_data(item)
-                    # TODO we don't have the coding in metadata
-                    try:
-                        text = text.decode('utf-8')
-                    except UnicodeDecodeError:
-                        # well, it is not utf-8 or ascii, so we can only guess...
-                        text = text.decode('iso-8859-1')
-                    lexer = get_lexer_for_mimetype(ct_pygments)
-                    formatter = HtmlFormatter(linenos='table', lineanchors="L", anchorlinenos=True)
-                    rendered_content = Markup(highlight(text, lexer, formatter))
                 elif ct.startswith('image/'):
                     src = url_for('bepasty.download', name=name)
                     rendered_content = Markup(u'<img src="%s" alt="the image" width="800">' % src)
@@ -115,6 +104,17 @@ class DisplayView(MethodView):
                     src = url_for('bepasty.inline', name=name)
                     link_txt = u'Click to see PDF'
                     rendered_content = Markup(u'<a href="%s">%s</a>' % (src, link_txt))
+                elif use_pygments:
+                    text = read_data(item)
+                    # TODO we don't have the coding in metadata
+                    try:
+                        text = text.decode('utf-8')
+                    except UnicodeDecodeError:
+                        # well, it is not utf-8 or ascii, so we can only guess...
+                        text = text.decode('iso-8859-1')
+                    lexer = get_lexer_for_mimetype(ct_pygments)
+                    formatter = HtmlFormatter(linenos='table', lineanchors="L", anchorlinenos=True)
+                    rendered_content = Markup(highlight(text, lexer, formatter))
                 else:
                     rendered_content = u"Can't render this content type."
             else:
