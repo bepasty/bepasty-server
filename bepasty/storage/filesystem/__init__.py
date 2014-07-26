@@ -17,11 +17,12 @@ class Storage(object):
     def __init__(self, app):
         storage_dir = app.config['STORAGE_FILESYSTEM_DIRECTORY']
         try:
-            _, tmp_file = tempfile.mkstemp(dir=storage_dir)
+            fd, tmp_file = tempfile.mkstemp(dir=storage_dir)
         except OSError as e:
-            logger.error("Could write file in storage directory: %s\n %s", storage_dir, e)
+            logger.error("Could not write file in storage directory: %s\n %s", storage_dir, e)
             raise
         else:
+            os.close(fd)
             os.remove(tmp_file)
             self.directory = storage_dir
             app.storage = self
