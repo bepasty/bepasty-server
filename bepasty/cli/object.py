@@ -82,6 +82,7 @@ class Main(object):
             print 'removing: %s (%s %dB %s)' % (name, file_name, file_size, file_type)
             if not args.purge_dry_run:
                 storage.remove(name)
+
     _parser = _subparsers.add_parser('purge', help='Purge objects')
     _parser.set_defaults(func=do_purge)
     _parser.add_argument('-D', '--dry-run', dest='purge_dry_run', action='store_true',

@@ -63,8 +63,10 @@ class Upload(object):
         return cls._type_re.sub('', ct)[:50]
 
     @classmethod
-    def meta_new(cls, item, input_size, input_filename, input_type, input_type_hint, storage_name, maxlife_stamp=0):
-        item.meta['filename'] = cls.filter_filename(input_filename, storage_name, input_type, input_type_hint)
+    def meta_new(cls, item, input_size, input_filename, input_type,
+                 input_type_hint, storage_name, maxlife_stamp=-1):
+        item.meta['filename'] = cls.filter_filename(input_filename,
+                                                    storage_name, input_type, input_type_hint)
         item.meta['size'] = cls.filter_size(input_size)
         item.meta['type'] = cls.filter_type(input_type, input_type_hint, input_filename)
         item.meta['timestamp-upload'] = int(time.time())
@@ -116,7 +118,8 @@ def create_item(f, filename, size, content_type, content_type_hint,
     name = ItemName.create()
     with current_app.storage.create(name, size) as item:
         size_written, file_hash = Upload.data(item, f, size)
-        Upload.meta_new(item, size, filename, content_type, content_type_hint, name, maxlife_stamp=maxlife_stamp)
+        Upload.meta_new(item, size, filename, content_type, content_type_hint,
+                        name, maxlife_stamp=maxlife_stamp)
         Upload.meta_complete(item, file_hash)
     return name
 

@@ -22,7 +22,7 @@ class Storage(object):
             logger.error("Could write file in storage directory: %s\n %s", storage_dir, e)
             raise
         else:
-            f.close()
+            os.close(f)
             os.remove(fname)
             self.directory = storage_dir
             app.storage = self

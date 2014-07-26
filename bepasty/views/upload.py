@@ -53,14 +53,15 @@ class UploadView(MethodView):
         maxlife_unit = request.form.get('maxlife-unit')
         maxlife_value = int(request.form.get('maxlife-value'))
         units = {
-            'forever': -1,
-            'minutes': maxlife_value * 60,
-            'hours': maxlife_value * 60 * 60,
-            'days': maxlife_value * 60 * 60 * 24,
-            'weeks': maxlife_value * 60 * 60 * 24 * 7,
-            'years': maxlife_value * 60 * 60 * 24 * 365
+            'minutes': 60,
+            'hours': 60 * 60,
+            'days': 60 * 60 * 24,
+            'weeks': 60 * 60 * 24 * 7,
+            'months': 60 * 60 * 24 * 30,
+            'years': 60 * 60 * 24 * 365,
+            'forever': -1
         }
-        maxlife_timestamp = time.time() + units[maxlife_unit]\
+        maxlife_timestamp = int(time.time()) + units[maxlife_unit] * maxlife_value\
             if units[maxlife_unit] > 0 else units[maxlife_unit]
         name = create_item(f, filename, size, content_type, content_type_hint, maxlife_stamp=maxlife_timestamp)
         return redirect_next('bepasty.display', name=name)
@@ -81,20 +82,22 @@ class UploadNewView(MethodView):
         maxlife_value = int(data['maxlife_value'])
         maxlife_unit = data['maxlife_unit']
         units = {
-            'forever': -1,
-            'minutes': maxlife_value * 60,
-            'hours': maxlife_value * 60 * 60,
-            'days': maxlife_value * 60 * 60 * 24,
-            'weeks': maxlife_value * 60 * 60 * 24 * 7,
-            'years': maxlife_value * 60 * 60 * 24 * 365
+            'minutes': 60,
+            'hours': 60 * 60,
+            'days': 60 * 60 * 24,
+            'weeks': 60 * 60 * 24 * 7,
+            'months': 60 * 60 * 24 * 30,
+            'years': 60 * 60 * 24 * 365,
+            'forever': -1
         }
-        maxlife_timestamp = time.time() + units[maxlife_unit]\
+        maxlife_timestamp = int(time.time()) + units[maxlife_unit] * maxlife_value\
             if units[maxlife_unit] > 0 else units[maxlife_unit]
 
         name = ItemName.create()
         with current_app.storage.create(name, data_size) as item:
             # Save meta-data
-            Upload.meta_new(item, data_size, data_filename, data_type, 'application/octet-stream', name, maxlife_stamp=maxlife_timestamp)
+            Upload.meta_new(item, data_size, data_filename, data_type,
+                            'application/octet-stream', name, maxlife_stamp=maxlife_timestamp)
 
             return jsonify({'url': url_for('bepasty.upload_continue', name=name),
                             'name': name})

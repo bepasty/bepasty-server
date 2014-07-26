@@ -55,8 +55,6 @@ class ItemUploadView(MethodView):
         # Check the file size from Request
         Upload.filter_size(file_size)
 
-
-
         # Check if Transaction-ID is available for continued upload
         if not request.headers.get("Transaction-Id"):
             # Create ItemName and empty file in Storage
