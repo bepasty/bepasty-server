@@ -54,7 +54,8 @@ class UploadView(MethodView):
         # set max lifetime
         maxlife_unit = request.form.get('maxlife-unit', 'forever').upper()
         maxlife_value = int(request.form.get('maxlife-value', 1))
-        maxlife_timestamp = int(time.time()) + time_unit_to_sec(maxlife_value, maxlife_unit)
+        maxtime = time_unit_to_sec(maxlife_value, maxlife_unit)
+        maxlife_timestamp = int(time.time()) + maxtime if maxtime > 0 else maxtime
         name = create_item(f, filename, size, content_type, content_type_hint, maxlife_stamp=maxlife_timestamp)
         return redirect_next('bepasty.display', name=name, _anchor=url_quote(filename))
 
@@ -73,8 +74,8 @@ class UploadNewView(MethodView):
         # set max lifetime
         maxlife_value = int(data['maxlife_value'])
         maxlife_unit = data['maxlife_unit'].upper()
-
-        maxlife_timestamp = int(time.time()) + time_unit_to_sec(maxlife_value, maxlife_unit)
+        maxtime = time_unit_to_sec(maxlife_value, maxlife_unit)
+        maxlife_timestamp = int(time.time()) + maxtime if maxtime > 0 else maxtime
 
         name = ItemName.create()
         with current_app.storage.create(name, data_size) as item:

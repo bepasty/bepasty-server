@@ -42,6 +42,7 @@ class DownloadView(MethodView):
             # delete the file if it exists
             try:
                 current_app.storage.remove(name)
+                print "Removed:", name
             except (OSError, IOError) as e:
                 pass
             raise NotFound()
