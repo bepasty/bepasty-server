@@ -1,4 +1,5 @@
 # Copyright: 2014 Dennis Schmalacker <github@progde.de>
+# Copyright: 2014 Darko Ronic <darko.ronic@gmail.com>
 # License: BSD 2-clause, see LICENSE for details.
 
 import errno
@@ -6,9 +7,9 @@ import base64
 import time
 from io import BytesIO
 
-from . import rest_api
-from flask.views import MethodView
+from . import blueprint
 from flask import Response, make_response, url_for, jsonify, stream_with_context
+from flask.views import MethodView
 
 from ..utils.name import ItemName
 from ..utils.http import ContentRange, DownloadRange
@@ -98,19 +99,23 @@ class ItemUploadView(MethodView):
 
         # Make a Response and create Transaction-ID from ItemName
         response = make_response()
-        response.headers["Transaction-Id"] = base64.b64encode(name)
+        response.headers["transaction-id"] = base64.b64encode(name)
         response.status = '200'
 
         # Check if file is completely uploaded and set meta
         if file_range.is_complete:
             Upload.meta_complete(item, '')
             item.meta['size'] = item.data.size
+            item.close()
+
             background_compute_hash(current_app.storage, name)
             # Set status 'successful' and return the new URL for the uploaded file
             response.status = '201'
-            response.headers["Content-Location"] = url_for('bepasty_rest.items_detail', name=name)
+            response.headers["Content-Location"] = url_for('bepasty_apis.items_detail', name=name)
+            response.headers["transaction-id"] = base64.b64encode(name)
+        else:
+            item.close()
 
-        item.close()
         return response
 
 
@@ -177,6 +182,13 @@ class ItemDownloadView(MethodView):
         return ret
 
 
-rest_api.add_url_rule('/items', view_func=ItemUploadView.as_view('items'))
-rest_api.add_url_rule('/items/<itemname:name>', view_func=ItemDetailView.as_view('items_detail'))
-rest_api.add_url_rule('/items/<itemname:name>/download', view_func=ItemDownloadView.as_view('items_download'))
+class InfoView(MethodView):
+    def get(self):
+        return jsonify({'MAX_BODY_SIZE': current_app.config['MAX_BODY_SIZE']})
+
+
+blueprint.add_url_rule('/rest', view_func=InfoView.as_view('api_info'))
+blueprint.add_url_rule('/rest/items', view_func=ItemUploadView.as_view('items'))
+blueprint.add_url_rule('/rest/items/<itemname:name>', view_func=ItemDetailView.as_view('items_detail'))
+blueprint.add_url_rule('/rest/items/<itemname:name>/download', view_func=ItemDownloadView.as_view('items_download'))
+
