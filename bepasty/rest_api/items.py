@@ -3,16 +3,18 @@
 
 import errno
 import base64
+import time
 from io import BytesIO
 
 from . import rest_api
 from flask.views import MethodView
-from flask import Response, current_app, request, make_response, url_for, jsonify, stream_with_context
+from flask import Response, make_response, url_for, jsonify, stream_with_context
 
 from ..utils.name import ItemName
 from ..utils.http import ContentRange, DownloadRange
 from ..utils.upload import Upload, background_compute_hash
 from ..utils.permissions import *
+from ..utils.date_funcs import time_unit_to_sec
 
 
 class ItemUploadView(MethodView):
@@ -60,8 +62,15 @@ class ItemUploadView(MethodView):
             name = ItemName.create()
             item = current_app.storage.create(name, 0)
 
+            # set max lifetime
+            maxlife_unit = request.form.get('maxlife-unit', 'forever')
+            maxlife_value = int(request.form.get('maxlife-value'), 1)
+            maxtime = time_unit_to_sec(maxlife_value, maxlife_unit)
+            maxlife_timestamp = int(time.time()) + maxtime if maxtime > 0 else maxtime
             # Fill meta with data from Request
-            Upload.meta_new(item, 0, file_name, file_type, 'application/octet-stream', name)
+            Upload.meta_new(item, 0, file_name, file_type,
+                            'application/octet-stream',
+                            name, maxlife_stamp=maxlife_timestamp)
         else:
             # Get file name from Transaction-ID and open from Storage
             name = base64.b64decode(request.headers.get("Transaction-Id"))

@@ -9,6 +9,7 @@ from flask.views import MethodView
 from werkzeug.exceptions import NotFound, Forbidden
 
 from ..utils.permissions import *
+from ..utils.date_funcs import delete_if_lifetime_over
 from . import blueprint
 
 
@@ -37,6 +38,9 @@ class DownloadView(MethodView):
 
         if item.meta['locked'] and not may(ADMIN):
             raise Forbidden()
+        # check if maxlife is over, if maxlife exists
+        if delete_if_lifetime_over(item, name):
+            raise NotFound()
 
         def stream():
             with item as _item:

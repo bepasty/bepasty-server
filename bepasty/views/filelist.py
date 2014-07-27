@@ -5,10 +5,12 @@ import errno
 
 from flask import current_app, render_template
 from flask.views import MethodView
+import time
 from werkzeug.exceptions import Forbidden
 
 from . import blueprint
 from ..utils.permissions import *
+from ..utils.date_funcs import delete_if_lifetime_over
 
 
 def file_infos(names=None):
@@ -26,6 +28,8 @@ def file_infos(names=None):
         try:
             with storage.open(name) as item:
                 meta = dict(item.meta)
+                if delete_if_lifetime_over(item, name):
+                    continue
                 meta['id'] = name
                 yield meta
         except (OSError, IOError) as e:

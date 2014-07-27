@@ -4,16 +4,19 @@
 import os
 import errno
 from StringIO import StringIO
+import time
 
 from flask import abort, current_app, jsonify, request, url_for
 from flask.views import MethodView
 from werkzeug.exceptions import NotFound, Forbidden
+from werkzeug.urls import url_quote
 
 from ..utils.http import ContentRange, redirect_next
 from ..utils.name import ItemName
 from ..utils.upload import Upload, create_item, background_compute_hash
 from ..utils.permissions import *
 from . import blueprint
+from ..utils.date_funcs import time_unit_to_sec
 
 
 class UploadView(MethodView):
@@ -48,8 +51,13 @@ class UploadView(MethodView):
             filename = request.form.get('filename')
         else:
             raise NotImplementedError
-        name = create_item(f, filename, size, content_type, content_type_hint)
-        return redirect_next('bepasty.display', name=name)
+        # set max lifetime
+        maxlife_unit = request.form.get('maxlife-unit', 'forever').upper()
+        maxlife_value = int(request.form.get('maxlife-value', 1))
+        maxtime = time_unit_to_sec(maxlife_value, maxlife_unit)
+        maxlife_timestamp = int(time.time()) + maxtime if maxtime > 0 else maxtime
+        name = create_item(f, filename, size, content_type, content_type_hint, maxlife_stamp=maxlife_timestamp)
+        return redirect_next('bepasty.display', name=name, _anchor=url_quote(filename))
 
 
 class UploadNewView(MethodView):
@@ -63,10 +71,17 @@ class UploadNewView(MethodView):
         data_size = int(data['size'])
         data_type = data['type']
 
+        # set max lifetime
+        maxlife_value = int(data['maxlife_value'])
+        maxlife_unit = data['maxlife_unit'].upper()
+        maxtime = time_unit_to_sec(maxlife_value, maxlife_unit)
+        maxlife_timestamp = int(time.time()) + maxtime if maxtime > 0 else maxtime
+
         name = ItemName.create()
         with current_app.storage.create(name, data_size) as item:
             # Save meta-data
-            Upload.meta_new(item, data_size, data_filename, data_type, 'application/octet-stream', name)
+            Upload.meta_new(item, data_size, data_filename, data_type,
+                            'application/octet-stream', name, maxlife_stamp=maxlife_timestamp)
 
             return jsonify({'url': url_for('bepasty.upload_continue', name=name),
                             'name': name})
@@ -109,7 +124,8 @@ class UploadContinueView(MethodView):
                 'name': name,
                 'filename': item.meta['filename'],
                 'size': item.meta['size'],
-                'url': url_for('bepasty.display', name=name),
+                'url': "{}#{}".format(url_for('bepasty.display', name=name),
+                                      item.meta['filename']),
             }]})
 
         if is_complete and not file_hash:
