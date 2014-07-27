@@ -55,17 +55,8 @@ class LodgeitUpload(MethodView):
         size = len(t)
         f = StringIO(t)
         # set max lifetime
-        maxlife_unit = request.form.get('maxlife-unit').upper()
-        maxlife_value = int(request.form.get('maxlife-value'))
-        units = {
-            'minutes': 60,
-            'hours': 60 * 60,
-            'days': 60 * 60 * 24,
-            'weeks': 60 * 60 * 24 * 7,
-            'months': 60 * 60 * 24 * 30,
-            'years': 60 * 60 * 24 * 365,
-            'forever': -1
-        }
+        maxlife_unit = request.form.get('maxlife-unit', 'forever').upper()
+        maxlife_value = int(request.form.get('maxlife-value', 1))
         maxlife_timestamp = int(time.time()) + time_unit_to_sec(maxlife_value, maxlife_unit)
         name = create_item(f, filename, size, content_type, content_type_hint,
                            maxlife_stamp=maxlife_timestamp)

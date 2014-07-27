@@ -52,8 +52,8 @@ class UploadView(MethodView):
         else:
             raise NotImplementedError
         # set max lifetime
-        maxlife_unit = request.form.get('maxlife-unit').upper()
-        maxlife_value = int(request.form.get('maxlife-value'))
+        maxlife_unit = request.form.get('maxlife-unit', 'forever').upper()
+        maxlife_value = int(request.form.get('maxlife-value', 1))
         maxlife_timestamp = int(time.time()) + time_unit_to_sec(maxlife_value, maxlife_unit)
         name = create_item(f, filename, size, content_type, content_type_hint, maxlife_stamp=maxlife_timestamp)
         return redirect_next('bepasty.display', name=name, _anchor=url_quote(filename))
