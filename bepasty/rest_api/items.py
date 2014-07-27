@@ -8,7 +8,7 @@ from io import BytesIO
 
 from . import rest_api
 from flask.views import MethodView
-from flask import Response, current_app, request, make_response, url_for, jsonify, stream_with_context
+from flask import Response, make_response, url_for, jsonify, stream_with_context
 
 from ..utils.name import ItemName
 from ..utils.http import ContentRange, DownloadRange
@@ -63,8 +63,8 @@ class ItemUploadView(MethodView):
             item = current_app.storage.create(name, 0)
 
             # set max lifetime
-            maxlife_unit = request.form.get('maxlife-unit')
-            maxlife_value = int(request.form.get('maxlife-value'))
+            maxlife_unit = request.form.get('maxlife-unit', 'forever')
+            maxlife_value = int(request.form.get('maxlife-value'), 1)
             maxtime = time_unit_to_sec(maxlife_value, maxlife_unit)
             maxlife_timestamp = int(time.time()) + maxtime if maxtime > 0 else maxtime
             # Fill meta with data from Request

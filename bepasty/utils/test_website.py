@@ -1,5 +1,6 @@
 # Copyright: 2014 Valentin Pratz <vp.pratz@yahoo.de>
 # License: BSD 2-clause, see LICENSE for details.
+
 from selenium.webdriver import Firefox
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException

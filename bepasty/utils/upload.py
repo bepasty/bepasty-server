@@ -10,6 +10,7 @@ from flask import abort, current_app
 from .name import ItemName
 from .decorators import async
 from .hashing import compute_hash, hash_new
+from ..utils.date_funcs import FOREVER
 
 # we limit to 250 characters as we do not want to accept arbitrarily long
 # filenames. other than that, there is no specific reason we could not
@@ -64,7 +65,7 @@ class Upload(object):
 
     @classmethod
     def meta_new(cls, item, input_size, input_filename, input_type,
-                 input_type_hint, storage_name, maxlife_stamp=-1):
+                 input_type_hint, storage_name, maxlife_stamp=FOREVER):
         item.meta['filename'] = cls.filter_filename(input_filename,
                                                     storage_name, input_type, input_type_hint)
         item.meta['size'] = cls.filter_size(input_size)
@@ -111,7 +112,7 @@ class Upload(object):
 
 
 def create_item(f, filename, size, content_type, content_type_hint,
-                maxlife_stamp=-1):
+                maxlife_stamp=FOREVER):
     """
     create an item from open file <f> with the given metadata, return the item name.
     """

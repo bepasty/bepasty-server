@@ -14,6 +14,7 @@ from flask import Flask
 
 from ..utils.hashing import compute_hash
 from ..storage import create_storage
+from ..utils.date_funcs import FOREVER
 
 
 class Main(object):
@@ -52,7 +53,7 @@ class Main(object):
             if 'hash' not in item.meta:
                 item.meta['hash'] = ''  # see do_consistency
             if 'timestamp-max-life' not in item.meta:
-                item.meta['timestamp-max-life'] = -1
+                item.meta['timestamp-max-life'] = FOREVER
 
     _parser = _subparsers.add_parser('migrate', help='Migrate metadata to current schema')
     _parser.set_defaults(func=do_migrate)
@@ -65,7 +66,7 @@ class Main(object):
             t_upload = item.meta['timestamp-upload']
             t_download = item.meta['timestamp-download']
             file_type = item.meta['type']
-            max_lifetime = item.meta.get('timestamp-max-life', -1)
+            max_lifetime = item.meta.get('timestamp-max-life', FOREVER)
         purge = True  # be careful: we start from True, then AND the specified criteria
         if args.purge_age is not None:
             dt = args.purge_age * 24 * 3600  # n days since upload
@@ -79,7 +80,7 @@ class Main(object):
         if args.purge_type is not None:
             purge = purge and file_type.startswith(args.purge_type)
         if max_lifetime is not None:
-            purge = purge and max_lifetime < tnow and max_lifetime > 0
+            purge = purge and tnow > max_lifetime > 0
         if purge:
             print 'removing: %s (%s %dB %s)' % (name, file_name, file_size, file_type)
             if not args.purge_dry_run:
