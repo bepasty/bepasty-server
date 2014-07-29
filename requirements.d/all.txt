@@ -1,6 +1,7 @@
 Flask>=0.10
 Pygments
 xstatic
+xstatic-bootbox
 xstatic-bootstrap
 xstatic-jquery
 xstatic-jquery-file-upload

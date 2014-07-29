@@ -5,6 +5,7 @@ from xstatic.main import XStatic
 
 # names below must be package names
 mod_names = [
+    'bootbox',
     'bootstrap',
     'jquery',
     'jquery_file_upload',
