@@ -7,6 +7,7 @@ from xstatic.main import XStatic
 mod_names = [
     'bootstrap',
     'jquery',
+    'jquery_file_upload',
     'pygments',
 ]
 

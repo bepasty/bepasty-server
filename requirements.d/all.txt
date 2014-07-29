@@ -3,4 +3,5 @@ Pygments
 xstatic
 xstatic-bootstrap
 xstatic-jquery
+xstatic-jquery-file-upload
 xstatic-pygments

@@ -118,22 +118,22 @@
 
 {% block extra_link %}
 <!-- fileinput-button styles -->
-<link rel="stylesheet" href="{{ url_for('static', filename='jquery.fileupload/css/jquery.fileupload.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ url_for('bepasty.xstatic', name='jquery_file_upload', filename='css/jquery.fileupload.css') }}" type="text/css">
 <!-- Fileupload ui styles -->
-<link rel="stylesheet" href="{{ url_for('static', filename='jquery.fileupload/css/jquery.fileupload-ui.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ url_for('bepasty.xstatic', name='jquery_file_upload', filename='css/jquery.fileupload-ui.css') }}" type="text/css">
 {% endblock %}
 
 {% block extra_script %}
 <!-- jquery ui widget -->
-<script src="{{ url_for('static', filename='jquery.fileupload/js/vendor/jquery.ui.widget.js') }}" type="text/javascript"></script>
+<script src="{{ url_for('bepasty.xstatic', name='jquery_file_upload', filename='js/vendor/jquery.ui.widget.js') }}" type="text/javascript"></script>
 <!-- iframe transport for browser without XHR support -->
-<script src="{{ url_for('static', filename='jquery.fileupload/js/jquery.iframe-transport.js') }}" type="text/javascript"></script>
+<script src="{{ url_for('bepasty.xstatic', name='jquery_file_upload', filename='js/jquery.iframe-transport.js') }}" type="text/javascript"></script>
 <!-- basic file upload -->
-<script src="{{ url_for('static', filename='jquery.fileupload/js/jquery.fileupload.js') }}" type="text/javascript"></script>
+<script src="{{ url_for('bepasty.xstatic', name='jquery_file_upload', filename='js/jquery.fileupload.js') }}" type="text/javascript"></script>
 <!-- file upload progress bar -->
-<script src="{{ url_for('static', filename='jquery.fileupload/js/jquery.fileupload-process.js') }}" type="text/javascript"></script>
+<script src="{{ url_for('bepasty.xstatic', name='jquery_file_upload', filename='js/jquery.fileupload-process.js') }}" type="text/javascript"></script>
 <!-- file upload validation -->
-<script src="{{ url_for('static', filename='jquery.fileupload/js/jquery.fileupload-validate.js') }}" type="text/javascript"></script>
+<script src="{{ url_for('bepasty.xstatic', name='jquery_file_upload', filename='js/jquery.fileupload-validate.js') }}" type="text/javascript"></script>
 <!-- QuestionBox -->
 <script src="{{ url_for('static', filename='bootbox/bootbox.min.js') }}" type="text/javascript"></script>
 <!-- fileuploader -->
