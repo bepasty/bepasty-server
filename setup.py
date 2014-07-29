@@ -47,7 +47,6 @@ setup(
             'static/jquery.fileupload/img/*',
             'static/jquery.fileupload/js/*.js',
             'static/jquery.fileupload/js/vendor/*.js',
-            'static/pygments/*.css',
             'templates/*',
         ],
     },
