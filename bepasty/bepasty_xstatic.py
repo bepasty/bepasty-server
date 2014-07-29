@@ -5,6 +5,8 @@ from xstatic.main import XStatic
 
 # names below must be package names
 mod_names = [
+    'bootstrap',
+    'jquery',
     'pygments',
 ]
 

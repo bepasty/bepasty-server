@@ -1,4 +1,6 @@
 Flask>=0.10
 Pygments
 xstatic
+xstatic-bootstrap
+xstatic-jquery
 xstatic-pygments
