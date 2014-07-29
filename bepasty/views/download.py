@@ -61,7 +61,7 @@ class DownloadView(MethodView):
                 ct = 'text/plain'  # only send simple plain text
 
         ret = Response(stream_with_context(stream()))
-        ret.headers['Content-Disposition'] = '{}; filename="{}"'.format(
+        ret.headers['Content-Disposition'] = '{0}; filename="{1}"'.format(
             dispo, item.meta['filename'])
         ret.headers['Content-Length'] = item.meta['size']
         ret.headers['Content-Type'] = ct

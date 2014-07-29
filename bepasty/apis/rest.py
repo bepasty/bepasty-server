@@ -173,7 +173,7 @@ class ItemDownloadView(MethodView):
                     yield buf
 
         ret = Response(stream_with_context(stream(range_begin, range_end)))
-        ret.headers['Content-Disposition'] = '{}; filename="{}"'.format(
+        ret.headers['Content-Disposition'] = '{0}; filename="{1}"'.format(
             self.content_disposition, item.meta['filename'])
         ret.headers['Content-Length'] = (range_end - range_begin) + 1
         ret.headers['Content-Type'] = item.meta['type']  # 'application/octet-stream'

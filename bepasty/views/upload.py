@@ -124,8 +124,8 @@ class UploadContinueView(MethodView):
                 'name': name,
                 'filename': item.meta['filename'],
                 'size': item.meta['size'],
-                'url': "{}#{}".format(url_for('bepasty.display', name=name),
-                                      item.meta['filename']),
+                'url': "{0}#{1}".format(url_for('bepasty.display', name=name),
+                                        item.meta['filename']),
             }]})
 
         if is_complete and not file_hash:
