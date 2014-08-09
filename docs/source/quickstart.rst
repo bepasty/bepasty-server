@@ -64,6 +64,10 @@ environment variable like this:
 
     BEPASTY_CONFIG=/srv/bepasty/bepasty.conf bepasty-server
 
+Important note:
+
+* Use an absolute path as value for BEPASTY_CONFIG.
+
 
 The builtin WSGI server is recommended only for development and non-production use.
 
