@@ -66,7 +66,7 @@ class TestMaxlifeFeature(object):
         value_input.clear()
         value_input.send_keys(1)
         self.fill_form()
-        assert "max life" not in self.browser.find_element_by_tag_name("body").text.lower()
+        assert "max lifetime: forever" in self.browser.find_element_by_tag_name("body").text.lower()
         self.delete_current_file()
 
     def test_paste_keep_minutes(self):
@@ -75,7 +75,7 @@ class TestMaxlifeFeature(object):
         value_input.clear()
         value_input.send_keys(1)
         self.fill_form()
-        assert "max time" in self.browser.find_element_by_tag_name("body").text.lower()
+        assert "max lifetime: forever" not in self.browser.find_element_by_tag_name("body").text.lower()
         self.delete_current_file()
 
     @pytest.mark.slow
