@@ -1,7 +1,7 @@
 ChangeLog
 =========
 
-Release 0.2.0
+Release 0.3.0
 -------------
 
 New features:
@@ -19,6 +19,11 @@ New features:
 * let admin directly delete locked files, without having to unlock first
 * new bepasty-object cli command
 * added REST api for bepasty-client-cli
+* MAX_RENDER_SIZE can be used to set up maximum sizes for items of misc. types,
+  so bepasty e.g. won't try to render a 1 GB text file with highlighting.
+* offer a "max. lifetime" when creating a pastebin
+* if you link to some specific text line, it will highlight that line now
+* add filename to the pastebin url (as anchor)
 
 Removed features:
 
@@ -37,11 +42,20 @@ Fixes:
 * application/x-pdf content-type items are offer for in-browser rendering, too
 * fix typo in cli command bepasty-object set --incomplete (not: uncomplete)
 * quite some UI / UX and other bug fixes
+* filesystem storage: check if the configured directory is actually writeable
 
 Other changes:
 
-* upgrade static files / cdn urls for bootstrap, jQuery, jquery.file-upload, bootbox
+* using xstatic packages now for all 3rd party static files
 * docs updated / enhanced
+
+
+No release 0.2.0
+----------------
+
+We made quite quick progress due to many contributions from EuroPython 2014
+sprint participants, so there was no 0.2.0 release and we directly jumped to
+0.3.0.
 
 
 Release 0.1.0
