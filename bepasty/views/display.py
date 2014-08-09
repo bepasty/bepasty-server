@@ -12,6 +12,7 @@ from pygments.lexers import get_lexer_for_mimetype
 from pygments.util import ClassNotFound as NoPygmentsLexer
 
 from ..utils.permissions import *
+from ..utils.date_funcs import delete_if_lifetime_over
 from ..utils.formatters import CustomHtmlFormatter
 from . import blueprint
 from .filelist import file_infos
@@ -57,6 +58,9 @@ class DisplayView(MethodView):
 
             if item.meta['locked'] and not may(ADMIN):
                 raise Forbidden()
+
+            if delete_if_lifetime_over(item, name):
+                raise NotFound()
 
             def read_data(item):
                 # reading the item for rendering is registered like a download

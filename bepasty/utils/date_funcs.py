@@ -30,7 +30,7 @@ def time_unit_to_sec(value, unit):
 
 def delete_if_lifetime_over(item, name):
     """
-    :return: file existed
+    :return: True if file was deleted
     """
     if 0 < item.meta['timestamp-max-life'] < time.time():
         try:

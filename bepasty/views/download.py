@@ -38,7 +38,7 @@ class DownloadView(MethodView):
 
         if item.meta['locked'] and not may(ADMIN):
             raise Forbidden()
-        # check if maxlife is over, if maxlife exists
+
         if delete_if_lifetime_over(item, name):
             raise NotFound()
 
