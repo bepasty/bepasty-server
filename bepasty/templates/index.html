@@ -30,7 +30,7 @@
             <!-- Set max file lifetime -->
             <div class="row">
                 <div class="col-sm-12">
-                    <p>Set the maximum lifetime (<b>Set before dragging</b>)</p>
+                    <p>Set the maximum lifetime (<b>choose before dragging or submitting</b>):</p>
                     <input name="maxlife-value" type="number" min="1" value="1" />
                     <select name="maxlife-unit" size="1">
                         <option value="forever">Keep Forever</option>
@@ -51,7 +51,7 @@
             <form id="filelist-form" style="display: none" action="/+upload" method="POST" enctype="multipart/form-data">
                 <div class="col-sm-12">
                     <textarea id="filelist" name="text" rows="10" cols="40"></textarea>
-                    <p>Set the maximum lifetime</p>
+                    <p>Set the maximum lifetime:</p>
                     <input name="maxlife-value" type="number" min="1" value="1" />
                     <select name="maxlife-unit" size="1">
                         <option value="forever">Keep Forever</option>
