@@ -8,6 +8,7 @@ mod_names = [
     'bootbox',
     'bootstrap',
     'jquery',
+    'jquery_ui',
     'jquery_file_upload',
     'pygments',
 ]

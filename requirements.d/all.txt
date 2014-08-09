@@ -4,5 +4,6 @@ xstatic
 xstatic-bootbox
 xstatic-bootstrap
 xstatic-jquery
+xstatic-jquery-ui
 xstatic-jquery-file-upload
 xstatic-pygments
