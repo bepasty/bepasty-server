@@ -2,7 +2,12 @@
 # License: BSD 2-clause, see LICENSE for details.
 
 import collections
-from urlparse import urlparse, urljoin
+try:
+    # Python2
+    from urlparse import urlparse, urljoin
+except ImportError:
+    # Python3
+    from urllib.parse import urlparse, urljoin
 
 from flask import request, abort, redirect, url_for
 from werkzeug.exceptions import BadRequest

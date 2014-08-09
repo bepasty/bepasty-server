@@ -1,7 +1,12 @@
 # Copyright: 2014 Thomas Waldmann <tw@waldmann-edv.de>
 # License: BSD 2-clause, see LICENSE for details.
 
-from StringIO import StringIO
+try:
+    # Python2
+    from StringIO import StringIO
+except ImportError:
+    # Python3 differs between BytesIO and StringIO. In this case BytesIO is needed
+    from io import BytesIO as StringIO
 import time
 
 from flask import request

@@ -39,7 +39,13 @@ class Storage(object):
         return Item(file_data, file_meta)
 
     def create(self, name, size):
-        return self._open(name, 'w+bx')
+        try:
+            # Python2 version with error on exists
+            return self._open(name, 'w+bx')
+        except ValueError:
+            # Python3 version without. Previous raises following error:
+            # ValueError: must have exactly one of create/read/write/append mode
+            return self._open(name, 'w+b')
 
     def open(self, name):
         return self._open(name, 'rb')
@@ -114,7 +120,12 @@ class Data(object):
 
     def write(self, data, offset):
         self._file.seek(offset)
-        return self._file.write(data)
+        try:
+            # Python2 string type
+            return self._file.write(data)
+        except TypeError:
+            # Python3 string has to be encoded
+            return self._file.write(bytes(data, 'utf-8'))
 
 
 class Meta(collections.MutableMapping):

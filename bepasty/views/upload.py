@@ -3,7 +3,12 @@
 
 import os
 import errno
-from StringIO import StringIO
+try:
+    # Python2
+    from StringIO import StringIO
+except ImportError:
+    # Python3 differs between BytesIO and StringIO. In this case BytesIO is needed
+    from io import BytesIO as StringIO
 import time
 
 from flask import abort, current_app, jsonify, request, url_for
@@ -41,7 +46,9 @@ class UploadView(MethodView):
             f.seek(0, os.SEEK_END)
             size = f.tell()
             f.seek(0)
-        elif t is not None:
+        # with "elif t is not None:" not filename gets displayed and metadata is missing by test(pasted) upload.
+        # Why is it?
+        if t is not None:
             # t is already unicode, but we want utf-8 for storage
             t = t.encode('utf-8')
             content_type = request.form.get('contenttype')  # TODO: add coding

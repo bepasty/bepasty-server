@@ -30,7 +30,11 @@ def rendering_allowed(item_type, item_size, use_pygments, complete):
         # if we use pygments, special restrictions apply
         item_type = 'HIGHLIGHT_TYPES'
     # create a tuple list [(content_type_prefix, max_size), ...] with long prefixes first
-    ct_size = sorted(current_app.config['MAX_RENDER_SIZE'].iteritems(), key=lambda e: len(e[0]), reverse=True)
+    # dict.iteritems() was replaced by dict.items() in Python3
+    if hasattr(current_app.config['MAX_RENDER_SIZE'], 'iteritems'):
+        ct_size = sorted(current_app.config['MAX_RENDER_SIZE'].iteritems(), key=lambda e: len(e[0]), reverse=True)
+    else:
+        ct_size = sorted(current_app.config['MAX_RENDER_SIZE'].items(), key=lambda e: len(e[0]), reverse=True)
     for ct, size in ct_size:
         if item_type.startswith(ct):
             return item_size <= size
