@@ -46,15 +46,18 @@
     </div>
     <div class="panel-body">
         <p>
-        Type {{ item.meta['type'] }},
-        Size {{ item.meta['size'] }} bytes,
-        uploaded {{ item.meta['timestamp-upload'] | datetime }} (UTC),
-        downloaded {{ item.meta['timestamp-download'] | datetime }} (UTC),
-        {% if item.meta['timestamp-max-life'] > 0 %}
-        max time {{ item.meta['timestamp-max-life'] | datetime }} (UTC).
-        {% endif %}
+        Type: {{ item.meta['type'] }},
+        Size: {{ item.meta['size'] }} bytes,
+        SHA256: <code>{{ item.meta['hash'] }}</code>.
         <br/>
-        SHA256-Hash: <code>{{ item.meta['hash'] }}</code>
+        UTC timestamps:
+        upload: {{ item.meta['timestamp-upload'] | datetime }},
+        download: {{ item.meta['timestamp-download'] | datetime }},
+        {% if item.meta['timestamp-max-life'] > 0 %}
+        max lifetime: {{ item.meta['timestamp-max-life'] | datetime }}.
+        {% else %}
+        max lifetime: forever.
+        {% endif %}
         </p>
         <div class="data">
             {{ rendered_content }}
