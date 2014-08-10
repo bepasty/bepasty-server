@@ -1,12 +1,7 @@
 # Copyright: 2014 Thomas Waldmann <tw@waldmann-edv.de>
 # License: BSD 2-clause, see LICENSE for details.
 
-try:
-    # Python2
-    from StringIO import StringIO
-except ImportError:
-    # Python3 differs between BytesIO and StringIO. In this case BytesIO is needed
-    from io import BytesIO as StringIO
+from io import BytesIO
 import time
 
 from flask import request
@@ -58,7 +53,7 @@ class LodgeitUpload(MethodView):
         # t is already unicode, but we want utf-8 for storage
         t = t.encode('utf-8')
         size = len(t)
-        f = StringIO(t)
+        f = BytesIO(t)
         maxlife_timestamp = FOREVER
         name = create_item(f, filename, size, content_type, content_type_hint,
                            maxlife_stamp=maxlife_timestamp)

@@ -7,6 +7,8 @@ import pickle
 import logging
 import tempfile
 
+from bepasty.utils._compat import PY2
+
 logger = logging.getLogger(__name__)
 
 
@@ -39,13 +41,8 @@ class Storage(object):
         return Item(file_data, file_meta)
 
     def create(self, name, size):
-        try:
-            # Python2 version with error on exists
-            return self._open(name, 'w+bx')
-        except ValueError:
-            # Python3 version without. Previous raises following error:
-            # ValueError: must have exactly one of create/read/write/append mode
-            return self._open(name, 'w+b')
+        mode = 'w+bx' if PY2 else 'w+b'
+        return self._open(name, mode)
 
     def open(self, name):
         return self._open(name, 'rb')
@@ -120,12 +117,8 @@ class Data(object):
 
     def write(self, data, offset):
         self._file.seek(offset)
-        try:
-            # Python2 string type
-            return self._file.write(data)
-        except TypeError:
-            # Python3 string has to be encoded
-            return self._file.write(bytes(data, 'utf-8'))
+        data = data if PY2 or type(data) is bytes else bytes(data, encoding='utf-8', errors='strict')
+        return self._file.write(data)
 
 
 class Meta(collections.MutableMapping):
@@ -170,5 +163,5 @@ class Meta(collections.MutableMapping):
 
     def _write(self):
         self._file.seek(0)
-        pickle.dump(self._data, self._file)
+        pickle.dump(self._data, self._file, protocol=2)
         self._file.seek(0)
