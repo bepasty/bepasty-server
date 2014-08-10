@@ -88,7 +88,7 @@ class DisplayView(MethodView):
                 if ct.startswith('text/x-bepasty-'):
                     # special bepasty items - must be first, don't feed to pygments
                     if ct == 'text/x-bepasty-list':
-                        names = read_data(item).splitlines()
+                        names = read_data(item).decode('utf-8').splitlines()
                         files = sorted(file_infos(names), key=lambda f: f['filename'])
                         rendered_content = Markup(render_template('filelist_tableonly.html', files=files))
                     else:
