@@ -4,6 +4,8 @@
 from flask import request, session, current_app
 from flask import g as flaskg
 
+from ..utils._compat import PY2
+
 
 # in the code, please always use this constants for permission values:
 ADMIN = 'admin'
@@ -41,6 +43,8 @@ def get_permissions():
         permissions = session.get(PERMISSIONS)
     if permissions is None:
         permissions = current_app.config['DEFAULT_PERMISSIONS']
+    if not PY2 and type(permissions) == bytes:
+        permissions = permissions.decode('utf-8')
     permissions = set(permissions.split(','))
     return permissions
 
