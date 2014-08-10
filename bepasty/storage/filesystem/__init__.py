@@ -162,5 +162,8 @@ class Meta(collections.MutableMapping):
 
     def _write(self):
         self._file.seek(0)
+        # Python 2.x only uses protocol 2, 3.x uses protocol 3 by default.
+        # If we just use protocol 2, changing the Python version shouldn't
+        # cause problems with existing pickles.
         pickle.dump(self._data, self._file, protocol=2)
         self._file.seek(0)

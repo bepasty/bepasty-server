@@ -25,6 +25,9 @@ class UploadView(MethodView):
             raise Forbidden()
         f = request.files.get('file')
         t = request.form.get('text')
+        # note: "and f.filename" is needed due to missing __bool__ method in
+        # werkzeug.datastructures.FileStorage, to work around it crashing
+        # on Python 3.x.
         if f and f.filename:
             # Check Content-Range, disallow its usage
             if ContentRange.from_request():
