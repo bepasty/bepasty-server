@@ -117,7 +117,6 @@ class Data(object):
 
     def write(self, data, offset):
         self._file.seek(offset)
-        data = data if PY2 or type(data) is bytes else bytes(data, encoding='utf-8', errors='strict')
         return self._file.write(data)
 
 
