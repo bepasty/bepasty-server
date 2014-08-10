@@ -5,6 +5,8 @@
 bepasty-object commandline interface
 """
 
+from __future__ import print_function
+
 import os
 import argparse
 import logging
@@ -82,7 +84,7 @@ class Main(object):
         if max_lifetime is not None:
             purge = purge and tnow > max_lifetime > 0
         if purge:
-            print 'removing: %s (%s %dB %s)' % (name, file_name, file_size, file_type)
+            print('removing: %s (%s %dB %s)' % (name, file_name, file_size, file_type))
             if not args.purge_dry_run:
                 storage.remove(name)
 
@@ -107,14 +109,14 @@ class Main(object):
             t_upload = item.meta['timestamp-upload']
             meta_hash = item.meta['hash']
 
-            print 'checking: %s (%s %dB %s)' % (name, file_name, meta_size, meta_type)
+            print('checking: %s (%s %dB %s)' % (name, file_name, meta_size, meta_type))
 
             size = item.data.size
             size_consistent = size == meta_size
             if not size_consistent:
-                print "Inconsistent file size: meta: %d file: %d" % (meta_size, size)
+                print("Inconsistent file size: meta: %d file: %d" % (meta_size, size))
                 if args.consistency_fix:
-                    print "Writing computed file size into metadata..."
+                    print("Writing computed file size into metadata...")
                     item.meta['size'] = size
                     size_consistent = True
 
@@ -122,20 +124,20 @@ class Main(object):
             hash_consistent = meta_hash == file_hash
             if not hash_consistent:
                 if meta_hash:
-                    print "Inconsistent hashes:"
-                    print "meta: %s" % meta_hash
-                    print "file: %s" % file_hash
+                    print("Inconsistent hashes:")
+                    print("meta: %s" % meta_hash)
+                    print("file: %s" % file_hash)
                 else:
                     # the upload code can not compute hashes for chunked uploads and thus stores an empty hash.
                     # we can fix that empty hash with the computed hash from the file we have in storage.
-                    print "Empty hash in metadata."
+                    print("Empty hash in metadata.")
                 if args.consistency_fix or args.consistency_compute and not meta_hash:
-                    print "Writing computed file hash into metadata..."
+                    print("Writing computed file hash into metadata...")
                     item.meta['hash'] = file_hash
                     hash_consistent = True
 
         if args.consistency_remove and not (size_consistent and hash_consistent):
-            print 'REMOVING inconsistent file!'
+            print('REMOVING inconsistent file!')
             storage.remove(name)
 
     _parser = _subparsers.add_parser('consistency', help='Consistency-related functions')
@@ -149,29 +151,29 @@ class Main(object):
 
     def do_info(self, storage, name, args):
         with storage.open(name) as item:
-            print name
+            print(name)
             for key, value in sorted(item.meta.items()):
-                print '  ', key, value
+                print('  ', key, value)
 
     _parser = _subparsers.add_parser('info', help='Display information about objects')
     _parser.set_defaults(func=do_info)
 
     def do_set(self, storage, name, args):
         with storage.openwrite(name) as item:
-            print name
+            print(name)
 
             if args.flag_complete is not None:
                 if args.flag_complete:
-                    print '  set complete'
+                    print('  set complete')
                 else:
-                    print '  set not complete'
+                    print('  set not complete')
                 item.meta['complete'] = args.flag_complete
 
             if args.flag_locked is not None:
                 if args.flag_locked:
-                    print '  set locked'
+                    print('  set locked')
                 else:
-                    print '  set not locked'
+                    print('  set not locked')
                 item.meta['locked'] = args.flag_locked
 
     _parser = _subparsers.add_parser('set', help='Set flags on objects')

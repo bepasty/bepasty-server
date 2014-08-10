@@ -47,13 +47,19 @@ class TestMaxlifeFeature(object):
         assert value_input is not None
 
     def fill_form(self):
+        """
+        Fills test values to the form and submits it
+        :return: filename
+        """
+        fn = "test.txt"
         paste_input = self.browser.find_element_by_id("formupload")
         paste_input.send_keys("This is test")
         filename_input = self.browser.find_element_by_id("filename")
-        filename_input.send_keys("test.txt")
+        filename_input.send_keys(fn)
         contenttype_input = self.browser.find_element_by_id("contenttype")
         contenttype_input.send_keys("text/plain")
         contenttype_input.send_keys(Keys.ENTER)
+        return fn
 
     def delete_current_file(self):
         self.browser.find_element_by_id("del-btn").click()
@@ -76,6 +82,11 @@ class TestMaxlifeFeature(object):
         value_input.send_keys(1)
         self.fill_form()
         assert "max lifetime: forever" not in self.browser.find_element_by_tag_name("body").text.lower()
+        self.delete_current_file()
+
+    def test_filename_gets_displayed(self):
+        fn = self.fill_form()
+        assert fn.lower() in self.browser.find_element_by_tag_name("body").text.lower()
         self.delete_current_file()
 
     @pytest.mark.slow
