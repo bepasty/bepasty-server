@@ -7,8 +7,6 @@ import pickle
 import logging
 import tempfile
 
-from bepasty.utils._compat import PY2
-
 logger = logging.getLogger(__name__)
 
 
@@ -41,8 +39,7 @@ class Storage(object):
         return Item(file_data, file_meta)
 
     def create(self, name, size):
-        mode = 'w+b' if PY2 else 'w+bx'
-        return self._open(name, mode)
+        return self._open(name, 'w+b')
 
     def open(self, name):
         return self._open(name, 'rb')
