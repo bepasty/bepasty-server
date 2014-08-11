@@ -41,7 +41,7 @@ class Storage(object):
         return Item(file_data, file_meta)
 
     def create(self, name, size):
-        mode = 'w+bx' if PY2 else 'w+b'
+        mode = 'w+b' if PY2 else 'w+bx'
         return self._open(name, mode)
 
     def open(self, name):
