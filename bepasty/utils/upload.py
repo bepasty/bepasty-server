@@ -127,7 +127,7 @@ def create_item(f, filename, size, content_type, content_type_hint,
 
 @async
 def background_compute_hash(storage, name):
-        with storage.openwrite(name) as item:
-            size = item.meta['size']
-            file_hash = compute_hash(item.data, size)
-            item.meta['hash'] = file_hash
+    with storage.openwrite(name) as item:
+        size = item.meta['size']
+        file_hash = compute_hash(item.data, size)
+        item.meta['hash'] = file_hash
