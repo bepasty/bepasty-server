@@ -112,7 +112,7 @@ class ItemUploadView(MethodView):
             # Set status 'successful' and return the new URL for the uploaded file
             response.status = '201'
             response.headers["Content-Location"] = url_for('bepasty_apis.items_detail', name=name)
-            response.headers["transaction-id"] = base64.b64encode(name)
+            response.headers["Transaction-ID"] = base64.b64encode(name)
         else:
             item.close()
 
@@ -184,7 +184,8 @@ class ItemDownloadView(MethodView):
 
 class InfoView(MethodView):
     def get(self):
-        return jsonify({'MAX_BODY_SIZE': current_app.config['MAX_BODY_SIZE']})
+        return jsonify({'MAX_BODY_SIZE': current_app.config['MAX_BODY_SIZE'],
+                        'MAX_ALLOWED_FILE_SIZE': current_app.config['MAX_ALLOWED_FILE_SIZE']})
 
 
 blueprint.add_url_rule('/rest', view_func=InfoView.as_view('api_info'))
