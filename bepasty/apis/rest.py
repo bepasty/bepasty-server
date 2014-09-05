@@ -64,9 +64,9 @@ class ItemUploadView(MethodView):
             item = current_app.storage.create(name, 0)
 
             # set max lifetime
-            maxlife_unit = request.form.get('maxlife-unit', 'forever')
-            maxlife_value = int(request.form.get('maxlife-value'), 1)
-            maxtime = time_unit_to_sec(maxlife_value, maxlife_unit)
+            maxlife_unit = request.headers.get('maxlife-unit', 'FOREVER')
+            maxlife_value = int(request.headers.get('maxlife-value', 1))
+            maxtime = time_unit_to_sec(maxlife_value, maxlife_unit.upper())
             maxlife_timestamp = int(time.time()) + maxtime if maxtime > 0 else maxtime
             # Fill meta with data from Request
             Upload.meta_new(item, 0, file_name, file_type,
@@ -112,7 +112,7 @@ class ItemUploadView(MethodView):
             # Set status 'successful' and return the new URL for the uploaded file
             response.status = '201'
             response.headers["Content-Location"] = url_for('bepasty_apis.items_detail', name=name)
-            response.headers["transaction-id"] = base64.b64encode(name)
+            response.headers["Transaction-ID"] = base64.b64encode(name)
         else:
             item.close()
 
@@ -184,7 +184,8 @@ class ItemDownloadView(MethodView):
 
 class InfoView(MethodView):
     def get(self):
-        return jsonify({'MAX_BODY_SIZE': current_app.config['MAX_BODY_SIZE']})
+        return jsonify({'MAX_BODY_SIZE': current_app.config['MAX_BODY_SIZE'],
+                        'MAX_ALLOWED_FILE_SIZE': current_app.config['MAX_ALLOWED_FILE_SIZE']})
 
 
 blueprint.add_url_rule('/rest', view_func=InfoView.as_view('api_info'))

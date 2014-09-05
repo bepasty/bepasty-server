@@ -113,3 +113,8 @@ table.highlighttable {
     padding-left: 0;
     padding-right: 0;
 }
+
+/* Set minimal width and let the contents push the block width */
+.linenos {
+    width: 1px;
+}
