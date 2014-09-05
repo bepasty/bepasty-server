@@ -75,18 +75,36 @@ The following headers *can (cursive)* or **must (bold)** be delivered by every p
     The content-filename header can be used to name the file on the server. If no content-filename is passed, the server
     will generate a name from scratch. Maximum filename size is 50 characters.
 
-Maxlife-Unit
+*Maxlife-Unit*
+    The maxlife-unit can be used with the maxlife-value header to define a lifetime for the file that is uploaded.
+    The unit has to be one of these::
+        ['MINUTES', 'HOURS', 'DAYS', 'WEEKS', 'MONTHS', 'YEARS', 'FOREVER']
+    If this header is ommited the unit will be forever
 
-Maxlife-Value
+*Maxlife-Value*
+    The maxlife-value header defines the value of the maxlife-unit.
 
-Post Response by the server
+POST Response by the server
 ---------------------------
+
+
 
 Retrieving information about a file
 ===================================
 API Interface::
 
     GET /apis/rest/items/<itemname>
+
+GET Request by the client
+-------------------------
+
+**itemname**
+    The itemname of the file that
+
+GET Response by the server
+--------------------------
+
+
 
 Downloading a file
 ==================
