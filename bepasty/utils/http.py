@@ -4,7 +4,7 @@
 import collections
 from urlparse import urlparse, urljoin
 
-from flask import request, abort, redirect, url_for
+from flask import request, redirect, url_for
 from werkzeug.exceptions import BadRequest
 
 
