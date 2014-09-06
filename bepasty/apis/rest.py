@@ -1,7 +1,3 @@
-# Copyright: 2014 Dennis Schmalacker <github@progde.de>
-# Copyright: 2014 Darko Ronic <darko.ronic@gmail.com>
-# License: BSD 2-clause, see LICENSE for details.
-
 import errno
 import base64
 import time

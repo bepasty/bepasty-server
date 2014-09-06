@@ -1,6 +1,3 @@
-# Copyright: 2014 Thomas Waldmann <tw@waldmann-edv.de>
-# License: BSD 2-clause, see LICENSE for details.
-
 import errno
 
 from flask import current_app, render_template
