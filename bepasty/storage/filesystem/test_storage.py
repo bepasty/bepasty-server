@@ -14,3 +14,16 @@ def test_contains(tmpdir):
     storage.remove(name)
     # check if it is gone
     assert name not in storage
+
+
+def test_iter(tmpdir):
+    storage = Storage(str(tmpdir))
+    # nothing there yet
+    assert list(storage) == []
+    names = ["foo", "bar", "baz", ]
+    for name in names:
+        with storage.create(name, 0) as item:
+            # we just want it created, no need to write sth into it
+            pass
+    assert set(list(storage)) == set(names)
+
