@@ -1,3 +1,5 @@
+import pytest
+
 from . import Storage
 
 
@@ -27,3 +29,9 @@ def test_iter(tmpdir):
             pass
     assert set(list(storage)) == set(names)
 
+
+def test_invalid_name(tmpdir):
+    storage = Storage(str(tmpdir))
+    name = "../invalid"
+    with pytest.raises(RuntimeError):
+        storage.create(name, 0)
