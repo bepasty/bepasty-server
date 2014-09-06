@@ -24,7 +24,7 @@ def create_app():
     if os.environ.get('BEPASTY_CONFIG'):
         app.config.from_envvar('BEPASTY_CONFIG')
 
-    create_storage(app)
+    app.storage = create_storage(app)
     setup_werkzeug_routing(app)
 
     app.register_blueprint(blueprint)

@@ -10,12 +10,17 @@ import tempfile
 logger = logging.getLogger(__name__)
 
 
+def create_storage(app):
+    # decouple Storage class from flask app
+    storage_dir = app.config['STORAGE_FILESYSTEM_DIRECTORY']
+    return Storage(storage_dir)
+
+
 class Storage(object):
     """
     Filesystem storage - store meta and data into separate files in a directory.
     """
-    def __init__(self, app):
-        storage_dir = app.config['STORAGE_FILESYSTEM_DIRECTORY']
+    def __init__(self, storage_dir):
         try:
             fd, fname = tempfile.mkstemp(dir=storage_dir)
         except OSError as e:
@@ -25,7 +30,6 @@ class Storage(object):
             os.close(fd)
             os.remove(fname)
             self.directory = storage_dir
-            app.storage = self
 
     def _filename(self, name):
         if '/' in name:

@@ -12,4 +12,4 @@ def create_storage(app):
         raise Exception("Missing STORAGE config key")
 
     storage = importlib.import_module('.' + app.config['STORAGE'], __name__)
-    return storage.Storage(app)
+    return storage.create_storage(app)

@@ -194,7 +194,7 @@ class Main(object):
         if args.config is not None:
             cfg_path = os.path.abspath(args.config)
             app.config.from_pyfile(cfg_path)
-        storage = create_storage(app)
+        app.storage = storage = create_storage(app)
 
         # Setup application context
         with app.app_context():
