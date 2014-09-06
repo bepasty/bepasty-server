@@ -68,6 +68,10 @@ class Storage(object):
         for name in names:
             yield name
 
+    def __contains__(self, name):
+        meta_filename = self._filename(name) + '.meta'
+        return os.path.exists(meta_filename)
+
 
 class Item(object):
     """
