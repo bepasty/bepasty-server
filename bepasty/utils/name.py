@@ -71,8 +71,29 @@ class ItemName(str):
         return str(uid)
 
     @classmethod
-    def create(cls, length=ID_LENGTH):
-        return cls(make_id(length))
+    def create(cls, storage, length=ID_LENGTH, max_length=2 * ID_LENGTH, max_tries=10):
+        """
+        create a unique item name in storage, wanted name length is <length>.
+
+        we try at most <max_tries> times to find a unique name of a specific length -
+        if we do not succeed, we increase name length and try again.
+        if we can't find a unique name even for longer lengths up to max_length,
+        we'll raise RuntimeError.
+        """
+        while length <= max_length:
+            tries = 0
+            while tries < max_tries:
+                name = make_id(length)
+                if name not in storage:
+                    break
+                tries += 1
+            if tries < max_tries:
+                # we found a name, break out of outer while also
+                break
+            length += 1
+        if length > max_length:
+            raise RuntimeError("no unique names available")
+        return cls(name)
 
 
 class ItemNameConverter(BaseConverter):

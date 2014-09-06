@@ -7,8 +7,25 @@ from .name import ItemName, encode, make_id
 
 
 def test_create():
-    n = ItemName.create()
+    fake_storage = {}
+    n = ItemName.create(fake_storage)
     assert n
+
+
+def test_create_many():
+    fake_storage = {}
+    length = 1
+    count = 400  # way more than we can do with this name length
+    max_seen_length = 0
+    for i in xrange(count):
+        name = ItemName.create(fake_storage, length=length, max_length=length*4, max_tries=10)
+        # use the name in storage, so it is not available any more
+        fake_storage[name] = None
+        max_seen_length = max(max_seen_length, len(name))
+    # it should automatically use longer names, if it runs out of unique names:
+    assert max_seen_length > length
+    # we should get all unique names we wanted, no duplicates:
+    assert len(list(fake_storage)) == count
 
 
 def test_make_id_type():

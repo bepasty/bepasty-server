@@ -77,7 +77,7 @@ class UploadNewView(MethodView):
         maxtime = time_unit_to_sec(maxlife_value, maxlife_unit)
         maxlife_timestamp = int(time.time()) + maxtime if maxtime > 0 else maxtime
 
-        name = ItemName.create()
+        name = ItemName.create(current_app.storage)
         with current_app.storage.create(name, data_size) as item:
             # Save meta-data
             Upload.meta_new(item, data_size, data_filename, data_type,

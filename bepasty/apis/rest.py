@@ -60,7 +60,7 @@ class ItemUploadView(MethodView):
         # Check if Transaction-ID is available for continued upload
         if not request.headers.get("Transaction-Id"):
             # Create ItemName and empty file in Storage
-            name = ItemName.create()
+            name = ItemName.create(current_app.storage)
             item = current_app.storage.create(name, 0)
 
             # set max lifetime
