@@ -1,23 +1,22 @@
 # Copyright: 2013 Bastian Blank <bastian@waldi.eu.org>
 # License: BSD 2-clause, see LICENSE for details.
 
-import tempfile
-
 from . import Meta
 
 
-def test():
-    f = tempfile.TemporaryFile()
+def test(tmpdir):
+    p = tmpdir.join("test.meta")
 
-    m = Meta(f)
+    m = Meta(p.open('w+b'))
     assert len(m) == 0
-    m.write()
+    m.close()
 
-    m = Meta(f)
+    m = Meta(p.open('r+b'))
     m['flag'] = True
     assert len(m) == 1
-    m.write()
+    m.close()
 
-    m = Meta(f)
+    m = Meta(p.open('r+b'))
     assert len(m) == 1
     assert m['flag'] is True
+    m.close()
