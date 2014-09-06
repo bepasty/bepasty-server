@@ -1,6 +1,21 @@
 ChangeLog
 =========
 
+
+Release 0.4.0
+-------------
+
+New features:
+
+* shorter, easy-to-read URLs / filenames (old uuid4 style URLs still supported,
+  but not generated any more for new items)
+
+Fixes:
+
+* give configured limits to JS also, so stuff has not to be kept in sync manually, fixes #109
+* highlighted text file views: set fixed width to line number column, fixes #108
+
+
 Release 0.3.0
 -------------
 
