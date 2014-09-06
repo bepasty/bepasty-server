@@ -52,4 +52,3 @@ def test_del(tmpdir):
     assert len(m) == 0
     assert key not in m
     m.close()
-
