@@ -4,6 +4,7 @@ from flask import g as flaskg
 
 # in the code, please always use this constants for permission values:
 ADMIN = 'admin'
+LIST = 'list'
 CREATE = 'create'
 READ = 'read'
 DELETE = 'delete'

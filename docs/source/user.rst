@@ -16,7 +16,18 @@ The site admin can assign permissions to login credentials (and also to the anon
 * create: be able to create pastebins
 * read: be able to read / download pastebins
 * delete: be able to delete pastebins
-* admin: be able to list all pastebins, to lock/unlock files
+* list: be able to list (discover) all pastebins
+* admin: be able to lock/unlock files, do actions even if upload is not completed or item is locked
+
+Be careful about who you give what permissions - especially "admin" and "list" are rather critical ones.
+
+If you want good privacy, do not give "list" to anybody (except site administrator maybe).
+
+If you want to do everything rather in the public, you may give "list" to users (or even use it by
+default for not-logged-in users).
+
+"admin" likely should be given only to very trusted people, like site administrator.
+
 
 Pasting text
 ============

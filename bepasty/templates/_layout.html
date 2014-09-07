@@ -40,7 +40,7 @@
                             <div class="collapse navbar-collapse" id="navbar-collapse">
                                 <ul class="nav navbar-nav">
                                     <li><a href="http://bepasty-server.readthedocs.org/en/latest/">Documentation</a></li>
-                                    {% if may(ADMIN) %}
+                                    {% if may(LIST) %}
                                     <li><a href="{{ url_for('bepasty.filelist') }}">List all Items</a></li>
                                     {% endif %}
                                 </ul>

@@ -35,7 +35,7 @@ def file_infos(names=None):
 
 class FileListView(MethodView):
     def get(self):
-        if not may(ADMIN):
+        if not may(LIST):
             raise Forbidden()
         files = sorted(file_infos(), key=lambda f: f['timestamp-upload'], reverse=True)
         return render_template('filelist.html', files=files)

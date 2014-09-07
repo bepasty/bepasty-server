@@ -82,6 +82,7 @@ def create_app():
     app.jinja_env.globals['flaskg'] = flaskg
     app.jinja_env.globals['may'] = may
     app.jinja_env.globals['ADMIN'] = ADMIN
+    app.jinja_env.globals['LIST'] = LIST
     app.jinja_env.globals['CREATE'] = CREATE
     app.jinja_env.globals['READ'] = READ
     app.jinja_env.globals['DELETE'] = DELETE
