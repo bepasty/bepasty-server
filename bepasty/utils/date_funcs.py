@@ -1,6 +1,3 @@
-# Copyright: 2014 Valentin Pratz <vp.pratz@yahoo.de>
-# License: BSD 2-clause, see LICENSE for details.
-
 import time
 from flask import current_app
 

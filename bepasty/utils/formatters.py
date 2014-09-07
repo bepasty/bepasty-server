@@ -1,6 +1,3 @@
-# Copyright: 2014 Ana Balica <ana.balica@gmail.com>
-# License: BSD 2-clause, see LICENSE for details.
-
 from pygments.formatters.html import HtmlFormatter
 
 

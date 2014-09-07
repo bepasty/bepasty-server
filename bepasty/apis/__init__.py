@@ -1,5 +1,4 @@
-from flask import Blueprint, current_app, jsonify
-from flask.views import MethodView
+from flask import Blueprint
 
 blueprint = Blueprint('bepasty_apis', __name__, url_prefix='/apis')
 

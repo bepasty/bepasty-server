@@ -1,6 +1,3 @@
-# Copyright: 2014 Thomas Waldmann <tw@waldmann-edv.de>
-# License: BSD 2-clause, see LICENSE for details.
-
 from flask import request, session, current_app
 from flask import g as flaskg
 

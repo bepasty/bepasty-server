@@ -91,9 +91,9 @@ table.highlighttable {
 
 .linenodiv pre, .highlight pre {
     margin-bottom: 0;
-    -webkit-border-radius: 0px;
-    -moz-border-radius: 0px;
-    border-radius: 0px;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
 }
 
 .highlight p {
@@ -112,4 +112,9 @@ table.highlighttable {
 .highlight pre {
     padding-left: 0;
     padding-right: 0;
+}
+
+/* Set minimal width and let the contents push the block width */
+.linenos {
+    width: 1px;
 }

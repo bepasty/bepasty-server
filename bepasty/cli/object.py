@@ -1,6 +1,3 @@
-# Copyright: 2013 Bastian Blank <bastian@waldi.eu.org>
-# License: BSD 2-clause, see LICENSE for details.
-
 """
 bepasty-object commandline interface
 """
@@ -196,7 +193,7 @@ class Main(object):
         if args.config is not None:
             cfg_path = os.path.abspath(args.config)
             app.config.from_pyfile(cfg_path)
-        storage = create_storage(app)
+        app.storage = storage = create_storage(app)
 
         # Setup application context
         with app.app_context():

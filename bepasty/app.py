@@ -1,6 +1,3 @@
-# Copyright: 2013 Bastian Blank <bastian@waldi.eu.org>
-# License: BSD 2-clause, see LICENSE for details.
-
 import os
 import time
 
@@ -24,7 +21,7 @@ def create_app():
     if os.environ.get('BEPASTY_CONFIG'):
         app.config.from_envvar('BEPASTY_CONFIG')
 
-    create_storage(app)
+    app.storage = create_storage(app)
     setup_werkzeug_routing(app)
 
     app.register_blueprint(blueprint)

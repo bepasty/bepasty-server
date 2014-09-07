@@ -1,15 +1,10 @@
-# Copyright: 2013 Bastian Blank <bastian@waldi.eu.org>
-# License: BSD 2-clause, see LICENSE for details.
-
-import tempfile
-
 from . import Data
 
 
-def test():
-    f = tempfile.TemporaryFile()
+def test(tmpdir):
+    p = tmpdir.join("test.data")
 
-    d = Data(f)
+    d = Data(p.open('w+b'))
     assert d.size == 0
 
     d.write(b'a' * 1024, 0)

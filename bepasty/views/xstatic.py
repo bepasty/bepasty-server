@@ -1,6 +1,5 @@
 from ..bepasty_xstatic import serve_files
 
-from flask import Response, abort
 from flask import send_from_directory
 from werkzeug.exceptions import NotFound
 
