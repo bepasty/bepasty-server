@@ -41,7 +41,7 @@ def test_make_id_alphabet():
 
 def test_make_id_unique():
     length, count = 6, 10000
-    ids = {make_id(length) for i in xrange(count)}
+    ids = set(make_id(length) for i in xrange(count))
     # if we did not encounter duplicates, set size must be <count>
     # of course, in extremely rare cases, this test might fail
     assert len(ids) == count
