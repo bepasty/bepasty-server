@@ -40,7 +40,7 @@ class Storage(object):
         return Item(file_data, file_meta)
 
     def create(self, name, size):
-        return self._open(name, 'w+bx')
+        return self._open(name, 'w+b')
 
     def open(self, name):
         return self._open(name, 'rb')
@@ -164,5 +164,8 @@ class Meta(collections.MutableMapping):
 
     def _write(self):
         self._file.seek(0)
-        pickle.dump(self._data, self._file)
+        # Python 2.x only uses protocol 2, 3.x uses protocol 3 by default.
+        # If we just use protocol 2, changing the Python version shouldn't
+        # cause problems with existing pickles.
+        pickle.dump(self._data, self._file, protocol=2)
         self._file.seek(0)

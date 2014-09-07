@@ -1,6 +1,6 @@
 import os
 import errno
-from StringIO import StringIO
+from io import BytesIO
 import time
 
 from flask import abort, current_app, jsonify, request, url_for
@@ -22,7 +22,10 @@ class UploadView(MethodView):
             raise Forbidden()
         f = request.files.get('file')
         t = request.form.get('text')
-        if f:
+        # note: "and f.filename" is needed due to missing __bool__ method in
+        # werkzeug.datastructures.FileStorage, to work around it crashing
+        # on Python 3.x.
+        if f and f.filename:
             # Check Content-Range, disallow its usage
             if ContentRange.from_request():
                 abort(416)
@@ -44,7 +47,7 @@ class UploadView(MethodView):
             content_type = request.form.get('contenttype')  # TODO: add coding
             content_type_hint = 'text/plain'
             size = len(t)
-            f = StringIO(t)
+            f = BytesIO(t)
             filename = request.form.get('filename')
         else:
             raise NotImplementedError
