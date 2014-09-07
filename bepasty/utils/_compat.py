@@ -9,11 +9,15 @@ _identity = lambda x: x
 
 
 if not PY2:
+    range_type = range
+
     from urllib.parse import urlparse, urljoin
     iterkeys = lambda d: iter(d.keys())
     itervalues = lambda d: iter(d.values())
     iteritems = lambda d: iter(d.items())
 else:
+    range_type = xrange
+
     from urlparse import urlparse, urljoin
     iterkeys = lambda d: d.iterkeys()
     itervalues = lambda d: d.itervalues()
