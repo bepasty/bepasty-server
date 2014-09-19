@@ -1,21 +1,16 @@
-# Copyright: 2014 Thomas Waldmann <tw@waldmann-edv.de>
-# License: BSD 2-clause, see LICENSE for details.
-
-from StringIO import StringIO
-import time
+from io import BytesIO
 
 from flask import request
 from flask.views import MethodView
 from werkzeug.exceptions import Forbidden
-from pygments.lexers import get_lexer_by_name, get_all_lexers
+from pygments.lexers import get_all_lexers
 
 from . import blueprint
 from werkzeug.urls import url_quote
 from ..utils.date_funcs import FOREVER
 from ..utils.permissions import *
 from ..utils.http import redirect_next
-from ..utils.name import ItemName
-from ..utils.upload import Upload, create_item
+from ..utils.upload import create_item
 
 
 class LodgeitUpload(MethodView):
@@ -53,7 +48,7 @@ class LodgeitUpload(MethodView):
         # t is already unicode, but we want utf-8 for storage
         t = t.encode('utf-8')
         size = len(t)
-        f = StringIO(t)
+        f = BytesIO(t)
         maxlife_timestamp = FOREVER
         name = create_item(f, filename, size, content_type, content_type_hint,
                            maxlife_stamp=maxlife_timestamp)

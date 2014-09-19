@@ -1,6 +1,3 @@
-# Copyright: 2014 Dennis Schmalacker <github@progde.de>
-# License: BSD 2-clause, see LICENSE for details.
-
 import re
 import time
 import mimetypes
@@ -116,7 +113,7 @@ def create_item(f, filename, size, content_type, content_type_hint,
     """
     create an item from open file <f> with the given metadata, return the item name.
     """
-    name = ItemName.create()
+    name = ItemName.create(current_app.storage)
     with current_app.storage.create(name, size) as item:
         size_written, file_hash = Upload.data(item, f, size)
         Upload.meta_new(item, size, filename, content_type, content_type_hint,
@@ -127,7 +124,7 @@ def create_item(f, filename, size, content_type, content_type_hint,
 
 @async
 def background_compute_hash(storage, name):
-        with storage.openwrite(name) as item:
-            size = item.meta['size']
-            file_hash = compute_hash(item.data, size)
-            item.meta['hash'] = file_hash
+    with storage.openwrite(name) as item:
+        size = item.meta['size']
+        file_hash = compute_hash(item.data, size)
+        item.meta['hash'] = file_hash

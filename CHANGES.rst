@@ -1,6 +1,33 @@
 ChangeLog
 =========
 
+
+Release 0.4.0
+-------------
+
+New features:
+
+* shorter, easy-to-read URLs / filenames (old uuid4 style URLs still supported,
+  but not generated any more for new items)
+* "list" permission separated from "admin" permission.
+
+  - list: be able to list (discover) all pastebins
+  - admin: be able to lock/unlock files, do actions even if upload is not
+    completed or item is locked
+
+  Make sure you update your PERMISSIONS configuration (you likely want to give
+  "list" to the site administrator).
+
+  By giving "list" (and/or "delete") permission to more users, you could
+  operate your bepasty site in a rather public way (users seeing stuff from
+  other users, maybe even being able to delete stuff they see).
+
+Fixes:
+
+* give configured limits to JS also, so stuff has not to be kept in sync manually, fixes #109
+* highlighted text file views: set fixed width to line number column, fixes #108
+
+
 Release 0.3.0
 -------------
 

@@ -1,12 +1,10 @@
-# Copyright: 2014 Thomas Waldmann <tw@waldmann-edv.de>
-# License: BSD 2-clause, see LICENSE for details.
-
 from flask import request, session, current_app
 from flask import g as flaskg
 
 
 # in the code, please always use this constants for permission values:
 ADMIN = 'admin'
+LIST = 'list'
 CREATE = 'create'
 READ = 'read'
 DELETE = 'delete'

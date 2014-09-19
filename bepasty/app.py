@@ -1,6 +1,3 @@
-# Copyright: 2013 Bastian Blank <bastian@waldi.eu.org>
-# License: BSD 2-clause, see LICENSE for details.
-
 import os
 import time
 
@@ -24,7 +21,7 @@ def create_app():
     if os.environ.get('BEPASTY_CONFIG'):
         app.config.from_envvar('BEPASTY_CONFIG')
 
-    create_storage(app)
+    app.storage = create_storage(app)
     setup_werkzeug_routing(app)
 
     app.register_blueprint(blueprint)
@@ -85,6 +82,7 @@ def create_app():
     app.jinja_env.globals['flaskg'] = flaskg
     app.jinja_env.globals['may'] = may
     app.jinja_env.globals['ADMIN'] = ADMIN
+    app.jinja_env.globals['LIST'] = LIST
     app.jinja_env.globals['CREATE'] = CREATE
     app.jinja_env.globals['READ'] = READ
     app.jinja_env.globals['DELETE'] = DELETE

@@ -1,5 +1,3 @@
-# License: BSD 2-clause, see LICENSE for details.
-
 from flask import request, session
 from flask.views import MethodView
 

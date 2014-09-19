@@ -1,11 +1,7 @@
-# Copyright: 2014 Thomas Waldmann <tw@waldmann-edv.de>
-# License: BSD 2-clause, see LICENSE for details.
-
 import errno
 
 from flask import current_app, render_template
 from flask.views import MethodView
-import time
 from werkzeug.exceptions import Forbidden
 
 from . import blueprint
@@ -39,7 +35,7 @@ def file_infos(names=None):
 
 class FileListView(MethodView):
     def get(self):
-        if not may(ADMIN):
+        if not may(LIST):
             raise Forbidden()
         files = sorted(file_infos(), key=lambda f: f['timestamp-upload'], reverse=True)
         return render_template('filelist.html', files=files)

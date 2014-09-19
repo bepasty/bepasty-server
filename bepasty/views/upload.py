@@ -1,9 +1,6 @@
-# Copyright: 2013 Bastian Blank <bastian@waldi.eu.org>
-# License: BSD 2-clause, see LICENSE for details.
-
 import os
 import errno
-from StringIO import StringIO
+from io import BytesIO
 import time
 
 from flask import abort, current_app, jsonify, request, url_for
@@ -25,7 +22,10 @@ class UploadView(MethodView):
             raise Forbidden()
         f = request.files.get('file')
         t = request.form.get('text')
-        if f:
+        # note: "and f.filename" is needed due to missing __bool__ method in
+        # werkzeug.datastructures.FileStorage, to work around it crashing
+        # on Python 3.x.
+        if f and f.filename:
             # Check Content-Range, disallow its usage
             if ContentRange.from_request():
                 abort(416)
@@ -47,7 +47,7 @@ class UploadView(MethodView):
             content_type = request.form.get('contenttype')  # TODO: add coding
             content_type_hint = 'text/plain'
             size = len(t)
-            f = StringIO(t)
+            f = BytesIO(t)
             filename = request.form.get('filename')
         else:
             raise NotImplementedError
@@ -77,7 +77,7 @@ class UploadNewView(MethodView):
         maxtime = time_unit_to_sec(maxlife_value, maxlife_unit)
         maxlife_timestamp = int(time.time()) + maxtime if maxtime > 0 else maxtime
 
-        name = ItemName.create()
+        name = ItemName.create(current_app.storage)
         with current_app.storage.create(name, data_size) as item:
             # Save meta-data
             Upload.meta_new(item, data_size, data_filename, data_type,

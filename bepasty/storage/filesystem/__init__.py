@@ -1,6 +1,3 @@
-# Copyright: 2013 Bastian Blank <bastian@waldi.eu.org>
-# License: BSD 2-clause, see LICENSE for details.
-
 import collections
 import os
 import pickle
@@ -10,12 +7,17 @@ import tempfile
 logger = logging.getLogger(__name__)
 
 
+def create_storage(app):
+    # decouple Storage class from flask app
+    storage_dir = app.config['STORAGE_FILESYSTEM_DIRECTORY']
+    return Storage(storage_dir)
+
+
 class Storage(object):
     """
     Filesystem storage - store meta and data into separate files in a directory.
     """
-    def __init__(self, app):
-        storage_dir = app.config['STORAGE_FILESYSTEM_DIRECTORY']
+    def __init__(self, storage_dir):
         try:
             fd, fname = tempfile.mkstemp(dir=storage_dir)
         except OSError as e:
@@ -25,7 +27,6 @@ class Storage(object):
             os.close(fd)
             os.remove(fname)
             self.directory = storage_dir
-            app.storage = self
 
     def _filename(self, name):
         if '/' in name:
@@ -39,7 +40,7 @@ class Storage(object):
         return Item(file_data, file_meta)
 
     def create(self, name, size):
-        return self._open(name, 'w+bx')
+        return self._open(name, 'w+b')
 
     def open(self, name):
         return self._open(name, 'rb')
@@ -67,6 +68,10 @@ class Storage(object):
                  if fn.endswith('.meta')]
         for name in names:
             yield name
+
+    def __contains__(self, name):
+        meta_filename = self._filename(name) + '.meta'
+        return os.path.exists(meta_filename)
 
 
 class Item(object):
@@ -159,5 +164,8 @@ class Meta(collections.MutableMapping):
 
     def _write(self):
         self._file.seek(0)
-        pickle.dump(self._data, self._file)
+        # Python 2.x only uses protocol 2, 3.x uses protocol 3 by default.
+        # If we just use protocol 2, changing the Python version shouldn't
+        # cause problems with existing pickles.
+        pickle.dump(self._data, self._file, protocol=2)
         self._file.seek(0)

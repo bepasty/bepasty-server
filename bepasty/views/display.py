@@ -1,6 +1,3 @@
-# Copyright: 2013 Bastian Blank <bastian@waldi.eu.org>
-# License: BSD 2-clause, see LICENSE for details.
-
 import errno
 import time
 
@@ -14,6 +11,7 @@ from pygments.util import ClassNotFound as NoPygmentsLexer
 from ..utils.permissions import *
 from ..utils.date_funcs import delete_if_lifetime_over
 from ..utils.formatters import CustomHtmlFormatter
+from ..utils._compat import iteritems
 from . import blueprint
 from .filelist import file_infos
 
@@ -31,7 +29,7 @@ def rendering_allowed(item_type, item_size, use_pygments, complete):
         # if we use pygments, special restrictions apply
         item_type = 'HIGHLIGHT_TYPES'
     # create a tuple list [(content_type_prefix, max_size), ...] with long prefixes first
-    ct_size = sorted(current_app.config['MAX_RENDER_SIZE'].iteritems(), key=lambda e: len(e[0]), reverse=True)
+    ct_size = sorted(iteritems(current_app.config['MAX_RENDER_SIZE']), key=lambda e: len(e[0]), reverse=True)
     for ct, size in ct_size:
         if item_type.startswith(ct):
             return item_size <= size
@@ -87,7 +85,7 @@ class DisplayView(MethodView):
                 if ct.startswith('text/x-bepasty-'):
                     # special bepasty items - must be first, don't feed to pygments
                     if ct == 'text/x-bepasty-list':
-                        names = read_data(item).splitlines()
+                        names = read_data(item).decode('utf-8').splitlines()
                         files = sorted(file_infos(names), key=lambda f: f['filename'])
                         rendered_content = Markup(render_template('filelist_tableonly.html', files=files))
                     else:

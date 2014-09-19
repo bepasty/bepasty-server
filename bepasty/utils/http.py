@@ -1,10 +1,7 @@
-# Copyright: 2013 Bastian Blank <bastian@waldi.eu.org>
-# License: BSD 2-clause, see LICENSE for details.
-
 import collections
-from urlparse import urlparse, urljoin
+from ._compat import urlparse, urljoin
 
-from flask import request, abort, redirect, url_for
+from flask import request, redirect, url_for
 from werkzeug.exceptions import BadRequest
 
 

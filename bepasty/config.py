@@ -1,7 +1,3 @@
-# Copyright: 2013 Bastian Blank <bastian@waldi.eu.org>
-# License: BSD 2-clause, see LICENSE for details.
-
-
 class Config(object):
     """This is the basic configuration class for bepasty."""
 
@@ -96,9 +92,9 @@ class Config(object):
     #: ::
     #:
     #:     PERMISSIONS = {
-    #:         'myadminsecret': 'admin,create,read,delete',
+    #:         'myadminsecret': 'admin,list,create,read,delete',
     #:         'uploadersecret': 'create,read',
     #:     }
     PERMISSIONS = {
-        # 'foo': 'admin,create,read,delete',
+        # 'foo': 'admin,list,create,read,delete',
     }

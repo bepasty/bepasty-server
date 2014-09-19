@@ -1,10 +1,8 @@
-# Copyright: 2013 Bastian Blank <bastian@waldi.eu.org>
-# License: BSD 2-clause, see LICENSE for details.
-
 """
 bepasty-server commandline interface
 """
 
+from __future__ import print_function
 import argparse
 
 from ..app import create_app
@@ -18,7 +16,7 @@ def main():
 
     args = argparser.parse_args()
     app = create_app()
-    print " * Starting bepasty server..."
+    print(" * Starting bepasty server...")
     app.run(host=args.host, port=args.port, debug=args.debug)
 
 
