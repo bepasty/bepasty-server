@@ -36,7 +36,10 @@ commands to run
 
 config file for bepasty -- ``/home/bepasty/bepasty.conf``:
 
-Copy ``bepasty/config.py`` to ``/home/bepasty/bepasty.conf`` first, then modify it:
+Copy ``bepasty/config.py`` to ``/home/bepasty/bepasty.conf`` first,
+remove the ``class Config`` and remove all indents in the file.
+The comments can be removed too, if you feel the need to.
+At last modify these two configs variables:
 
 ::
 

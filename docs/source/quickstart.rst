@@ -30,7 +30,9 @@ Here is the documentation straight from its config:
 
 
 To create a local and non-default configuration, copy ``bepasty/config.py`` to e.g. ``/srv/bepasty/bepasty.conf``
-first, then modify it:
+first, remove the ``class Config`` and remove all indents in the file.
+The comments can be removed too, if you feel the need to.
+At last modify these two configs variables: then modify it:
 
 ::
 
