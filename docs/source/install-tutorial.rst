@@ -100,6 +100,7 @@ A nginx configuration i.e. in ``/etc/nginx/conf.d/bepasty.conf``:
     }
   }
 
+Now reload your nginx configuration: `service nginx reload`.  
 
 Supervisord config i.e. in ``/etc/supervisor/conf.d/bepasty.conf``:
 
@@ -111,3 +112,4 @@ Supervisord config i.e. in ``/etc/supervisor/conf.d/bepasty.conf``:
   stdout_logfile = /home/bepasty/logs/gunicorn_supervisor.log   ; Where to write log messages
   redirect_stderr = true                                        ; Save stderr in the same log
 
+Finally reload supervisor: `service supervisor reload`
