@@ -87,7 +87,10 @@ The following headers *can (cursive)* or **must (bold)** be delivered by every p
 POST Response by the server
 ---------------------------
 
-
+*Transaction-ID*
+    Transaction-ID provided for continued upload in a chunked upload process.
+*Content-Disposition*
+    The URI of the newly uploaded file on the server. Will only be provided when upload is finished and successful.
 
 Retrieving information about a file
 ===================================
@@ -99,15 +102,62 @@ GET Request by the client
 -------------------------
 
 **itemname**
-    The itemname of the file that
+    The itemname of the file requested.
 
 GET Response by the server
 --------------------------
+Example Respone::
 
+    {
+    file-meta: {
+        complete: true,
+        filename: "Wallpaper Work.7z",
+        hash: "dded24ba6f1d953bedb9d2745635a6f7462817061763b0d70f68b7952722f275",
+        locked: false,
+        size: 150225567,
+        timestamp-download: 1414483078,
+        timestamp-max-life: -1,
+        timestamp-upload: 1414443534,
+        type: "application/x-7z-compressed"
+        },
+    uri: "/apis/rest/items/N24bFRZm"
+    }
+
+*URI*
+    The URI of the file on the server. Used to link to the download.
+*File-Meta*
+    *Filename*
+        The Filename of the uploaded file.
+    *Size*
+        The calculated size of the file on the server.
+    *Timestamp-Upload*
+        The timestamp of the moment the file was uploaded.
+    *Timestamp-Download*
+        The timestamp of the last download.
+    *Timestamp-Max_life*
+        The lifetime timestamp of the file in seconds. -1 means to keep the file forever.
+    *Complete*
+        True if the file upload is completed. False if it isn't
+    *Locked*
+        Wether the file is locked or not. 
+    *Hash*
+        The sha256 hash of the file uploaded. Calculated by the server.
+    *Type*    
+        Mimetype of the file uploaded. If no filetype is provided this will be set to 'application/octet-stream'.
 
 
 Downloading a file
 ==================
 API Interface::
 
-    GET /apis/rest
+    GET /apis/rest/items/<itemname>/download
+
+GET Response by the server
+--------------------------
+Example Response::
+    Content-Type: application/x-7z-compressed
+    Content-Length: 150225568
+    Content-Disposition: attachment; filename="Wallpaper Work.7z"
+    Content-Range: bytes 0-150225567/150225567
+
+Opens up a stream and delivers the binary data directly. The above headers can be found in the HTTP Response.
