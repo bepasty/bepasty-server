@@ -139,7 +139,7 @@ class ItemDownloadView(MethodView):
                 return 'File not found', 404
             raise
 
-        if not item.meta.get('unlocked'):
+        if item.meta.get('locked'):
             error = 'File Locked.'
         elif not item.meta.get('complete'):
             error = 'Upload incomplete. Try again later.'
