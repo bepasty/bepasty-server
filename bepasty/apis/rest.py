@@ -121,7 +121,7 @@ class ItemDetailView(MethodView):
             return 'Missing Permissions', 403
 
         with current_app.storage.open(name) as item:
-            return jsonify({'uri': url_for('bepasty_rest.items_detail', name=name),
+            return jsonify({'uri': url_for('bepasty_apis.items_detail', name=name),
                             'file-meta': dict(item.meta)})
 
 
