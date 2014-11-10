@@ -13,6 +13,7 @@ Contents
 
    intro
    user
+   rest
    user-cli
    quickstart
    install-tutorial
