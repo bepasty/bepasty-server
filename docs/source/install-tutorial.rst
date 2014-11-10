@@ -84,6 +84,7 @@ A nginx configuration i.e. in ``/etc/nginx/conf.d/bepasty.conf``:
 
   server {
     listen 80;
+    #listen [::]:80; #uncomment this if your server supports IPv6
     server_name paste.example.org;  # <-- add your domainname here
 
     access_log /home/bepasty/logs/nginx-access.log;
