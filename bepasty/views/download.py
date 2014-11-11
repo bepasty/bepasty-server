@@ -18,7 +18,7 @@ class DownloadView(MethodView):
             raise Forbidden()
         try:
             item = current_app.storage.openwrite(name)
-        except OSError as e:
+        except (OSError, IOError) as e:
             if e.errno == errno.ENOENT:
                 raise NotFound()
             raise
