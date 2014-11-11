@@ -25,7 +25,7 @@ Notes:
   internal format default [which is "text" and completely useless for us as it
   is not a valid contenttype])
 
-~/pastebin.d/bepasty.conf::
+~/.pastebin.d/bepasty.conf::
 
     [pastebin]
     basename = bepasty.example.org
