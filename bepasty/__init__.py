@@ -3,7 +3,7 @@
 #       everywhere where we just need the version number, project
 #       name, etc. - even if the dependencies are not installed.
 
-version = u"0.3.0"
+version = u"0.4.0"
 
 # python package name, pypi package name,
 # but: repo name is "bepasty-server"

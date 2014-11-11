@@ -26,6 +26,13 @@ Fixes:
 
 * give configured limits to JS also, so stuff has not to be kept in sync manually, fixes #109
 * highlighted text file views: set fixed width to line number column, fixes #108
+* fixed crash for inline and download views when item was already deleted
+
+Other changes:
+
+* support Python 3.3+ additionally to 2.6+
+* improved documentation, esp. about REST api
+* improve sample configs
 
 
 Release 0.3.0
