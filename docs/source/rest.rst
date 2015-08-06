@@ -8,6 +8,7 @@ about the file on the server.
 Currently (Version 0.3) the REST API provides four API Endpoints::
 
     GET  /apis/rest
+    GET  /apis/rest/items
     POST /apis/rest/items
     GET  /apis/rest/items/<itemname>
     GET  /apis/rest/items/<itemname>/download
@@ -106,7 +107,7 @@ GET Request by the client
 
 GET Response by the server
 --------------------------
-Example Respone::
+Example Response::
 
     {
     file-meta: {
@@ -139,11 +140,45 @@ Example Respone::
     *Complete*
         True if the file upload is completed. False if it isn't
     *Locked*
-        Wether the file is locked or not. 
+        Wether the file is locked or not.
     *Hash*
         The sha256 hash of the file uploaded. Calculated by the server.
-    *Type*    
+    *Type*
         Mimetype of the file uploaded. If no filetype is provided this will be set to 'application/octet-stream'.
+
+Retrieving Item List
+====================
+API Interface::
+
+    GET /apis/rest/items
+
+GET Request by the client
+-------------------------
+
+    No Parameters
+
+GET Response by the server
+--------------------------
+Example Response::
+
+    {
+      "N24bFRZm": {
+        file-meta: {
+            complete: true,
+            filename: "Wallpaper Work.7z",
+            hash: "dded24ba6f1d953bedb9d2745635a6f7462817061763b0d70f68b7952722f275",
+            locked: false,
+            size: 150225567,
+            timestamp-download: 1414483078,
+            timestamp-max-life: -1,
+            timestamp-upload: 1414443534,
+            type: "application/x-7z-compressed"
+          },
+          uri: "/apis/rest/items/N24bFRZm"
+      }, ...
+    }
+
+Parameters are the same as in *Retrieving information about a file*.
 
 
 Downloading a file
