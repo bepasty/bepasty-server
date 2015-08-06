@@ -114,6 +114,27 @@ class ItemUploadView(MethodView):
 
         return response
 
+    def get(self):
+        """
+        Return the list of all files in bepasty, including metadata in the form:
+
+            {
+                "<name>": {
+                    "file-meta": { <name.metadata> },
+                    "uri" : "/apis/rest/items/<name>"
+                },
+                ...
+            }
+        """
+        if not may(LIST):
+            return 'Missing Permissions', 403
+        ret = {}
+        for name in current_app.storage:
+            item = current_app.storage.open(name)
+            ret[name] = {'uri': url_for('bepasty_apis.items_detail', name=name),
+                         'file-meta': dict(item.meta)}
+        return jsonify(ret)
+
 
 class ItemDetailView(MethodView):
     def get(self, name):
@@ -123,7 +144,6 @@ class ItemDetailView(MethodView):
         with current_app.storage.open(name) as item:
             return jsonify({'uri': url_for('bepasty_apis.items_detail', name=name),
                             'file-meta': dict(item.meta)})
-
 
 class ItemDownloadView(MethodView):
     content_disposition = 'attachment'
@@ -182,6 +202,7 @@ class InfoView(MethodView):
     def get(self):
         return jsonify({'MAX_BODY_SIZE': current_app.config['MAX_BODY_SIZE'],
                         'MAX_ALLOWED_FILE_SIZE': current_app.config['MAX_ALLOWED_FILE_SIZE']})
+
 
 
 blueprint.add_url_rule('/rest', view_func=InfoView.as_view('api_info'))
