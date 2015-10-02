@@ -25,6 +25,9 @@ body {
 #files p {
     word-break: break-all;
 }
+#files p .break-word {
+    word-break: break-word;
+}
 
 #filelist {
     height: auto;
