@@ -1,4 +1,4 @@
-jqXHR = null;
+jqXHR = {};
 $(function () {
     'use strict';
     $('#fileupload')
@@ -51,16 +51,16 @@ $(function () {
                 contentType: 'application/json',
                 success: function (result) {
                     data.url = result.url;
-                    jqXHR = $this.fileupload('send', data);
-                    jqXHR.error(function (jqXHR, textStatus, errorThrown)
-                        {
+                    var _jqXHR = $this.fileupload('send', data);
+                    _jqXHR.error(function (jqXHR, textStatus, errorThrown) {
                             //Delete file garbage on server
                             $.ajax({
                                 type: 'GET',
                                 url: data.url+'/abort'
                             });
                         });
-                    }
+                    jqXHR[result.name] = _jqXHR;
+                }
             });
             return false;
         })
@@ -73,16 +73,17 @@ $(function () {
                     .wrapInner($('<a target="_blank" class="alert-link">')
                         .prop('href', file.url));
                 $('#filelist').append(file.name + "\n");
+                delete jqXHR[file.name];
             });
             $('#filelist-form').show();
-            jqXHR = null;
         })
 
         .on('fileuploadfail', function (e, data) {
             $(data.context)
                 .attr('class', 'alert alert-danger')
                 .append('<p><strong>Upload failed!</strong></p>');
-            jqXHR = null;
+            var name = data.url.split('/').pop();
+            delete jqXHR[name];
         })
 
         .on('fileuploadprogressall', function (e, data) {
@@ -113,7 +114,7 @@ $(function () {
     $('#fileupload-abort').click(function (e) {
         bootbox.confirm("Are you sure you want to abort the upload?", function(result) {
             if (result == true && jqXHR != null){
-                jqXHR.abort();
+                for (var key in jqXHR) jqXHR[key].abort();
             }
         });
     });
