@@ -29,8 +29,10 @@ $(function () {
 
             // Add one paragraph per file
             $.each(data.files, function (index, file) {
-                var node = $('<p/>')
-                    .text(file.name + " (" + humansize(file.size) + ")");
+                var node = $('<p/>').text(file.name);
+                node.append(' <span class="break-word">(');
+                node.append(document.createTextNode(humansize(file.size)));
+                node.append(')</span>');
                 node.appendTo(data.context);
             });
         })
