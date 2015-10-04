@@ -34,7 +34,11 @@
                 <td>
                     {{ file['timestamp-upload'] | datetime }}
                     <br />
+                    {% if file['timestamp-download'] %}
                     {{ file['timestamp-download'] | datetime }}
+                    {% else %}
+                    never
+                    {% endif %}
                 </td>
                 <td>
                     <div class="btn-group">
