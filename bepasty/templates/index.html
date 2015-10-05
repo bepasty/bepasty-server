@@ -1,84 +1,80 @@
 {% extends "_layout.html" %}
 
+{% macro maximum_lifetime() -%}
+<div class="row">
+  <div class="col-md-3 form-group">
+    <input class="form-control" name="maxlife-value" type="number" min="1" value="1" /><br>
+  </div>
+  <div class="col-md-9 form-group">
+    <select class="form-control" name="maxlife-unit" size="1">
+      <option value="forever">Keep Forever</option>
+      <option value="minutes">Minutes</option>
+      <option value="hours">Hours</option>
+      <option value="days">Days</option>
+      <option value="weeks">Weeks</option>
+      <option value="months">Months</option>
+      <option value="years">Years</option>
+    </select>
+  </div>
+</div>
+{% endmacro %}
+
 {% block content %}
 {% if may(CREATE) %}
 <div class="row">
-    <div class="col-sm-8">
-        <form action="/+upload" method="POST" enctype="multipart/form-data">
-            <div class="row">
-                <div class="col-sm-12">
-                    <textarea id="formupload" name="text" placeholder="Paste text here..." autofocus></textarea>
-                    <input type="text" id="contenttype" name="contenttype" size="30" placeholder="Content-Type">
-                    <input type="text" id="filename" name="filename" size="40" placeholder="optional Filename for Download">
-                    <button id="formupload-submit" class="btn btn-success">Submit</button>
-                </div>
-            </div>
-            <hr>
-            <div class="row">
-                <div class="col-sm-12">
-                        <p>
-                            <span class="btn btn-default fileinput-button dropzone">
-                                <i class="glyphicon glyphicon-upload"></i>
-                                <span>drag and drop files here - or click to select files</span>
-                                <!-- Input for file upload widget -->
-                                <input id="fileupload" type="file" name="file" multiple style="height: 100%; width: 100%;">
-                            </span>
-                            <noscript><button id="fileupload-submit" class="btn btn-success">Upload</button></noscript>
-                        </p>
-                </div>
-            </div>
-            <!-- Set max file lifetime -->
-            <div class="row">
-                <div class="col-sm-12">
-                    <p>Set the maximum lifetime (<b>choose before dragging or submitting</b>):</p>
-                    <input name="maxlife-value" type="number" min="1" value="1" />
-                    <select name="maxlife-unit" size="1">
-                        <option value="forever">Keep Forever</option>
-                        <option value="minutes">Minutes</option>
-                        <option value="hours">Hours</option>
-                        <option value="days">Days</option>
-                        <option value="weeks">Weeks</option>
-                        <option value="months">Months</option>
-                        <option value="years">Years</option>
-                    </select>
-                </div>
-            </div>
-        </form>
+  <div class="col-sm-8">
+    <form action="/+upload" method="POST" enctype="multipart/form-data">
+      <div class="form-group">
+        <textarea class="form-control" id="formupload" name="text" placeholder="Paste text here..." autofocus></textarea>
+      </div>
+      <div class="row">
+        <div class="col-xs-3 form-group">
+          <input class="form-control" type="text" id="contenttype" name="contenttype" size="30" placeholder="Content-Type">
+        </div>
+        <div class="col-xs-6 form-group">
+          <input class="form-control" type="text" id="filename" name="filename" size="40" placeholder="optional download-filename">
+        </div>
+        <div class="col-xs-3">
+          <button id="formupload-submit" class="btn btn-success btn-block">Submit</button>
+        </div>
+      </div>
+      <hr>
+      <label>Maximum lifetime value (choose before dragging or submitting)</label>
+      {{ maximum_lifetime() }}
+      <span class="btn btn-default fileinput-button dropzone">
+        <i class="glyphicon glyphicon-upload"></i>
+        <span>drag and drop files here - or click to select files</span>
+        <!-- Input for file upload widget -->
+        <input id="fileupload" type="file" name="file" multiple style="height: 100%; width: 100%;">
+      </span>
+      <noscript><br><button id="fileupload-submit" class="btn btn-success btn-block">Upload</button></noscript>
+    </form>
+  </div>
+  <div class="col-sm-4">
+    <!-- item name list assembled here and offered for submission -->
+    <form id="filelist-form" style="display: none" action="/+upload" method="POST" enctype="multipart/form-data">
+      <div class="form-group">
+        <textarea class="form-control" id="filelist" name="text" rows="10" cols="40"></textarea>
+      </div>
+      {{ maximum_lifetime() }}
+      <input type="hidden" name="contenttype" value="text/x-bepasty-list">
+      <div class="row">
+        <div class="col-md-7 form-group">
+          <input class="form-control" type="text" id="filelist-filename" name="filename" size="23" placeholder="optional list-name">
+        </div>
+        <div class="col-md-5">
+          <button class="btn btn-success btn-block">Create List Item</button>
+        </div>
+      </div>
+    </form>
+    <button id="fileupload-abort" class="btn btn-danger pull-right" style="visibility: hidden">abort</button>
+    <!-- The progress bar -->
+    <div id="fileupload-progress" class="progress progress-striped active" style="visibility: hidden">
+      <div class="progress-bar"></div>
     </div>
-    <div class="col-sm-4">
-        <div class="row">
-            {# item name list assembled here and offered for submission #}
-            <form id="filelist-form" style="display: none" action="/+upload" method="POST" enctype="multipart/form-data">
-                <div class="col-sm-12">
-                    <textarea id="filelist" name="text" rows="10" cols="40"></textarea>
-                    <p>Set the maximum lifetime:</p>
-                    <input name="maxlife-value" type="number" min="1" value="1" />
-                    <select name="maxlife-unit" size="1">
-                        <option value="forever">Keep Forever</option>
-                        <option value="minutes">Minutes</option>
-                        <option value="hours">Hours</option>
-                        <option value="days">Days</option>
-                        <option value="weeks">Weeks</option>
-                        <option value="months">Months</option>
-                        <option value="years">Years</option>
-                    </select>
-                    <input type="text" id="filelist-filename" name="filename" size="23" placeholder="optional Filename">
-                    <input type="hidden" name="contenttype" value="text/x-bepasty-list">
-                    <button class="btn btn-success">Create List Item</button>
-                </div>
-            </form>
-        </div>
-        <button id="fileupload-abort" class="btn btn-danger pull-right" style="visibility: hidden">abort</button>
-        <!-- The progress bar -->
-        <div id="fileupload-progress" class="progress progress-striped active" style="visibility: hidden">
-            <div class="progress-bar"></div>
-        </div>
-
-        <div class="row">
-            <!-- Uploaded files -->
-            <div id="files" class="files col-sm-12"></div>
-        </div>
-    </div>
+    <!-- Uploaded files -->
+    <div id="files" class="files"></div>
+  </div>
 </div>
 
 {% else %}
