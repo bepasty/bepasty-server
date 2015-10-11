@@ -63,7 +63,7 @@ def create_app():
         stuff here and make it easily available.
         """
         flaskg.logged_in = logged_in()
-        flaskg.permissions = get_permissions()
+        flaskg.permissions = get_permission_icons()
         if flaskg.logged_in:
             session.permanent = current_app.config['PERMANENT_SESSION']
 
