@@ -13,6 +13,14 @@ DELETE = 'delete'
 PERMISSIONS = 'permissions'
 LOGGEDIN = 'loggedin'
 
+permission_icons = {
+    'admin': 'user',
+    'list': 'list',
+    'create': 'plus',
+    'read': 'book',
+    'delete': 'trash'
+}
+
 
 def lookup_permissions(token):
     """
@@ -41,6 +49,10 @@ def get_permissions():
         permissions = current_app.config['DEFAULT_PERMISSIONS']
     permissions = set(permissions.split(','))
     return permissions
+
+
+def get_permission_icons():
+    return [permission_icons[permission] for permission in get_permissions()]
 
 
 def may(permission):
