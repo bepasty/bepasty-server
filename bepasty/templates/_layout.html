@@ -12,6 +12,8 @@
         <link rel="stylesheet" href="{{ url_for('bepasty.xstatic', name='bootstrap', filename='css/bootstrap.min.css') }}" type="text/css">
         <!-- jQuery UI styles -->
         <link rel="stylesheet" href="{{ url_for('bepasty.xstatic', name='jquery_ui', filename='themes/smoothness/jquery-ui.css') }}" type="text/css">
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
         <!-- Bepasty styles -->
         <link rel="stylesheet" href="{{ url_for('static', filename='app/css/style.css' ) }}" type="text/css">
         {% block extra_link %}{% endblock %}
@@ -33,7 +35,7 @@
                                     <span class="icon-bar"></span>
                                 </button>
                                 <a class="navbar-brand" href="/">
-                                    {{ config.SITENAME }} (Permissions: {{ flaskg.permissions | join(',') }})
+                                    {{ config.SITENAME }} (Permissions: {% for permission in flaskg.permissions %}<i class="fa fa-{{ permission }}"></i>  {% endfor %})
                                 </a>
                             </div>
                             <!-- Collect the nav links, forms, and other content for toggling -->
