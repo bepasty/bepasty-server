@@ -27,12 +27,18 @@ body {
 }
 #files p .break-word {
     word-break: break-word;
+    font-weight: normal !important;
 }
 
 #filelist {
     height: auto;
     width: 100%;
     font-family: monospace;
+}
+
+.fileupload-abort {
+    float: right;
+    margin-left: 10px;
 }
 
 .dropzone {
@@ -60,7 +66,7 @@ body {
 }
 
 .alert {
-    padding: 5px 35px 5px 15px;
+    padding: 5px 10px;
 }
 
 .alert-processing {
