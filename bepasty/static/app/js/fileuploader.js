@@ -118,6 +118,7 @@ $(function () {
             if (result == true && jqXHR != null){
                 for (var key in jqXHR) jqXHR[key].abort();
             }
+            $('#fileupload-progress').find('.progress-bar').css('width', 0 + '%');
         });
     });
 });
