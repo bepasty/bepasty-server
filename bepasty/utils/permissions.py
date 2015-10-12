@@ -52,7 +52,10 @@ def get_permissions():
 
 
 def get_permission_icons():
-    return [permission_icons[permission] for permission in get_permissions()]
+    return [
+        (permission, permission_icons[permission])
+        for permission in get_permissions()
+    ]
 
 
 def may(permission):
