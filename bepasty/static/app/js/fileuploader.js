@@ -99,7 +99,9 @@ $(function () {
         })
 
         .on('fileuploadstop', function (e, data) {
-            $('#fileupload-progress').css('visibility', 'hidden');
+            var progressBar = $('#fileupload-progress')
+            progressBar.css('visibility', 'hidden');
+            progressBar.find('.progress-bar').css('width', 0 + '%');
             $('#fileupload-abort').css('visibility', 'hidden');
         })
 
