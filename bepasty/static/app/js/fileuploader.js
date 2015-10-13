@@ -1,6 +1,20 @@
 jqXHR = {};
 $(function () {
     'use strict';
+
+    // Generate human readable file size
+    function humansize (size) {
+        var suffix = ["B", "KiB", "MiB", "GiB", "TiB", "PiB"],
+            tier = 0;
+
+        while (size >= 1024) {
+            size = size / 1024;
+            tier++;
+        }
+
+        return Math.round(size * 10) / 10 + " " + suffix[tier];
+    }
+
     $('#fileupload')
         .fileupload({
             dataType: 'json',
@@ -10,49 +24,44 @@ $(function () {
             maxFileSize: MAX_ALLOWED_FILE_SIZE
         })
 
-        .on('fileuploadadd', function (e, data) {
-            data.context = $('<div class="alert alert-processing"/>')
-                .appendTo('#files');
-
-            // Generate human readable file size
-            function humansize (size) {
-                var suffix = ["B", "KiB", "MiB", "GiB", "TiB", "PiB"],
-                    tier = 0;
-
-                while (size >= 1024) {
-                    size = size / 1024;
-                    tier++;
-                }
-
-                return Math.round(size * 10) / 10 + " " + suffix[tier];
-            }
-
-            // Add one paragraph per file
-            $.each(data.files, function (index, file) {
-                var node = $('<p/>').text(file.name);
-                node.append(' <span class="break-word">(');
-                node.append(document.createTextNode(humansize(file.size)));
-                node.append(')</span>');
-                node.appendTo(data.context);
-            });
-        })
+        .on('fileuploadadd', function (e, data) { })
 
         .on('fileuploadsubmit', function (e, data) {
             var $this = $(this);
+            var file = data.files[0]
             // Create new item
             $.ajax({
                 type: 'POST',
                 url: '/+upload/new',
                 data: JSON.stringify({
-                    filename: data.files[0].name,
-                    size: data.files[0].size,
-                    type: data.files[0].type,
+                    filename: file.name,
+                    size: file.size,
+                    type: file.type,
                     maxlife_unit: $("select[name=maxlife-unit] option:selected").val(),
                     maxlife_value: $("input[name=maxlife-value]").val()
                 }),
                 contentType: 'application/json',
                 success: function (result) {
                     data.url = result.url;
+
+                    data.context = $('<div class="alert alert-processing"/>')
+                        .appendTo('#files');
+
+                    var abortButton = $('<button id="' + result.name + '" class="'
+                        + ' fileupload-abort btn btn-danger"/>').text('abort');
+                    abortButton.appendTo(data.context);
+
+                    abortButton.click(function (e) {
+                        jqXHR[result.name].abort();
+                        abortButton.css('display', 'none')
+                    });
+
+                    var fileItem = $('<p/>').text(file.name);
+                    fileItem.append(' <span class="break-word">('
+                        + humansize(file.size)
+                        + ')</span>');
+                    fileItem.appendTo(data.context);
+
                     var _jqXHR = $this.fileupload('send', data);
                     _jqXHR.error(function (jqXHR, textStatus, errorThrown) {
                             //Delete file garbage on server
@@ -71,11 +80,12 @@ $(function () {
             $(data.context)
                 .attr('class', 'alert alert-success');
             $.each(data.result.files, function (index, file) {
-                $(data.context.children()[index])
+                $(data.context[0].childNodes[1])
                     .wrapInner($('<a target="_blank" class="alert-link">')
                         .prop('href', file.url));
                 $('#filelist').append(file.name + "\n");
                 delete jqXHR[file.name];
+                $('#' + file.name).css('display', 'none');
             });
             $('#filelist-form').show();
         })
@@ -118,7 +128,10 @@ $(function () {
     $('#fileupload-abort').click(function (e) {
         bootbox.confirm("Are you sure you want to abort the upload?", function(result) {
             if (result == true && jqXHR != null){
-                for (var key in jqXHR) jqXHR[key].abort();
+                for (var key in jqXHR) {
+                    jqXHR[key].abort();
+                    $('#' + key).css('display', 'none');
+                }
             }
             $('#fileupload-progress').find('.progress-bar').css('width', 0 + '%');
         });
