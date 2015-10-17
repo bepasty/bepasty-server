@@ -8,11 +8,23 @@ from bepasty.app import create_app, create_storage
 
 
 @pytest.fixture(scope='module')
-def testclient(request):
+def app(request):
+    """
+    creates a bepasty App-Instance
+    """
+    app = create_app()
+
+    def teardown():
+        unlink(app.config['DATABASE'])
+    request.addfinalizer(teardown)
+    return app
+
+
+@pytest.fixture(scope='module')
+def testclient(request, app):
     """
     creates a Flask-testclient instance for bepasty
     """
-    app = create_app()
     db_file, app.config['DATABASE'] = mkstemp()
     # reset default permissions
     app.config['DEFAULT_PERMISSIONS'] = ''
@@ -29,6 +41,5 @@ def testclient(request):
 
     def teardown():
         close(db_file)
-        unlink(app.config['DATABASE'])
     request.addfinalizer(teardown)
     return app.test_client()
