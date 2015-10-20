@@ -93,6 +93,7 @@ A nginx configuration i.e. in ``/etc/nginx/conf.d/bepasty.conf``:
     client_max_body_size 32M;
 
     location / {
+        proxy_set_header Host $http_host;
         proxy_pass http://pasty_server;
     }
 
