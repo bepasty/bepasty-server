@@ -9,9 +9,9 @@ from bepasty.app import create_app, create_storage
 
 @pytest.fixture(scope='module')
 def testclient(request):
-    '''
+    """
     creates a Flask-testclient instance for bepasty
-    '''
+    """
     app = create_app()
     db_file, app.config['DATABASE'] = mkstemp()
     # reset default permissions
