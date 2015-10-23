@@ -7,20 +7,17 @@ import pytest
 from bepasty.app import create_app, create_storage
 
 
-@pytest.fixture(scope='module')
+@pytest.yield_fixture(scope='module')
 def app(request):
     """
     creates a bepasty App-Instance
     """
     app = create_app()
-
-    def teardown():
-        unlink(app.config['DATABASE'])
-    request.addfinalizer(teardown)
-    return app
+    yield app
+    unlink(app.config['DATABASE'])
 
 
-@pytest.fixture(scope='module')
+@pytest.yield_fixture(scope='module')
 def testclient(request, app):
     """
     creates a Flask-testclient instance for bepasty
@@ -38,8 +35,5 @@ def testclient(request, app):
         'd': 'delete',
         'a': 'admin'
     }
-
-    def teardown():
-        close(db_file)
-    request.addfinalizer(teardown)
-    return app.test_client()
+    yield app.test_client()
+    close(db_file)
