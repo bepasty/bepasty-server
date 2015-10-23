@@ -1,4 +1,4 @@
-from ..utils.date_funcs import time_unit_to_sec, FOREVER
+from bepasty.utils.date_funcs import time_unit_to_sec, FOREVER
 
 
 def test_unit_to_secs():

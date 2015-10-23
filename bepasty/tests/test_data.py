@@ -1,8 +1,8 @@
-from . import Data
+from bepasty.storage.filesystem import Data
 
 
 def test(tmpdir):
-    p = tmpdir.join("test.data")
+    p = tmpdir.join('test.data')
 
     d = Data(p.open('w+b'))
     assert d.size == 0

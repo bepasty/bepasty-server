@@ -1,4 +1,4 @@
-from . import Meta
+from bepasty.storage.filesystem import Meta
 
 
 def test(tmpdir):
