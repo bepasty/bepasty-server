@@ -1,5 +1,7 @@
 -r all.txt
 pytest
 pytest-pep8
-Sphinx
+pytest-cov
+coverage
+coveralls
 selenium

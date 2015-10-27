@@ -1,8 +1,7 @@
 import pytest
-
 from werkzeug.exceptions import BadRequest
 
-from .http import ContentRange
+from bepasty.utils.http import ContentRange
 
 
 def test_contentrange_parse():

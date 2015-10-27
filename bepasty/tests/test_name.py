@@ -1,7 +1,7 @@
 import pytest
 
-from ._compat import range_type
-from .name import ItemName, encode, make_id
+from bepasty.utils._compat import range_type
+from bepasty.utils.name import ItemName, encode, make_id
 
 
 def test_create():

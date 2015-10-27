@@ -1,4 +1,4 @@
-from . import Item
+from bepasty.storage.filesystem import Item
 
 
 def test(tmpdir):

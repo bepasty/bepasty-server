@@ -1,6 +1,6 @@
 import pytest
 
-from . import Storage
+from bepasty.storage.filesystem import Storage
 
 
 def test_contains(tmpdir):
