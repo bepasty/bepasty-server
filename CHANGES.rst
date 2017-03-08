@@ -1,6 +1,13 @@
 ChangeLog
 =========
 
+Release 0.5.0 (not released yet)
+--------------------------------
+
+New features:
+
+* run bepasty at non-root URLs, see APP_BASE_PATH in the config.
+
 
 Release 0.4.0
 -------------

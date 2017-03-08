@@ -4,6 +4,11 @@ class Config(object):
     #: name of this site (put YOUR bepasty fqdn here)
     SITENAME = 'bepasty.example.org'
 
+    #: base URL path of app (if not served on root URL, but e.g. on http://example.org/bepasty ).
+    #: setting this to a non-None value will activate the PrefixMiddleware that splits PATH_INFO
+    #: into SCRIPT_NAME (== APP_BASE_PATH) and the rest of PATH_INFO.
+    APP_BASE_PATH = None  # '/bepasty'
+
     #: Whether files are automatically locked after upload.
     #:
     #: If you want to require admin approval and manual unlocking for each
