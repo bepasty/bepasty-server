@@ -36,7 +36,7 @@
                                     <span class="icon-bar"></span>
                                     <span class="icon-bar"></span>
                                 </button>
-                                <a class="navbar-brand" href="/">
+                                <a class="navbar-brand" href="{{ url_for('bepasty.index') }}">
                                     {{ config.SITENAME }} (Permissions: {% for permission, permission_icon in flaskg.icon_permissions %}<i class="fa fa-{{ permission_icon }}" title="{{ permission }}"></i>  {% endfor %})
                                 </a>
                             </div>
@@ -49,11 +49,11 @@
                                     {% endif %}
                                 </ul>
                                 {% if flaskg.logged_in %}
-                                <form class="navbar-form navbar-right" role="form" method="post" action="/+logout">
+                                <form class="navbar-form navbar-right" role="form" method="post" action="{{ url_for('bepasty.logout') }}">
                                     <input class="btn btn-default" type="submit" value="Logout">
                                 </form>
                                 {% else %}
-                                <form class="navbar-form navbar-right form-inline" role="form" method="post" action="/+login">
+                                <form class="navbar-form navbar-right form-inline" role="form" method="post" action="{{ url_for('bepasty.login') }}">
                                     <div class="form-group">
                                         <input class="form-control" type="password" name="token" autofocus>
                                     </div>

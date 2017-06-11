@@ -32,7 +32,7 @@ $(function () {
             // Create new item
             $.ajax({
                 type: 'POST',
-                url: '/+upload/new',
+                url: UPLOAD_NEW_URL,
                 data: JSON.stringify({
                     filename: file.name,
                     size: file.size,

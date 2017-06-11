@@ -14,12 +14,31 @@ from .utils.name import setup_werkzeug_routing
 from .utils.permissions import *
 
 
+class PrefixMiddleware(object):
+    def __init__(self, app, prefix=''):
+        self.app = app
+        self.prefix = prefix
+
+    def __call__(self, environ, start_response):
+        if environ['PATH_INFO'].startswith(self.prefix):
+            environ['PATH_INFO'] = environ['PATH_INFO'][len(self.prefix):]
+            environ['SCRIPT_NAME'] = self.prefix
+            return self.app(environ, start_response)
+        else:
+            start_response('404', [('Content-Type', 'text/plain')])
+            return ['This URL does not belong to the bepasty app.'.encode()]
+
+
 def create_app():
     app = Flask(__name__)
 
     app.config.from_object('bepasty.config.Config')
     if os.environ.get('BEPASTY_CONFIG'):
         app.config.from_envvar('BEPASTY_CONFIG')
+
+    prefix = app.config.get('APP_BASE_PATH')
+    if prefix is not None:
+        app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix=prefix)
 
     app.storage = create_storage(app)
     setup_werkzeug_routing(app)
