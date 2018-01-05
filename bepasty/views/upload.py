@@ -72,7 +72,7 @@ class UploadNewView(MethodView):
         data_type = data['type']
 
         # set max lifetime
-        maxlife_value = int(data['maxlife_value'])
+        maxlife_value = int(data.get('maxlife_value', 1))
         maxlife_unit = data['maxlife_unit'].upper()
         maxtime = time_unit_to_sec(maxlife_value, maxlife_unit)
         maxlife_timestamp = int(time.time()) + maxtime if maxtime > 0 else maxtime
