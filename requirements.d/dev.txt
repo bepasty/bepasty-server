@@ -2,4 +2,6 @@
 tox
 flake8
 pytest
+pytest-cov
 selenium
+codecov
