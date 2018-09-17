@@ -19,6 +19,8 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+.eggs/
+src/bepasty/_version.py
 
 # Installer logs
 pip-log.txt
