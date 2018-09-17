@@ -2,7 +2,7 @@ include README.rst CHANGES.rst LICENSE AUTHORS
 include setup.cfg setup.py
 recursive-include docs *
 recursive-include requirements.d *
-recursive-include bepasty/static *
-recursive-include bepasty/templates *
+recursive-include src/bepasty/static *
+recursive-include src/bepasty/templates *
 prune docs/build
 

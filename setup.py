@@ -4,9 +4,6 @@ import os
 
 from setuptools import setup, find_packages
 
-from bepasty import (project, version, license, description,
-                     author, author_email, maintainer, maintainer_email)
-
 this_dir = os.path.dirname(os.path.abspath(__file__))
 
 readme_path = os.path.join(this_dir, 'README.rst')
@@ -25,23 +22,24 @@ except ImportError:
     install_requires.append('importlib')
 
 setup(
-    name=project,
-    version=version,
-    license=license,
-    author=author,
-    author_email=author_email,
-    maintainer=maintainer,
-    maintainer_email=maintainer_email,
-    description=description,
+    name='bepasty',
+    version='0.5.0',
+    license='BSD 2-clause',
+    author='The Bepasty Team (see AUTHORS file)',
+    author_email='',
+    maintainer='Thomas Waldmann',
+    maintainer_email='tw@waldmann-edv.de',
+    description='a binary pastebin / file upload service',
     long_description=long_description,
     url='http://github.com/bepasty/bepasty-server/',
     keywords="text image audio video binary pastebin upload download service wsgi flask",
-    packages=find_packages(),
+    packages=find_packages('src'),
+    package_dir={'': 'src'},
     package_data={
         'bepasty': [
-            'static/app/css/*.css',
-            'static/app/js/*.js',
-            'templates/*',
+            'src/static/app/css/*.css',
+            'src/static/app/js/*.js',
+            'src/templates/*',
         ],
     },
     include_package_data=True,
