@@ -19,7 +19,7 @@ commands to run
   # change to user bepasty
   sudo su - bepasty
   # clone repository from github
-  git clone https://github.com/bepasty/bepasty-server.git src
+  git clone https://github.com/bepasty/bepasty-server.git repo
   # create folder for storage
   mkdir storage
   # create folder for logs
@@ -28,15 +28,15 @@ commands to run
   virtualenv .
   # activate virtualenv
   . bin/activate
-  cd src
-  # install python requirements for bepasty
-  pip install -r requirements.txt
+  cd repo
+  # install bepasty and requirements
+  pip install -e .
   # add gunicorn and gevent for hosting
   pip install gunicorn gevent
 
 config file for bepasty -- ``/home/bepasty/bepasty.conf``:
 
-Copy ``bepasty/config.py`` to ``/home/bepasty/bepasty.conf`` first,
+Copy ``src/bepasty/config.py`` to ``/home/bepasty/bepasty.conf`` first,
 remove the ``class Config`` and remove all indents in the file.
 The comments can be removed too, if you feel the need to.
 At last modify these two configs variables:
@@ -62,7 +62,7 @@ add this content to ``/home/bepasty/bin/gunicorn_bepasty``:
 
   source $HOME/bin/activate
 
-  cd $HOME/src
+  cd $HOME/repo
 
   exec gunicorn bepasty.wsgi \
     --name $NAME \
@@ -98,7 +98,7 @@ A nginx configuration i.e. in ``/etc/nginx/conf.d/bepasty.conf``:
     }
 
     location /static/ {
-        alias /home/bepasty/src/bepasty/static/;
+        alias /home/bepasty/repo/src/bepasty/static/;
     }
   }
 

@@ -11,10 +11,17 @@ readme_path = os.path.join(this_dir, 'README.rst')
 with open(readme_path) as f:
     long_description = f.read()
 
-# Read the requirements from the filesystem
-req_file = os.path.join(this_dir, 'requirements.d', 'all.txt')
-with open(req_file) as f:
-    install_requires = f.read().splitlines()
+install_requires = [
+    'Flask',
+    'Pygments',
+    'xstatic',
+    'xstatic-bootbox',
+    'xstatic-bootstrap',
+    'xstatic-jquery',
+    'xstatic-jquery-ui',
+    'xstatic-jquery-file-upload',
+    'xstatic-pygments',
+]
 
 try:
     import importlib
