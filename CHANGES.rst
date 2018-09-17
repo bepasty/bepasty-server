@@ -36,8 +36,8 @@ Other changes:
 * lots of cleanups for packaging, testing, source code
 
 
-Release 0.4.0
--------------
+Release 0.4.0 (2014-11-11)
+--------------------------
 
 New features:
 
@@ -69,8 +69,8 @@ Other changes:
 * improve sample configs
 
 
-Release 0.3.0
--------------
+Release 0.3.0 (2014-08-22)
+--------------------------
 
 New features:
 
@@ -126,8 +126,8 @@ sprint participants, so there was no 0.2.0 release and we directly jumped to
 0.3.0.
 
 
-Release 0.1.0
--------------
+Release 0.1.0 (2014-06-29)
+--------------------------
 
 New features:
 
@@ -165,7 +165,7 @@ Fixes:
 * now correctly positions to linenumber anchors
 
 
-Release 0.0.1
--------------
+Release 0.0.1 (2014-02-09)
+--------------------------
 
 * first pypi release. release early, release often! :)
