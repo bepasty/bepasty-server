@@ -1,13 +1,37 @@
 language: python
-python:
-  - "2.7"
-  - "3.4"
-  - "3.5"
-  - "3.6"
-install: "pip install -r requirements.d/dev.txt"
+
+cache:
+    directories:
+        - $HOME/.cache/pip
+
+matrix:
+    include:
+        - python: 3.6
+          os: linux
+          dist: xenial
+          env: TOXENV=flake8
+        - python: 2.7
+          os: linux
+          dist: xenial
+          env: TOXENV=py27
+        - python: 3.4
+          os: linux
+          dist: xenial
+          env: TOXENV=py34
+        - python: 3.5
+          os: linux
+          dist: xenial
+          env: TOXENV=py35
+        - python: 3.6
+          os: linux
+          dist: xenial
+          env: TOXENV=py36
+
+install:
+  - "pip install -r requirements.d/dev.txt"
+
 script:
-  - "pytest bepasty/ --cov=bepasty --cov-report xml --pep8 -m 'not needs_server'"
-after_success:
-  - "coveralls"
+  - "tox"
+
 env:
   - PYTHONPATH=$PYTHONPATH:bepasty/

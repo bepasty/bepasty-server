@@ -2,8 +2,4 @@
 tox
 flake8
 pytest
-pytest-pep8
-pytest-cov
-coverage
-coveralls
 selenium
