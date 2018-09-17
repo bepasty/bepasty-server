@@ -11,29 +11,12 @@ readme_path = os.path.join(this_dir, 'README.rst')
 with open(readme_path) as f:
     long_description = f.read()
 
-install_requires = [
-    'Flask',
-    'Pygments',
-    'xstatic',
-    'xstatic-bootbox',
-    'xstatic-bootstrap',
-    'xstatic-jquery',
-    'xstatic-jquery-ui',
-    'xstatic-jquery-file-upload',
-    'xstatic-pygments',
-]
-
-try:
-    import importlib
-except ImportError:
-    install_requires.append('importlib')
 
 setup(
     name='bepasty',
     use_scm_version={
         'write_to': 'src/bepasty/_version.py',
     },
-    setup_requires=['setuptools_scm', ],
     license='BSD 2-clause',
     author='The Bepasty Team (see AUTHORS file)',
     author_email='',
@@ -60,7 +43,18 @@ setup(
             'bepasty-object = bepasty.cli.object:main',
         ],
     },
-    install_requires=install_requires,
+    setup_requires=['setuptools_scm', ],
+    install_requires=[
+        'Flask',
+        'Pygments',
+        'xstatic',
+        'xstatic-bootbox',
+        'xstatic-bootstrap',
+        'xstatic-jquery',
+        'xstatic-jquery-ui',
+        'xstatic-jquery-file-upload',
+        'xstatic-pygments',
+    ],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
