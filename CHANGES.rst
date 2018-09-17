@@ -4,9 +4,36 @@ ChangeLog
 Release 0.5.0 (not released yet)
 --------------------------------
 
+Compatibility:
+
+* drop support for python 2.6 and 3.3
+* add support for python 3.5, 3.6 and 3.7
+* thus, you now need python 2.7 or python >= 3.4
+* changes in source code layout: package bepasty is below src/ now
+* thus, you need to install bepasty now: pip install -e .
+
+Fixes:
+
+* REST api: fix off-by-one error in range calculations, #124
+* config: reduce default body size by a 8kiB safety margin, #155
+* multiple abort buttons for multiple file uploads, #29
+* progress bar fixes, #131
+* fix display of "undefined", should be "never", #129
+* abort button now works w/ multiple files, #111
+* upload form: don't linebreak in numbers, #122
+
 New features:
 
 * run bepasty at non-root URLs, see APP_BASE_PATH in the config.
+* use icons instead of text for permissions (with hover-text)
+* REST api: GET /apis/rest/items returns the list of all items
+
+Other changes:
+
+* re-style upload form
+* add a favicon.ico (plus svg source)
+* docs updates
+* lots of cleanups for packaging, testing, source code
 
 
 Release 0.4.0
