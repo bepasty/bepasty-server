@@ -5,7 +5,7 @@ import mimetypes
 from flask import abort, current_app
 
 from .name import ItemName
-from .decorators import async
+from .decorators import threaded
 from .hashing import compute_hash, hash_new
 from ..utils.date_funcs import FOREVER
 
@@ -122,7 +122,7 @@ def create_item(f, filename, size, content_type, content_type_hint,
     return name
 
 
-@async
+@threaded
 def background_compute_hash(storage, name):
     with storage.openwrite(name) as item:
         size = item.meta['size']

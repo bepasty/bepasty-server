@@ -1,7 +1,7 @@
 from threading import Thread
 
 
-def async(func):
+def threaded(func):
     """
     decorator to run a function asynchronously (in a thread)
 
