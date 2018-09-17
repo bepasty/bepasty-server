@@ -30,7 +30,10 @@ except ImportError:
 
 setup(
     name='bepasty',
-    version='0.5.0',
+    use_scm_version={
+        'write_to': 'src/bepasty/_version.py',
+    },
+    setup_requires=['setuptools_scm', ],
     license='BSD 2-clause',
     author='The Bepasty Team (see AUTHORS file)',
     author_email='',
