@@ -35,7 +35,3 @@ script:
 
 after_success:
   - codecov -e TRAVIS_OS_NAME TOXENV
-
-env:
-  - PYTHONPATH=$PYTHONPATH:bepasty/
-  - CODECOV_TOKEN="c5c64733-05bb-47d1-a581-22842f60600a"
