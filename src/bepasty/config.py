@@ -27,7 +27,7 @@ class Config(object):
     #: settings:
     #: apache:  LimitRequestBody 1048576 # apache default is 0 (unlimited)
     #: nginx:  client_max_body_size 1m; # nginx default (== 1048576)
-    MAX_BODY_SIZE = 1 * 1024 * 1024
+    MAX_BODY_SIZE = 1 * 1024 * 1024 - 8192  # 8kiB safety margin, issue #155
 
     #: Setup maximum file sizes for specific content-types. If an item is
     #: beyond the limit set for its type, it will not be rendered, but just
