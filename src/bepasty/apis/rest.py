@@ -171,19 +171,19 @@ class ItemDownloadView(MethodView):
 
         request_range = DownloadRange.from_request()
         if not request_range:
-            range_end = item.data.size
+            range_end = item.data.size - 1
             range_begin = 0
         else:
             if request_range.end == -1:
-                range_end = item.data.size
+                range_end = item.data.size - 1
             else:
-                range_end = min(request_range.end, item.data.size)
+                range_end = min(request_range.end, item.data.size - 1)
             range_begin = request_range.begin
 
         def stream(begin, end):
             offset = max(0, begin)
             with item as _item:
-                while offset < end:
+                while offset <= end:
                     buf = _item.data.read(16 * 1024, offset)
                     offset += len(buf)
                     yield buf
