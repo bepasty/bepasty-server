@@ -1,4 +1,3 @@
--r all.txt
 tox
 flake8
 pytest
