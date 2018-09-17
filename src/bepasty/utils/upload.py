@@ -7,6 +7,9 @@ from flask import abort, current_app
 from .name import ItemName
 from .decorators import threaded
 from .hashing import compute_hash, hash_new
+
+from ..constants import *  # noqa
+
 from ..utils.date_funcs import FOREVER
 
 # we limit to 250 characters as we do not want to accept arbitrarily long
@@ -63,21 +66,21 @@ class Upload(object):
     @classmethod
     def meta_new(cls, item, input_size, input_filename, input_type,
                  input_type_hint, storage_name, maxlife_stamp=FOREVER):
-        item.meta['filename'] = cls.filter_filename(input_filename,
-                                                    storage_name, input_type, input_type_hint)
-        item.meta['size'] = cls.filter_size(input_size)
-        item.meta['type'] = cls.filter_type(input_type, input_type_hint, input_filename)
-        item.meta['timestamp-upload'] = int(time.time())
-        item.meta['timestamp-download'] = 0
-        item.meta['locked'] = current_app.config['UPLOAD_LOCKED']
-        item.meta['complete'] = False
-        item.meta['hash'] = ''
-        item.meta['timestamp-max-life'] = maxlife_stamp
+        item.meta[FILENAME] = cls.filter_filename(input_filename,
+                                                  storage_name, input_type, input_type_hint)
+        item.meta[SIZE] = cls.filter_size(input_size)
+        item.meta[TYPE] = cls.filter_type(input_type, input_type_hint, input_filename)
+        item.meta[TIMESTAMP_UPLOAD] = int(time.time())
+        item.meta[TIMESTAMP_DOWNLOAD] = 0
+        item.meta[LOCKED] = current_app.config['UPLOAD_LOCKED']
+        item.meta[COMPLETE] = False
+        item.meta[HASH] = ''
+        item.meta[TIMESTAMP_MAX_LIFE] = maxlife_stamp
 
     @classmethod
     def meta_complete(cls, item, file_hash):
-        item.meta['complete'] = True
-        item.meta['hash'] = file_hash
+        item.meta[COMPLETE] = True
+        item.meta[HASH] = file_hash
 
     @staticmethod
     def data(item, f, size_input, offset=0):
@@ -125,6 +128,6 @@ def create_item(f, filename, size, content_type, content_type_hint,
 @threaded
 def background_compute_hash(storage, name):
     with storage.openwrite(name) as item:
-        size = item.meta['size']
+        size = item.meta[SIZE]
         file_hash = compute_hash(item.data, size)
-        item.meta['hash'] = file_hash
+        item.meta[HASH] = file_hash

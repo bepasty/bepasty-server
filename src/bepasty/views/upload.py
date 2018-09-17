@@ -8,6 +8,8 @@ from flask.views import MethodView
 from werkzeug.exceptions import NotFound, Forbidden
 from werkzeug.urls import url_quote
 
+from ..constants import *  # noqa
+
 from ..utils.http import ContentRange, redirect_next
 from ..utils.name import ItemName
 from ..utils.upload import Upload, create_item, background_compute_hash
@@ -122,10 +124,10 @@ class UploadContinueView(MethodView):
 
             result = jsonify({'files': [{
                 'name': name,
-                'filename': item.meta['filename'],
-                'size': item.meta['size'],
+                'filename': item.meta[FILENAME],
+                'size': item.meta[SIZE],
                 'url': "{0}#{1}".format(url_for('bepasty.display', name=name),
-                                        item.meta['filename']),
+                                        item.meta[FILENAME]),
             }]})
 
         if is_complete and not file_hash:
@@ -146,7 +148,7 @@ class UploadAbortView(MethodView):
                 return 'No file found.', 404
             raise
 
-        if item.meta['complete']:
+        if item.meta[COMPLETE]:
             error = 'Upload complete. Cannot delete fileupload garbage.'
         else:
             error = None

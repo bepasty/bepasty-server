@@ -7,6 +7,8 @@ from . import blueprint
 from flask import Response, make_response, url_for, jsonify, stream_with_context
 from flask.views import MethodView
 
+from ..constants import *  # noqa
+
 from ..utils.name import ItemName
 from ..utils.http import ContentRange, DownloadRange
 from ..utils.upload import Upload, background_compute_hash
@@ -101,7 +103,7 @@ class ItemUploadView(MethodView):
         # Check if file is completely uploaded and set meta
         if file_range.is_complete:
             Upload.meta_complete(item, '')
-            item.meta['size'] = item.data.size
+            item.meta[SIZE] = item.data.size
             item.close()
 
             background_compute_hash(current_app.storage, name)
@@ -159,9 +161,9 @@ class ItemDownloadView(MethodView):
                 return 'File not found', 404
             raise
 
-        if item.meta.get('locked'):
+        if item.meta.get():
             error = 'File Locked.'
-        elif not item.meta.get('complete'):
+        elif not item.meta.get(COMPLETE):
             error = 'Upload incomplete. Try again later.'
         else:
             error = None
@@ -190,9 +192,9 @@ class ItemDownloadView(MethodView):
 
         ret = Response(stream_with_context(stream(range_begin, range_end)))
         ret.headers['Content-Disposition'] = '{0}; filename="{1}"'.format(
-            self.content_disposition, item.meta['filename'])
+            self.content_disposition, item.meta[FILENAME])
         ret.headers['Content-Length'] = (range_end - range_begin) + 1
-        ret.headers['Content-Type'] = item.meta['type']  # 'application/octet-stream'
+        ret.headers['Content-Type'] = item.meta[TYPE]  # 'application/octet-stream'
         ret.status = '200'
         ret.headers['Content-Range'] = ('bytes %d-%d/%d' % (range_begin, range_end, item.data.size))
         return ret
