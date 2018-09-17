@@ -5,6 +5,8 @@ from flask import Response, current_app, render_template, stream_with_context
 from flask.views import MethodView
 from werkzeug.exceptions import NotFound, Forbidden
 
+from ..constants import *  # noqa
+
 from ..utils.permissions import *
 from ..utils.date_funcs import delete_if_lifetime_over
 from . import blueprint
@@ -23,17 +25,17 @@ class DownloadView(MethodView):
                 raise NotFound()
             raise
 
-        if not item.meta['complete']:
+        if not item.meta[COMPLETE]:
             error = 'Upload incomplete. Try again later.'
         else:
             error = None
         if error:
             try:
-                return render_template('error.html', heading=item.meta['filename'], body=error), 409
+                return render_template('error.html', heading=item.meta[FILENAME], body=error), 409
             finally:
                 item.close()
 
-        if item.meta['locked'] and not may(ADMIN):
+        if item.meta[LOCKED] and not may(ADMIN):
             raise Forbidden()
 
         if delete_if_lifetime_over(item, name):
@@ -48,9 +50,9 @@ class DownloadView(MethodView):
                     buf = _item.data.read(16 * 1024, offset)
                     offset += len(buf)
                     yield buf
-                item.meta['timestamp-download'] = int(time.time())
+                item.meta[TIMESTAMP_DOWNLOAD] = int(time.time())
 
-        ct = item.meta['type']
+        ct = item.meta[TYPE]
         dispo = self.content_disposition
         if dispo != 'attachment':
             # no simple download, so we must be careful about XSS
@@ -59,8 +61,8 @@ class DownloadView(MethodView):
 
         ret = Response(stream_with_context(stream()))
         ret.headers['Content-Disposition'] = '{0}; filename="{1}"'.format(
-            dispo, item.meta['filename'])
-        ret.headers['Content-Length'] = item.meta['size']
+            dispo, item.meta[FILENAME])
+        ret.headers['Content-Length'] = item.meta[SIZE]
         ret.headers['Content-Type'] = ct
         ret.headers['X-Content-Type-Options'] = 'nosniff'  # yes, we really mean it
         return ret

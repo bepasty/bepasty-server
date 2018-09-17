@@ -1,6 +1,8 @@
 import time
 from flask import current_app
 
+from ..constants import *  # noqa
+
 FOREVER = -1
 
 
@@ -29,7 +31,7 @@ def delete_if_lifetime_over(item, name):
     """
     :return: True if file was deleted
     """
-    if 0 < item.meta['timestamp-max-life'] < time.time():
+    if 0 < item.meta[TIMESTAMP_MAX_LIFE] < time.time():
         try:
             current_app.storage.remove(name)
         except (OSError, IOError) as e:

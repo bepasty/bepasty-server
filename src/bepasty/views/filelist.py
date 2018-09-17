@@ -5,6 +5,9 @@ from flask.views import MethodView
 from werkzeug.exceptions import Forbidden
 
 from . import blueprint
+
+from ..constants import *  # noqa
+
 from ..utils.permissions import *
 from ..utils.date_funcs import delete_if_lifetime_over
 
@@ -12,7 +15,7 @@ from ..utils.date_funcs import delete_if_lifetime_over
 def file_infos(names=None):
     """
     iterates over storage files metadata.
-    note: we put the storage name into the metadata as 'id'
+    note: we put the storage name into the metadata as ID
 
     :param names: None means "all items"
                   otherwise give a list of storage item names
@@ -26,7 +29,7 @@ def file_infos(names=None):
                 meta = dict(item.meta)
                 if delete_if_lifetime_over(item, name):
                     continue
-                meta['id'] = name
+                meta[ID] = name
                 yield meta
         except (OSError, IOError) as e:
             if e.errno != errno.ENOENT:
@@ -37,7 +40,7 @@ class FileListView(MethodView):
     def get(self):
         if not may(LIST):
             raise Forbidden()
-        files = sorted(file_infos(), key=lambda f: f['timestamp-upload'], reverse=True)
+        files = sorted(file_infos(), key=lambda f: f[TIMESTAMP_UPLOAD], reverse=True)
         return render_template('filelist.html', files=files)
 
 

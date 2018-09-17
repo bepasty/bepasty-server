@@ -9,6 +9,9 @@ from flask.views import MethodView
 from werkzeug.exceptions import NotFound, Forbidden
 
 from . import blueprint
+
+from ..constants import *  # noqa
+
 from ..utils.permissions import *
 from ..utils.http import redirect_next_referrer
 
@@ -26,12 +29,12 @@ class SetKeyValueView(MethodView):
             with current_app.storage.openwrite(name) as item:
                 if item.meta[self.KEY] == self.NEXT_VALUE:
                     error = '%s already is %r.' % (self.KEY, self.NEXT_VALUE)
-                elif not item.meta['complete']:
+                elif not item.meta[COMPLETE]:
                     error = 'Upload incomplete. Try again later.'
                 else:
                     error = None
                 if error:
-                    return render_template('error.html', heading=item.meta['filename'], body=error), 409
+                    return render_template('error.html', heading=item.meta[FILENAME], body=error), 409
                 item.meta[self.KEY] = self.NEXT_VALUE
             return redirect_next_referrer('bepasty.display', name=name)
 
@@ -43,13 +46,13 @@ class SetKeyValueView(MethodView):
 
 class LockView(SetKeyValueView):
     REQUIRED_PERMISSION = ADMIN
-    KEY = 'locked'
+    KEY = LOCKED
     NEXT_VALUE = True
 
 
 class UnlockView(SetKeyValueView):
     REQUIRED_PERMISSION = ADMIN
-    KEY = 'locked'
+    KEY = LOCKED
     NEXT_VALUE = False
 
 
