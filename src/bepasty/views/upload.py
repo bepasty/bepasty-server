@@ -54,7 +54,7 @@ class UploadView(MethodView):
         else:
             raise NotImplementedError
         # set max lifetime
-        maxlife_unit = request.form.get('maxlife-unit', 'forever').upper()
+        maxlife_unit = request.form.get('maxlife-unit', 'FOREVER').upper()
         maxlife_value = int(request.form.get('maxlife-value', 1))
         maxtime = time_unit_to_sec(maxlife_value, maxlife_unit)
         maxlife_timestamp = int(time.time()) + maxtime if maxtime > 0 else maxtime
@@ -74,8 +74,8 @@ class UploadNewView(MethodView):
         data_type = data['type']
 
         # set max lifetime
-        maxlife_value = int(data['maxlife_value'])
-        maxlife_unit = data['maxlife_unit'].upper()
+        maxlife_unit = data.get('maxlife_unit', 'FOREVER').upper()
+        maxlife_value = int(data.get('maxlife_value', 1))
         maxtime = time_unit_to_sec(maxlife_value, maxlife_unit)
         maxlife_timestamp = int(time.time()) + maxtime if maxtime > 0 else maxtime
 
