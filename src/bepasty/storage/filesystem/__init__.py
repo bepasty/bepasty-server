@@ -127,14 +127,16 @@ class Meta(collections.MutableMapping):
     Meta-data of item.
     """
     def __init__(self, file_meta):
+        self._changed = False
         self._file = file_meta
         data = file_meta.read()
         if data:
             self._data = pickle.loads(data)
-            self._changed = False
         else:
+            # for empty input, we create a usable, empty Meta item,
+            # but we do NOT set self._changed to True to avoid trying
+            # to write to files opened in read-only mode.
             self._data = {}
-            self._changed = True
 
     def __iter__(self):
         return iter(self._data)
