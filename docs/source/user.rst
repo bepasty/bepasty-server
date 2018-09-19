@@ -11,6 +11,9 @@ Your current permissions are shown on the web interface (in the navigation bar).
 
 To log in, you need to know credentials - ask the admin who runs the site.
 
+Bepasty does **not** use the usual user/password scheme, but **only** uses passwords (or
+passphrases) as credentials - there are no separate user names.
+
 The site admin can assign permissions to login credentials (and also to the anonymous, not logged-in user):
 
 * create: be able to create pastebins

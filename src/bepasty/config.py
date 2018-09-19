@@ -1,5 +1,13 @@
 class Config(object):
-    """This is the basic configuration class for bepasty."""
+    """
+    This is the basic configuration class for bepasty.
+
+    IMPORTANT:
+
+    The config is only loaded at startup time of the app, so if you change it,
+    you need to restart the wsgi app process(es) to make it load the updated
+    config.
+    """
 
     #: name of this site (put YOUR bepasty fqdn here)
     SITENAME = 'bepasty.example.org'
@@ -81,25 +89,36 @@ class Config(object):
     #: lifetime of the permanent session (in seconds)
     PERMANENT_SESSION_LIFETIME = 31 * 24 * 3600
 
-    #: not-logged-in users get these permissions -
-    #: usually they are either no permissions ('') or read-only ('read').
-    DEFAULT_PERMISSIONS = ''
-
-    #: logged-in users may get more permissions.
-    #: a user may have a login secret to log in and, depending on that secret,
-    #: he/she will get the permissions configured here.
+    #: Bepasty does **not** use the usual user/password scheme, but **only**
+    #: uses passwords (or passphrases - we'll call both "a secret" below) as
+    #: log-in credentials - there are no separate user names.
     #:
-    #: you can use same secret / same permissions for all privileged users or
+    #: People who log-in using such a secret may get more permissions than
+    #: those who do not log-in (who just get DEFAULT_PERMISSIONS).
+    #:
+    #: Depending on the secret used to log-in, they will get the permissions
+    #: configured here, see below.
+    #:
+    #: You can use same secret / same permissions for all privileged users or
     #: set up different secrets / different permissions for each user.
+    #:
+    #: If you want to be able to revoke permissions for some user / some group
+    #: of users, it might be a good idea to remember to whom you gave which
+    #: secret (and also handle it in a rather fine-grained way).
     #:
     #: PERMISSIONS is a dict that maps secrets to permissions, use it like:
     #:
     #: ::
     #:
     #:     PERMISSIONS = {
-    #:         'myadminsecret': 'admin,list,create,read,delete',
-    #:         'uploadersecret': 'create,read',
+    #:         'myadminsecret_1.21d-3!wdar34': 'admin,list,create,read,delete',
+    #:         'uploadersecret_rtghtrbrrrfsd': 'create,read',
+    #:         'joe_doe_89359299887711335537': 'create,read,delete',
     #:     }
     PERMISSIONS = {
         # 'foo': 'admin,list,create,read,delete',
     }
+
+    #: not-logged-in users get these permissions -
+    #: usually they are either no permissions ('') or read-only ('read').
+    DEFAULT_PERMISSIONS = ''
