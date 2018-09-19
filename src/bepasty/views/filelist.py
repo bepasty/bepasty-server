@@ -1,4 +1,5 @@
 import errno
+import pickle
 
 from flask import current_app, render_template
 from flask.views import MethodView
@@ -31,9 +32,12 @@ def file_infos(names=None):
                     continue
                 meta[ID] = name
                 yield meta
-        except (OSError, IOError) as e:
+        except OSError as e:
             if e.errno != errno.ENOENT:
                 raise
+        except pickle.UnpicklingError:
+            # corrupted meta file, just ignore it for now
+            pass
 
 
 class FileListView(MethodView):
