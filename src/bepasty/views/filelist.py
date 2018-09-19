@@ -28,6 +28,10 @@ def file_infos(names=None):
         try:
             with storage.open(name) as item:
                 meta = dict(item.meta)
+                if not meta:
+                    # we got empty metadata, this happens for 0-byte .meta files.
+                    # ignore it for now.
+                    continue
                 if delete_if_lifetime_over(item, name):
                     continue
                 meta[ID] = name
