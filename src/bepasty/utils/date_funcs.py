@@ -13,7 +13,7 @@ def get_maxlife(data, underscore):
     value_key = 'maxlife_value' if underscore else 'maxlife-value'
     value_default = '1'
     value = int(data.get(value_key, value_default))
-    return value, unit
+    return time_unit_to_sec(value, unit)
 
 
 def time_unit_to_sec(value, unit):

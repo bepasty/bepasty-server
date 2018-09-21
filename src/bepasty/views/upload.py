@@ -54,8 +54,7 @@ class UploadView(MethodView):
         else:
             raise NotImplementedError
         # set max lifetime
-        maxlife_value, maxlife_unit = get_maxlife(request.form, underscore=False)
-        maxtime = time_unit_to_sec(maxlife_value, maxlife_unit)
+        maxtime = get_maxlife(request.form, underscore=False)
         maxlife_timestamp = int(time.time()) + maxtime if maxtime > 0 else maxtime
         name = create_item(f, filename, size, content_type, content_type_hint, maxlife_stamp=maxlife_timestamp)
         return redirect_next('bepasty.display', name=name, _anchor=url_quote(filename))
@@ -73,8 +72,7 @@ class UploadNewView(MethodView):
         data_type = data['type']
 
         # set max lifetime
-        maxlife_value, maxlife_unit = get_maxlife(data, underscore=True)
-        maxtime = time_unit_to_sec(maxlife_value, maxlife_unit)
+        maxtime = get_maxlife(data, underscore=True)
         maxlife_timestamp = int(time.time()) + maxtime if maxtime > 0 else maxtime
 
         name = ItemName.create(current_app.storage)

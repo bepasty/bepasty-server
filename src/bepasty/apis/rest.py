@@ -62,8 +62,7 @@ class ItemUploadView(MethodView):
             item = current_app.storage.create(name, 0)
 
             # set max lifetime
-            maxlife_value, maxlife_unit = get_maxlife(request.headers, underscore=False)
-            maxtime = time_unit_to_sec(maxlife_value, maxlife_unit)
+            maxtime = get_maxlife(request.headers, underscore=False)
             maxlife_timestamp = int(time.time()) + maxtime if maxtime > 0 else maxtime
             # Fill meta with data from Request
             Upload.meta_new(item, 0, file_name, file_type,
