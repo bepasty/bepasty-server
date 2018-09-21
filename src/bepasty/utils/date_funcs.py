@@ -8,7 +8,7 @@ FOREVER = -1
 
 def get_maxlife(data, underscore):
     unit_key = 'maxlife_unit' if underscore else 'maxlife-unit'
-    unit_default = 'FOREVER'
+    unit_default = 'MONTH'
     unit = data.get(unit_key, unit_default).upper()
     value_key = 'maxlife_value' if underscore else 'maxlife-value'
     value_default = '1'
