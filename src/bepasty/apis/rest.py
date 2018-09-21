@@ -13,7 +13,7 @@ from ..utils.name import ItemName
 from ..utils.http import ContentRange, DownloadRange
 from ..utils.upload import Upload, background_compute_hash
 from ..utils.permissions import *
-from ..utils.date_funcs import time_unit_to_sec
+from ..utils.date_funcs import time_unit_to_sec, get_maxlife
 
 
 class ItemUploadView(MethodView):
@@ -62,8 +62,7 @@ class ItemUploadView(MethodView):
             item = current_app.storage.create(name, 0)
 
             # set max lifetime
-            maxlife_unit = request.headers.get('maxlife-unit', 'FOREVER').upper()
-            maxlife_value = int(request.headers.get('maxlife-value', 1))
+            maxlife_value, maxlife_unit = get_maxlife(request.headers, underscore=False)
             maxtime = time_unit_to_sec(maxlife_value, maxlife_unit)
             maxlife_timestamp = int(time.time()) + maxtime if maxtime > 0 else maxtime
             # Fill meta with data from Request

@@ -15,7 +15,7 @@ from ..utils.name import ItemName
 from ..utils.upload import Upload, create_item, background_compute_hash
 from ..utils.permissions import *
 from . import blueprint
-from ..utils.date_funcs import time_unit_to_sec
+from ..utils.date_funcs import time_unit_to_sec, get_maxlife
 
 
 class UploadView(MethodView):
@@ -54,8 +54,7 @@ class UploadView(MethodView):
         else:
             raise NotImplementedError
         # set max lifetime
-        maxlife_unit = request.form.get('maxlife-unit', 'FOREVER').upper()
-        maxlife_value = int(request.form.get('maxlife-value', 1))
+        maxlife_value, maxlife_unit = get_maxlife(request.form, underscore=False)
         maxtime = time_unit_to_sec(maxlife_value, maxlife_unit)
         maxlife_timestamp = int(time.time()) + maxtime if maxtime > 0 else maxtime
         name = create_item(f, filename, size, content_type, content_type_hint, maxlife_stamp=maxlife_timestamp)
@@ -74,8 +73,7 @@ class UploadNewView(MethodView):
         data_type = data['type']
 
         # set max lifetime
-        maxlife_unit = data.get('maxlife_unit', 'FOREVER').upper()
-        maxlife_value = int(data.get('maxlife_value', 1))
+        maxlife_value, maxlife_unit = get_maxlife(data, underscore=True)
         maxtime = time_unit_to_sec(maxlife_value, maxlife_unit)
         maxlife_timestamp = int(time.time()) + maxtime if maxtime > 0 else maxtime
 

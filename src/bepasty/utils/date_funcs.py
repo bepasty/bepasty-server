@@ -6,6 +6,16 @@ from ..constants import *  # noqa
 FOREVER = -1
 
 
+def get_maxlife(data, underscore):
+    unit_key = 'maxlife_unit' if underscore else 'maxlife-unit'
+    unit_default = 'FOREVER'
+    unit = data.get(unit_key, unit_default).upper()
+    value_key = 'maxlife_value' if underscore else 'maxlife-value'
+    value_default = '1'
+    value = int(data.get(value_key, value_default))
+    return value, unit
+
+
 def time_unit_to_sec(value, unit):
     """
     Converts a numeric value and with a string time unit unit to a time in seconds
