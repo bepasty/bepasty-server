@@ -1,7 +1,7 @@
-from ..bepasty_xstatic import serve_files
-
 from flask import send_from_directory
 from werkzeug.exceptions import NotFound
+
+from ..bepasty_xstatic import serve_files
 
 
 def xstatic(name, filename):

@@ -8,9 +8,8 @@ from pygments import highlight
 from pygments.lexers import get_lexer_for_mimetype
 from pygments.util import ClassNotFound as NoPygmentsLexer
 
-from ..constants import *  # noqa
-
-from ..utils.permissions import *
+from .. import constants
+from ..utils import permissions
 from ..utils.date_funcs import delete_if_lifetime_over
 from ..utils.formatters import CustomHtmlFormatter
 from ..utils._compat import iteritems
@@ -41,7 +40,7 @@ def rendering_allowed(item_type, item_size, use_pygments, complete):
 
 class DisplayView(MethodView):
     def get(self, name):
-        if not may(READ):
+        if not permissions.may(permissions.READ):
             raise Forbidden()
         try:
             item = current_app.storage.openwrite(name)
@@ -51,12 +50,12 @@ class DisplayView(MethodView):
             raise
 
         with item as item:
-            complete = item.meta[COMPLETE]
-            if not complete and not may(ADMIN):
+            complete = item.meta[constants.COMPLETE]
+            if not complete and not permissions.may(permissions.ADMIN):
                 error = 'Upload incomplete. Try again later.'
-                return render_template('error.html', heading=item.meta[FILENAME], body=error), 409
+                return render_template('error.html', heading=item.meta[constants.FILENAME], body=error), 409
 
-            if item.meta[LOCKED] and not may(ADMIN):
+            if item.meta[constants.LOCKED] and not permissions.may(permissions.ADMIN):
                 raise Forbidden()
 
             if delete_if_lifetime_over(item, name):
@@ -65,11 +64,11 @@ class DisplayView(MethodView):
             def read_data(item):
                 # reading the item for rendering is registered like a download
                 data = item.data.read(item.data.size, 0)
-                item.meta[TIMESTAMP_DOWNLOAD] = int(time.time())
+                item.meta[constants.TIMESTAMP_DOWNLOAD] = int(time.time())
                 return data
 
-            size = item.meta[SIZE]
-            ct = item.meta[TYPE]
+            size = item.meta[constants.SIZE]
+            ct = item.meta[constants.TYPE]
             try:
                 get_lexer_for_mimetype(ct)
                 use_pygments = True
@@ -88,7 +87,7 @@ class DisplayView(MethodView):
                     # special bepasty items - must be first, don't feed to pygments
                     if ct == 'text/x-bepasty-list':
                         names = read_data(item).decode('utf-8').splitlines()
-                        files = sorted(file_infos(names), key=lambda f: f[FILENAME])
+                        files = sorted(file_infos(names), key=lambda f: f[constants.FILENAME])
                         rendered_content = Markup(render_template('filelist_tableonly.html', files=files))
                     else:
                         rendered_content = u"Can't render this content type."

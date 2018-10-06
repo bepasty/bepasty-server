@@ -1,6 +1,7 @@
 import pytest
 
-from bepasty.utils.date_funcs import time_unit_to_sec, FOREVER
+from bepasty.constants import FOREVER
+from bepasty.utils.date_funcs import time_unit_to_sec
 
 
 @pytest.mark.parametrize('unit,expectation', [

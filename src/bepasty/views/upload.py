@@ -8,18 +8,17 @@ from flask.views import MethodView
 from werkzeug.exceptions import NotFound, Forbidden
 from werkzeug.urls import url_quote
 
-from ..constants import *  # noqa
-
+from .. import constants
+from ..utils import permissions
 from ..utils.http import ContentRange, redirect_next
 from ..utils.name import ItemName
 from ..utils.upload import Upload, create_item, background_compute_hash
-from ..utils.permissions import *
 from ..utils.date_funcs import get_maxlife
 
 
 class UploadView(MethodView):
     def post(self):
-        if not may(CREATE):
+        if not permissions.may(permissions.CREATE):
             raise Forbidden()
         f = request.files.get('file')
         t = request.form.get('text')
@@ -61,7 +60,7 @@ class UploadView(MethodView):
 
 class UploadNewView(MethodView):
     def post(self):
-        if not may(CREATE):
+        if not permissions.may(permissions.CREATE):
             raise Forbidden()
 
         data = request.get_json()
@@ -86,7 +85,7 @@ class UploadNewView(MethodView):
 
 class UploadContinueView(MethodView):
     def post(self, name):
-        if not may(CREATE):
+        if not permissions.may(permissions.CREATE):
             raise Forbidden()
 
         f = request.files['file']
@@ -119,10 +118,10 @@ class UploadContinueView(MethodView):
 
             result = jsonify({'files': [{
                 'name': name,
-                'filename': item.meta[FILENAME],
-                'size': item.meta[SIZE],
+                'filename': item.meta[constants.FILENAME],
+                'size': item.meta[constants.SIZE],
                 'url': "{0}#{1}".format(url_for('bepasty.display', name=name),
-                                        item.meta[FILENAME]),
+                                        item.meta[constants.FILENAME]),
             }]})
 
         if is_complete and not file_hash:
@@ -133,7 +132,7 @@ class UploadContinueView(MethodView):
 
 class UploadAbortView(MethodView):
     def get(self, name):
-        if not may(CREATE):
+        if not permissions.may(permissions.CREATE):
             raise Forbidden()
 
         try:
@@ -143,7 +142,7 @@ class UploadAbortView(MethodView):
                 return 'No file found.', 404
             raise
 
-        if item.meta[COMPLETE]:
+        if item.meta[constants.COMPLETE]:
             error = 'Upload complete. Cannot delete fileupload garbage.'
         else:
             error = None

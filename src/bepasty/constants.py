@@ -8,3 +8,4 @@ TIMESTAMP_UPLOAD = 'timestamp-upload'
 TIMESTAMP_DOWNLOAD = 'timestamp-download'
 TIMESTAMP_MAX_LIFE = 'timestamp-max-life'
 ID = 'id'  # storage name
+FOREVER = -1

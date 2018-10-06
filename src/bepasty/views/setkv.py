@@ -8,9 +8,8 @@ from flask import current_app, render_template
 from flask.views import MethodView
 from werkzeug.exceptions import NotFound, Forbidden
 
-from ..constants import *  # noqa
-
-from ..utils.permissions import *
+from .. import constants
+from ..utils import permissions
 from ..utils.http import redirect_next_referrer
 
 
@@ -21,18 +20,18 @@ class SetKeyValueView(MethodView):
     NEXT_VALUE = None
 
     def post(self, name):
-        if self.REQUIRED_PERMISSION is not None and not may(self.REQUIRED_PERMISSION):
+        if self.REQUIRED_PERMISSION is not None and not permissions.may(self.REQUIRED_PERMISSION):
             raise Forbidden()
         try:
             with current_app.storage.openwrite(name) as item:
                 if item.meta[self.KEY] == self.NEXT_VALUE:
                     error = '%s already is %r.' % (self.KEY, self.NEXT_VALUE)
-                elif not item.meta[COMPLETE]:
+                elif not item.meta[constants.COMPLETE]:
                     error = 'Upload incomplete. Try again later.'
                 else:
                     error = None
                 if error:
-                    return render_template('error.html', heading=item.meta[FILENAME], body=error), 409
+                    return render_template('error.html', heading=item.meta[constants.FILENAME], body=error), 409
                 item.meta[self.KEY] = self.NEXT_VALUE
             return redirect_next_referrer('bepasty.display', name=name)
 
@@ -43,12 +42,12 @@ class SetKeyValueView(MethodView):
 
 
 class LockView(SetKeyValueView):
-    REQUIRED_PERMISSION = ADMIN
-    KEY = LOCKED
+    REQUIRED_PERMISSION = permissions.ADMIN
+    KEY = constants.LOCKED
     NEXT_VALUE = True
 
 
 class UnlockView(SetKeyValueView):
-    REQUIRED_PERMISSION = ADMIN
-    KEY = LOCKED
+    REQUIRED_PERMISSION = permissions.ADMIN
+    KEY = constants.LOCKED
     NEXT_VALUE = False
