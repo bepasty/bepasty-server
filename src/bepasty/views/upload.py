@@ -159,6 +159,7 @@ class UploadAbortView(MethodView):
             raise
         return 'Upload aborted'
 
+
 blueprint.add_url_rule('/+upload', view_func=UploadView.as_view('upload'))
 blueprint.add_url_rule('/+upload/new', view_func=UploadNewView.as_view('upload_new'))
 blueprint.add_url_rule('/+upload/<itemname:name>', view_func=UploadContinueView.as_view('upload_continue'))

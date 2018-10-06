@@ -145,6 +145,7 @@ class ItemDetailView(MethodView):
             return jsonify({'uri': url_for('bepasty_apis.items_detail', name=name),
                             'file-meta': dict(item.meta)})
 
+
 class ItemDownloadView(MethodView):
     content_disposition = 'attachment'
 
@@ -202,7 +203,6 @@ class InfoView(MethodView):
     def get(self):
         return jsonify({'MAX_BODY_SIZE': current_app.config['MAX_BODY_SIZE'],
                         'MAX_ALLOWED_FILE_SIZE': current_app.config['MAX_ALLOWED_FILE_SIZE']})
-
 
 
 blueprint.add_url_rule('/rest', view_func=InfoView.as_view('api_info'))
