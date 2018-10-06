@@ -16,7 +16,7 @@ def test_create_many():
     count = 400  # way more than we can do with this name length
     max_seen_length = 0
     for i in range_type(count):
-        name = ItemName.create(fake_storage, length=length, max_length=length*4, max_tries=10)
+        name = ItemName.create(fake_storage, length=length, max_length=length * 4, max_tries=10)
         # use the name in storage, so it is not available any more
         fake_storage[name] = None
         max_seen_length = max(max_seen_length, len(name))
