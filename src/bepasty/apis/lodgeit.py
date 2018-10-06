@@ -7,8 +7,8 @@ from werkzeug.exceptions import Forbidden
 from werkzeug.urls import url_quote
 
 from ..constants import FOREVER
-from ..utils import permissions
 from ..utils.http import redirect_next
+from ..utils.permissions import CREATE, may
 from ..utils.upload import create_item
 
 
@@ -37,7 +37,7 @@ class LodgeitUpload(MethodView):
             TRANS[name] = ct
 
     def post(self):
-        if not permissions.may(permissions.CREATE):
+        if not may(CREATE):
             raise Forbidden()
         lang = request.form.get('language')
         content_type = self.TRANS.get(lang)

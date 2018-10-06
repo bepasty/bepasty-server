@@ -12,8 +12,18 @@ from flask import (
 
 from .apis import blueprint as blueprint_apis
 from .storage import create_storage
-from .utils import permissions
 from .utils.name import setup_werkzeug_routing
+from .utils.permissions import (
+    ADMIN,
+    CREATE,
+    DELETE,
+    LIST,
+    READ,
+    get_permission_icons,
+    get_permissions,
+    logged_in,
+    may,
+)
 from .views import blueprint
 
 
@@ -84,9 +94,9 @@ def create_app():
         before the request is handled (by its view function), we compute some
         stuff here and make it easily available.
         """
-        flaskg.logged_in = permissions.logged_in()
-        flaskg.permissions = permissions.get_permissions()
-        flaskg.icon_permissions = permissions.get_permission_icons()
+        flaskg.logged_in = logged_in()
+        flaskg.permissions = get_permissions()
+        flaskg.icon_permissions = get_permission_icons()
         if flaskg.logged_in:
             session.permanent = current_app.config['PERMANENT_SESSION']
 
@@ -103,11 +113,11 @@ def create_app():
     app.jinja_env.filters['datetime'] = datetime_format
 
     app.jinja_env.globals['flaskg'] = flaskg
-    app.jinja_env.globals['may'] = permissions.may
-    app.jinja_env.globals['ADMIN'] = permissions.ADMIN
-    app.jinja_env.globals['LIST'] = permissions.LIST
-    app.jinja_env.globals['CREATE'] = permissions.CREATE
-    app.jinja_env.globals['READ'] = permissions.READ
-    app.jinja_env.globals['DELETE'] = permissions.DELETE
+    app.jinja_env.globals['may'] = may
+    app.jinja_env.globals['ADMIN'] = ADMIN
+    app.jinja_env.globals['LIST'] = LIST
+    app.jinja_env.globals['CREATE'] = CREATE
+    app.jinja_env.globals['READ'] = READ
+    app.jinja_env.globals['DELETE'] = DELETE
 
     return app

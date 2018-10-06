@@ -6,12 +6,12 @@ from io import BytesIO
 from flask import Response, make_response, url_for, jsonify, stream_with_context, request, current_app
 from flask.views import MethodView
 
-from .. import constants
-from ..utils import permissions
-from ..utils.name import ItemName
-from ..utils.http import ContentRange, DownloadRange
-from ..utils.upload import Upload, background_compute_hash
+from ..constants import COMPLETE, FILENAME, SIZE, TYPE
 from ..utils.date_funcs import get_maxlife
+from ..utils.http import ContentRange, DownloadRange
+from ..utils.name import ItemName
+from ..utils.permissions import CREATE, LIST, READ, may
+from ..utils.upload import Upload, background_compute_hash
 
 
 class ItemUploadView(MethodView):
@@ -42,7 +42,7 @@ class ItemUploadView(MethodView):
         If the file size exceeds the permitted size, the upload will be aborted. This will be checked twice.
         The first check is the provided Content-Length. The second is the actual file size on the server.
         """
-        if not permissions.may(permissions.CREATE):
+        if not may(CREATE):
             return 'Missing Permissions', 403
 
         # Collect all expected data from the Request
@@ -99,7 +99,7 @@ class ItemUploadView(MethodView):
         # Check if file is completely uploaded and set meta
         if file_range.is_complete:
             Upload.meta_complete(item, '')
-            item.meta[constants.SIZE] = item.data.size
+            item.meta[SIZE] = item.data.size
             item.close()
 
             background_compute_hash(current_app.storage, name)
@@ -124,7 +124,7 @@ class ItemUploadView(MethodView):
                 ...
             }
         """
-        if not permissions.may(permissions.LIST):
+        if not may(LIST):
             return 'Missing Permissions', 403
         ret = {}
         for name in current_app.storage:
@@ -136,7 +136,7 @@ class ItemUploadView(MethodView):
 
 class ItemDetailView(MethodView):
     def get(self, name):
-        if not permissions.may(permissions.READ):
+        if not may(READ):
             return 'Missing Permissions', 403
 
         with current_app.storage.open(name) as item:
@@ -148,7 +148,7 @@ class ItemDownloadView(MethodView):
     content_disposition = 'attachment'
 
     def get(self, name):
-        if not permissions.may(permissions.READ):
+        if not may(READ):
             return 'Missing Permissions', 403
 
         try:
@@ -160,7 +160,7 @@ class ItemDownloadView(MethodView):
 
         if item.meta.get():
             error = 'File Locked.'
-        elif not item.meta.get(constants.COMPLETE):
+        elif not item.meta.get(COMPLETE):
             error = 'Upload incomplete. Try again later.'
         else:
             error = None
@@ -189,9 +189,9 @@ class ItemDownloadView(MethodView):
 
         ret = Response(stream_with_context(stream(range_begin, range_end)))
         ret.headers['Content-Disposition'] = '{0}; filename="{1}"'.format(
-            self.content_disposition, item.meta[constants.FILENAME])
+            self.content_disposition, item.meta[FILENAME])
         ret.headers['Content-Length'] = (range_end - range_begin) + 1
-        ret.headers['Content-Type'] = item.meta[constants.TYPE]  # 'application/octet-stream'
+        ret.headers['Content-Type'] = item.meta[TYPE]  # 'application/octet-stream'
         ret.status = '200'
         ret.headers['Content-Range'] = ('bytes %d-%d/%d' % (range_begin, range_end, item.data.size))
         return ret

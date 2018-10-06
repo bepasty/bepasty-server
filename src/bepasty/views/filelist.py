@@ -5,9 +5,9 @@ from flask import current_app, render_template
 from flask.views import MethodView
 from werkzeug.exceptions import Forbidden
 
-from .. import constants
-from ..utils import permissions
+from ..constants import ID, TIMESTAMP_UPLOAD
 from ..utils.date_funcs import delete_if_lifetime_over
+from ..utils.permissions import LIST, may
 
 
 def file_infos(names=None):
@@ -31,7 +31,7 @@ def file_infos(names=None):
                     continue
                 if delete_if_lifetime_over(item, name):
                     continue
-                meta[constants.ID] = name
+                meta[ID] = name
                 yield meta
         except OSError as e:
             if e.errno != errno.ENOENT:
@@ -43,7 +43,7 @@ def file_infos(names=None):
 
 class FileListView(MethodView):
     def get(self):
-        if not permissions.may(permissions.LIST):
+        if not may(LIST):
             raise Forbidden()
-        files = sorted(file_infos(), key=lambda f: f[constants.TIMESTAMP_UPLOAD], reverse=True)
+        files = sorted(file_infos(), key=lambda f: f[TIMESTAMP_UPLOAD], reverse=True)
         return render_template('filelist.html', files=files)

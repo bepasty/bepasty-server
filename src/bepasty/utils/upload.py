@@ -4,7 +4,18 @@ import mimetypes
 
 from flask import abort, current_app
 
-from .. import constants
+from ..constants import (
+    COMPLETE,
+    FILENAME,
+    FOREVER,
+    HASH,
+    LOCKED,
+    SIZE,
+    TIMESTAMP_DOWNLOAD,
+    TIMESTAMP_MAX_LIFE,
+    TIMESTAMP_UPLOAD,
+    TYPE,
+)
 from .name import ItemName
 from .decorators import threaded
 from .hashing import compute_hash, hash_new
@@ -62,23 +73,23 @@ class Upload(object):
 
     @classmethod
     def meta_new(cls, item, input_size, input_filename, input_type,
-                 input_type_hint, storage_name, maxlife_stamp=constants.FOREVER):
-        item.meta[constants.FILENAME] = cls.filter_filename(
+                 input_type_hint, storage_name, maxlife_stamp=FOREVER):
+        item.meta[FILENAME] = cls.filter_filename(
             input_filename, storage_name, input_type, input_type_hint
         )
-        item.meta[constants.SIZE] = cls.filter_size(input_size)
-        item.meta[constants.TYPE] = cls.filter_type(input_type, input_type_hint, input_filename)
-        item.meta[constants.TIMESTAMP_UPLOAD] = int(time.time())
-        item.meta[constants.TIMESTAMP_DOWNLOAD] = 0
-        item.meta[constants.LOCKED] = current_app.config['UPLOAD_LOCKED']
-        item.meta[constants.COMPLETE] = False
-        item.meta[constants.HASH] = ''
-        item.meta[constants.TIMESTAMP_MAX_LIFE] = maxlife_stamp
+        item.meta[SIZE] = cls.filter_size(input_size)
+        item.meta[TYPE] = cls.filter_type(input_type, input_type_hint, input_filename)
+        item.meta[TIMESTAMP_UPLOAD] = int(time.time())
+        item.meta[TIMESTAMP_DOWNLOAD] = 0
+        item.meta[LOCKED] = current_app.config['UPLOAD_LOCKED']
+        item.meta[COMPLETE] = False
+        item.meta[HASH] = ''
+        item.meta[TIMESTAMP_MAX_LIFE] = maxlife_stamp
 
     @classmethod
     def meta_complete(cls, item, file_hash):
-        item.meta[constants.COMPLETE] = True
-        item.meta[constants.HASH] = file_hash
+        item.meta[COMPLETE] = True
+        item.meta[HASH] = file_hash
 
     @staticmethod
     def data(item, f, size_input, offset=0):
@@ -110,7 +121,7 @@ class Upload(object):
 
 
 def create_item(f, filename, size, content_type, content_type_hint,
-                maxlife_stamp=constants.FOREVER):
+                maxlife_stamp=FOREVER):
     """
     create an item from open file <f> with the given metadata, return the item name.
     """
@@ -126,6 +137,6 @@ def create_item(f, filename, size, content_type, content_type_hint,
 @threaded
 def background_compute_hash(storage, name):
     with storage.openwrite(name) as item:
-        size = item.meta[constants.SIZE]
+        size = item.meta[SIZE]
         file_hash = compute_hash(item.data, size)
-        item.meta[constants.HASH] = file_hash
+        item.meta[HASH] = file_hash

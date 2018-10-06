@@ -11,7 +11,18 @@ import time
 
 from flask import Flask
 
-from .. import constants
+from ..constants import (
+    COMPLETE,
+    FILENAME,
+    FOREVER,
+    HASH,
+    LOCKED,
+    SIZE,
+    TIMESTAMP_DOWNLOAD,
+    TIMESTAMP_MAX_LIFE,
+    TIMESTAMP_UPLOAD,
+    TYPE,
+)
 from ..utils.hashing import compute_hash
 from ..storage import create_storage
 
@@ -31,28 +42,28 @@ class Main(object):
             item.meta.pop('timestamp', None)
             # old items might miss some of the timestamps we require,
             # just initialize them with the current time:
-            for ts_key in [constants.TIMESTAMP_UPLOAD, constants.TIMESTAMP_DOWNLOAD, ]:
+            for ts_key in [TIMESTAMP_UPLOAD, TIMESTAMP_DOWNLOAD, ]:
                 if ts_key not in item.meta:
                     item.meta[ts_key] = tnow
-            if constants.LOCKED not in item.meta:
+            if LOCKED not in item.meta:
                 unlocked = item.meta.pop('unlocked', None)
                 if unlocked is not None:
                     locked = not unlocked
                 else:
                     locked = False
-                item.meta[constants.LOCKED] = locked
-            if constants.COMPLETE not in item.meta:
-                item.meta[constants.COMPLETE] = True
-            if constants.FILENAME not in item.meta:
-                item.meta[constants.FILENAME] = 'missing'
-            if constants.TYPE not in item.meta:
-                item.meta[constants.TYPE] = 'application/octet-stream'
-            if constants.SIZE not in item.meta:
-                item.meta[constants.SIZE] = item.data.size
-            if constants.HASH not in item.meta:
-                item.meta[constants.HASH] = ''  # see do_consistency
-            if constants.TIMESTAMP_MAX_LIFE not in item.meta:
-                item.meta[constants.TIMESTAMP_MAX_LIFE] = constants.FOREVER
+                item.meta[LOCKED] = locked
+            if COMPLETE not in item.meta:
+                item.meta[COMPLETE] = True
+            if FILENAME not in item.meta:
+                item.meta[FILENAME] = 'missing'
+            if TYPE not in item.meta:
+                item.meta[TYPE] = 'application/octet-stream'
+            if SIZE not in item.meta:
+                item.meta[SIZE] = item.data.size
+            if HASH not in item.meta:
+                item.meta[HASH] = ''  # see do_consistency
+            if TIMESTAMP_MAX_LIFE not in item.meta:
+                item.meta[TIMESTAMP_MAX_LIFE] = FOREVER
 
     _parser = _subparsers.add_parser('migrate', help='Migrate metadata to current schema')
     _parser.set_defaults(func=do_migrate)
@@ -60,12 +71,12 @@ class Main(object):
     def do_purge(self, storage, name, args):
         tnow = time.time()
         with storage.openwrite(name) as item:
-            file_name = item.meta[constants.FILENAME]
-            file_size = item.meta[constants.SIZE]
-            t_upload = item.meta[constants.TIMESTAMP_UPLOAD]
-            t_download = item.meta[constants.TIMESTAMP_DOWNLOAD]
-            file_type = item.meta[constants.TYPE]
-            max_lifetime = item.meta.get(constants.TIMESTAMP_MAX_LIFE, constants.FOREVER)
+            file_name = item.meta[FILENAME]
+            file_size = item.meta[SIZE]
+            t_upload = item.meta[TIMESTAMP_UPLOAD]
+            t_download = item.meta[TIMESTAMP_DOWNLOAD]
+            file_type = item.meta[TYPE]
+            max_lifetime = item.meta.get(TIMESTAMP_MAX_LIFE, FOREVER)
         purge = True  # be careful: we start from True, then AND the specified criteria
         if args.purge_age is not None:
             dt = args.purge_age * 24 * 3600  # n days since upload
@@ -100,10 +111,10 @@ class Main(object):
 
     def do_consistency(self, storage, name, args):
         with storage.openwrite(name) as item:
-            file_name = item.meta[constants.FILENAME]
-            meta_size = item.meta[constants.SIZE]
-            meta_type = item.meta[constants.TYPE]
-            meta_hash = item.meta[constants.HASH]
+            file_name = item.meta[FILENAME]
+            meta_size = item.meta[SIZE]
+            meta_type = item.meta[TYPE]
+            meta_hash = item.meta[HASH]
 
             print('checking: %s (%s %dB %s)' % (name, file_name, meta_size, meta_type))
 
@@ -113,7 +124,7 @@ class Main(object):
                 print("Inconsistent file size: meta: %d file: %d" % (meta_size, size))
                 if args.consistency_fix:
                     print("Writing computed file size into metadata...")
-                    item.meta[constants.SIZE] = size
+                    item.meta[SIZE] = size
                     size_consistent = True
 
             file_hash = compute_hash(item.data, size)
@@ -129,7 +140,7 @@ class Main(object):
                     print("Empty hash in metadata.")
                 if args.consistency_fix or args.consistency_compute and not meta_hash:
                     print("Writing computed file hash into metadata...")
-                    item.meta[constants.HASH] = file_hash
+                    item.meta[HASH] = file_hash
                     hash_consistent = True
 
         if args.consistency_remove and not (size_consistent and hash_consistent):
@@ -163,14 +174,14 @@ class Main(object):
                     print('  set complete')
                 else:
                     print('  set not complete')
-                item.meta[constants.COMPLETE] = args.flag_complete
+                item.meta[COMPLETE] = args.flag_complete
 
             if args.flag_locked is not None:
                 if args.flag_locked:
                     print('  set locked')
                 else:
                     print('  set not locked')
-                item.meta[constants.LOCKED] = args.flag_locked
+                item.meta[LOCKED] = args.flag_locked
 
     _parser = _subparsers.add_parser('set', help='Set flags on objects')
     _parser.set_defaults(func=do_set)
