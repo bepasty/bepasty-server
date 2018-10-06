@@ -11,7 +11,7 @@ PY2 = sys.version_info[0] == 2
 if PY2:
     from urlparse import urlparse, urljoin
 
-    range_type = xrange
+    range_type = xrange  # noqa: F821
     iteritems = lambda d: d.iteritems()  # noqa: E731
 else:
     from urllib.parse import urlparse, urljoin
