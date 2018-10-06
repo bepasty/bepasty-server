@@ -42,7 +42,7 @@ def delete_if_lifetime_over(item, name):
     if 0 < item.meta[constants.TIMESTAMP_MAX_LIFE] < time.time():
         try:
             current_app.storage.remove(name)
-        except (OSError, IOError) as e:
+        except (OSError, IOError):
             pass
         return True
     return False

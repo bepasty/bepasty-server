@@ -103,7 +103,6 @@ class Main(object):
             file_name = item.meta[constants.FILENAME]
             meta_size = item.meta[constants.SIZE]
             meta_type = item.meta[constants.TYPE]
-            t_upload = item.meta[constants.TIMESTAMP_UPLOAD]
             meta_hash = item.meta[constants.HASH]
 
             print('checking: %s (%s %dB %s)' % (name, file_name, meta_size, meta_type))

@@ -8,7 +8,7 @@ def test_contains(tmpdir):
     name = "foo"
     # check if it is not there yet
     assert name not in storage
-    with storage.create(name, 0) as item:
+    with storage.create(name, 0):
         # we just want it created, no need to write sth into it
         pass
     # check if it is there
@@ -24,7 +24,7 @@ def test_iter(tmpdir):
     assert list(storage) == []
     names = ["foo", "bar", "baz", ]
     for name in names:
-        with storage.create(name, 0) as item:
+        with storage.create(name, 0):
             # we just want it created, no need to write sth into it
             pass
     assert set(list(storage)) == set(names)
