@@ -12,7 +12,7 @@ from ..utils.name import ItemName
 from ..utils.http import ContentRange, DownloadRange
 from ..utils.upload import Upload, background_compute_hash
 from ..utils.permissions import *
-from ..utils.date_funcs import time_unit_to_sec, get_maxlife
+from ..utils.date_funcs import get_maxlife
 
 
 class ItemUploadView(MethodView):

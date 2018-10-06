@@ -14,7 +14,7 @@ from ..utils.http import ContentRange, redirect_next
 from ..utils.name import ItemName
 from ..utils.upload import Upload, create_item, background_compute_hash
 from ..utils.permissions import *
-from ..utils.date_funcs import time_unit_to_sec, get_maxlife
+from ..utils.date_funcs import get_maxlife
 
 
 class UploadView(MethodView):
