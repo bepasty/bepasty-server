@@ -10,13 +10,14 @@ letters_upper = set("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 digits = set("0123456789")
 
 # this stuff might be hard to read / differentiate or is otherwise unwanted:
-unwanted = set("1lI"
-               "0O"
-               "8B"
-               "5S"
-               '+'  # used in URL dispatching for views, e.g. +login
-               '/'  # used in URLs and fs paths
-              )
+unwanted = set(
+    "1lI"
+    "0O"
+    "8B"
+    "5S"
+    "+"  # used in URL dispatching for views, e.g. +login
+    "/"  # used in URLs and fs paths
+)
 
 all_chars = letters_lower | letters_upper | digits
 all_chars -= unwanted
@@ -57,9 +58,10 @@ def make_id(length, x=None, alphabet=all_chars):
     """
     base = len(alphabet)  # e.g. 10
     if x is None:
-        x = random.randint(0,                  # 000 (length==3) ...
-                           base ** length - 1  # 999 (length==3)
-                          )
+        x = random.randint(
+            0,                  # 000 (length==3) ...
+            base ** length - 1  # 999 (length==3)
+        )
     return ''.join(encode(x, length, alphabet))
 
 
@@ -98,10 +100,11 @@ class ItemNameConverter(BaseConverter):
     Accept the names of the style as we generate.
     """
     # for a while, support both old uuid4-style as well as new shorter IDs
-    regex = ('([a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})'
-             '|'
-             '([%(valid)s]{%(length)d})'
-            ) % dict(valid=re.escape(all_chars), length=ID_LENGTH)
+    regex = (
+        '([a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})'
+        '|'
+        '([%(valid)s]{%(length)d})'
+    ) % dict(valid=re.escape(all_chars), length=ID_LENGTH)
     weight = 200
 
 
