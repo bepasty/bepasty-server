@@ -15,7 +15,6 @@ from ..utils.date_funcs import delete_if_lifetime_over
 from ..utils.formatters import CustomHtmlFormatter
 from ..utils._compat import iteritems
 
-from . import blueprint
 from .filelist import file_infos
 
 
@@ -130,6 +129,3 @@ class DisplayView(MethodView):
 
             return render_template('display.html', name=name, item=item,
                                    rendered_content=rendered_content)
-
-
-blueprint.add_url_rule('/<itemname:name>', view_func=DisplayView.as_view('display'))

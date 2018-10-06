@@ -4,8 +4,6 @@ from flask import current_app, render_template
 from flask.views import MethodView
 from werkzeug.exceptions import NotFound, Forbidden
 
-from . import blueprint
-
 from ..constants import *  # noqa
 
 from ..utils.permissions import *
@@ -33,6 +31,3 @@ class DeleteView(MethodView):
             raise
 
         return redirect_next_referrer('bepasty.index')
-
-
-blueprint.add_url_rule('/<itemname:name>/+delete', view_func=DeleteView.as_view('delete'))

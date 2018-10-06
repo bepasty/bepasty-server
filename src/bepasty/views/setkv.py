@@ -8,8 +8,6 @@ from flask import current_app, render_template
 from flask.views import MethodView
 from werkzeug.exceptions import NotFound, Forbidden
 
-from . import blueprint
-
 from ..constants import *  # noqa
 
 from ..utils.permissions import *
@@ -54,7 +52,3 @@ class UnlockView(SetKeyValueView):
     REQUIRED_PERMISSION = ADMIN
     KEY = LOCKED
     NEXT_VALUE = False
-
-
-blueprint.add_url_rule('/<itemname:name>/+lock', view_func=LockView.as_view('lock'))
-blueprint.add_url_rule('/<itemname:name>/+unlock', view_func=UnlockView.as_view('unlock'))

@@ -9,7 +9,6 @@ from ..constants import *  # noqa
 
 from ..utils.permissions import *
 from ..utils.date_funcs import delete_if_lifetime_over
-from . import blueprint
 
 
 class DownloadView(MethodView):
@@ -70,7 +69,3 @@ class DownloadView(MethodView):
 
 class InlineView(DownloadView):
     content_disposition = 'inline'  # to trigger viewing in browser, for some types
-
-
-blueprint.add_url_rule('/<itemname:name>/+download', view_func=DownloadView.as_view('download'))
-blueprint.add_url_rule('/<itemname:name>/+inline', view_func=InlineView.as_view('inline'))

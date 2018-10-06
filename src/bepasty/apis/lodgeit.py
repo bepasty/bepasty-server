@@ -5,7 +5,6 @@ from flask.views import MethodView
 from werkzeug.exceptions import Forbidden
 from pygments.lexers import get_all_lexers
 
-from . import blueprint
 from werkzeug.urls import url_quote
 from ..utils.date_funcs import FOREVER
 from ..utils.permissions import *
@@ -53,6 +52,3 @@ class LodgeitUpload(MethodView):
         name = create_item(f, filename, size, content_type, content_type_hint,
                            maxlife_stamp=maxlife_timestamp)
         return redirect_next('bepasty.display', name=name, _anchor=url_quote(filename))
-
-
-blueprint.add_url_rule('/lodgeit/', view_func=LodgeitUpload.as_view('lodgeit'))
