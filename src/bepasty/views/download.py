@@ -5,11 +5,9 @@ from flask import Response, current_app, render_template, stream_with_context
 from flask.views import MethodView
 from werkzeug.exceptions import NotFound, Forbidden
 
-from ..constants import *  # noqa
-
-from ..utils.permissions import *
+from ..constants import COMPLETE, FILENAME, LOCKED, SIZE, TIMESTAMP_DOWNLOAD, TYPE
 from ..utils.date_funcs import delete_if_lifetime_over
-from . import blueprint
+from ..utils.permissions import ADMIN, READ, may
 
 
 class DownloadView(MethodView):
@@ -70,7 +68,3 @@ class DownloadView(MethodView):
 
 class InlineView(DownloadView):
     content_disposition = 'inline'  # to trigger viewing in browser, for some types
-
-
-blueprint.add_url_rule('/<itemname:name>/+download', view_func=DownloadView.as_view('download'))
-blueprint.add_url_rule('/<itemname:name>/+inline', view_func=InlineView.as_view('inline'))

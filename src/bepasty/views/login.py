@@ -1,18 +1,17 @@
 from flask import request, session
 from flask.views import MethodView
 
-from . import blueprint
-from ..utils.permissions import *
 from ..utils.http import redirect_next_referrer
+from ..utils.permissions import LOGGEDIN, PERMISSIONS, lookup_permissions
 
 
 class LoginView(MethodView):
     def post(self):
         token = request.form.get('token')
         if token is not None:
-            permissions = lookup_permissions(token)
-            if permissions is not None:
-                session[PERMISSIONS] = permissions
+            permissions_for_token = lookup_permissions(token)
+            if permissions_for_token is not None:
+                session[PERMISSIONS] = permissions_for_token
                 session[LOGGEDIN] = True
         return redirect_next_referrer('bepasty.index')
 
@@ -25,7 +24,3 @@ class LogoutView(MethodView):
         session.pop(LOGGEDIN, None)
         session.pop(PERMISSIONS, None)
         return redirect_next_referrer('bepasty.index')
-
-
-blueprint.add_url_rule('/+login', view_func=LoginView.as_view('login'))
-blueprint.add_url_rule('/+logout', view_func=LogoutView.as_view('logout'))

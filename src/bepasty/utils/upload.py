@@ -4,13 +4,21 @@ import mimetypes
 
 from flask import abort, current_app
 
+from ..constants import (
+    COMPLETE,
+    FILENAME,
+    FOREVER,
+    HASH,
+    LOCKED,
+    SIZE,
+    TIMESTAMP_DOWNLOAD,
+    TIMESTAMP_MAX_LIFE,
+    TIMESTAMP_UPLOAD,
+    TYPE,
+)
 from .name import ItemName
 from .decorators import threaded
 from .hashing import compute_hash, hash_new
-
-from ..constants import *  # noqa
-
-from ..utils.date_funcs import FOREVER
 
 # we limit to 250 characters as we do not want to accept arbitrarily long
 # filenames. other than that, there is no specific reason we could not
@@ -66,8 +74,9 @@ class Upload(object):
     @classmethod
     def meta_new(cls, item, input_size, input_filename, input_type,
                  input_type_hint, storage_name, maxlife_stamp=FOREVER):
-        item.meta[FILENAME] = cls.filter_filename(input_filename,
-                                                  storage_name, input_type, input_type_hint)
+        item.meta[FILENAME] = cls.filter_filename(
+            input_filename, storage_name, input_type, input_type_hint
+        )
         item.meta[SIZE] = cls.filter_size(input_size)
         item.meta[TYPE] = cls.filter_type(input_type, input_type_hint, input_filename)
         item.meta[TIMESTAMP_UPLOAD] = int(time.time())

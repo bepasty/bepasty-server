@@ -8,14 +8,12 @@ from pygments import highlight
 from pygments.lexers import get_lexer_for_mimetype
 from pygments.util import ClassNotFound as NoPygmentsLexer
 
-from ..constants import *  # noqa
-
-from ..utils.permissions import *
+from ..constants import COMPLETE, FILENAME, LOCKED, SIZE, TIMESTAMP_DOWNLOAD, TYPE
+from ..utils._compat import iteritems
 from ..utils.date_funcs import delete_if_lifetime_over
 from ..utils.formatters import CustomHtmlFormatter
-from ..utils._compat import iteritems
+from ..utils.permissions import ADMIN, READ, may
 
-from . import blueprint
 from .filelist import file_infos
 
 
@@ -130,6 +128,3 @@ class DisplayView(MethodView):
 
             return render_template('display.html', name=name, item=item,
                                    rendered_content=rendered_content)
-
-
-blueprint.add_url_rule('/<itemname:name>', view_func=DisplayView.as_view('display'))

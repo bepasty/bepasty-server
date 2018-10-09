@@ -123,7 +123,7 @@ class DownloadRange(collections.namedtuple('DownloadRange', ('begin', 'end'))):
 
         try:
             range_begin = int(range_begin)
-        except ValueError as e:
+        except ValueError:
             raise BadRequest(description='Range Header has no start')
 
         if range_end:

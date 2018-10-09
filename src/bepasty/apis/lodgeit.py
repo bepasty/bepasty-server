@@ -2,14 +2,13 @@ from io import BytesIO
 
 from flask import request
 from flask.views import MethodView
-from werkzeug.exceptions import Forbidden
 from pygments.lexers import get_all_lexers
-
-from . import blueprint
+from werkzeug.exceptions import Forbidden
 from werkzeug.urls import url_quote
-from ..utils.date_funcs import FOREVER
-from ..utils.permissions import *
+
+from ..constants import FOREVER
 from ..utils.http import redirect_next
+from ..utils.permissions import CREATE, may
 from ..utils.upload import create_item
 
 
@@ -53,6 +52,3 @@ class LodgeitUpload(MethodView):
         name = create_item(f, filename, size, content_type, content_type_hint,
                            maxlife_stamp=maxlife_timestamp)
         return redirect_next('bepasty.display', name=name, _anchor=url_quote(filename))
-
-
-blueprint.add_url_rule('/lodgeit/', view_func=LodgeitUpload.as_view('lodgeit'))

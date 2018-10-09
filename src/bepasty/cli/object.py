@@ -11,11 +11,20 @@ import time
 
 from flask import Flask
 
-from ..constants import *  # noqa
-
+from ..constants import (
+    COMPLETE,
+    FILENAME,
+    FOREVER,
+    HASH,
+    LOCKED,
+    SIZE,
+    TIMESTAMP_DOWNLOAD,
+    TIMESTAMP_MAX_LIFE,
+    TIMESTAMP_UPLOAD,
+    TYPE,
+)
 from ..utils.hashing import compute_hash
 from ..storage import create_storage
-from ..utils.date_funcs import FOREVER
 
 
 class Main(object):
@@ -105,7 +114,6 @@ class Main(object):
             file_name = item.meta[FILENAME]
             meta_size = item.meta[SIZE]
             meta_type = item.meta[TYPE]
-            t_upload = item.meta[TIMESTAMP_UPLOAD]
             meta_hash = item.meta[HASH]
 
             print('checking: %s (%s %dB %s)' % (name, file_name, meta_size, meta_type))

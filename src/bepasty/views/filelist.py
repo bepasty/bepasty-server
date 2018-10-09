@@ -5,12 +5,9 @@ from flask import current_app, render_template
 from flask.views import MethodView
 from werkzeug.exceptions import Forbidden
 
-from . import blueprint
-
-from ..constants import *  # noqa
-
-from ..utils.permissions import *
+from ..constants import ID, TIMESTAMP_UPLOAD
 from ..utils.date_funcs import delete_if_lifetime_over
+from ..utils.permissions import LIST, may
 
 
 def file_infos(names=None):
@@ -50,6 +47,3 @@ class FileListView(MethodView):
             raise Forbidden()
         files = sorted(file_infos(), key=lambda f: f[TIMESTAMP_UPLOAD], reverse=True)
         return render_template('filelist.html', files=files)
-
-
-blueprint.add_url_rule('/+list', view_func=FileListView.as_view('filelist'))

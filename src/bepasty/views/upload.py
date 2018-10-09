@@ -8,14 +8,12 @@ from flask.views import MethodView
 from werkzeug.exceptions import NotFound, Forbidden
 from werkzeug.urls import url_quote
 
-from ..constants import *  # noqa
-
+from ..constants import COMPLETE, FILENAME, SIZE
+from ..utils.date_funcs import get_maxlife
 from ..utils.http import ContentRange, redirect_next
 from ..utils.name import ItemName
+from ..utils.permissions import CREATE, may
 from ..utils.upload import Upload, create_item, background_compute_hash
-from ..utils.permissions import *
-from . import blueprint
-from ..utils.date_funcs import time_unit_to_sec, get_maxlife
 
 
 class UploadView(MethodView):
@@ -158,8 +156,3 @@ class UploadAbortView(MethodView):
                 raise NotFound()
             raise
         return 'Upload aborted'
-
-blueprint.add_url_rule('/+upload', view_func=UploadView.as_view('upload'))
-blueprint.add_url_rule('/+upload/new', view_func=UploadNewView.as_view('upload_new'))
-blueprint.add_url_rule('/+upload/<itemname:name>', view_func=UploadContinueView.as_view('upload_continue'))
-blueprint.add_url_rule('/+upload/<itemname:name>/abort', view_func=UploadAbortView.as_view('upload_abort'))

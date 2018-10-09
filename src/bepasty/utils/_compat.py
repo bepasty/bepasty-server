@@ -4,21 +4,17 @@
 
 import sys
 
+__all__ = ['urljoin', 'urlparse']
+
 PY2 = sys.version_info[0] == 2
-_identity = lambda x: x
 
-
-if not PY2:
-    range_type = range
-
-    from urllib.parse import urlparse, urljoin
-    iterkeys = lambda d: iter(d.keys())
-    itervalues = lambda d: iter(d.values())
-    iteritems = lambda d: iter(d.items())
-else:
-    range_type = xrange
-
+if PY2:
     from urlparse import urlparse, urljoin
-    iterkeys = lambda d: d.iterkeys()
-    itervalues = lambda d: d.itervalues()
-    iteritems = lambda d: d.iteritems()
+
+    range_type = xrange  # noqa: F821
+    iteritems = lambda d: d.iteritems()  # noqa: E731
+else:
+    from urllib.parse import urlparse, urljoin
+
+    range_type = range
+    iteritems = lambda d: iter(d.items())  # noqa: E731

@@ -4,7 +4,7 @@ from tempfile import mkstemp
 
 import pytest
 
-from bepasty.app import create_app, create_storage
+from bepasty.app import create_app
 
 
 @pytest.yield_fixture(scope='module')

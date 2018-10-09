@@ -3,17 +3,15 @@ import base64
 import time
 from io import BytesIO
 
-from . import blueprint
-from flask import Response, make_response, url_for, jsonify, stream_with_context
+from flask import Response, make_response, url_for, jsonify, stream_with_context, request, current_app
 from flask.views import MethodView
 
-from ..constants import *  # noqa
-
-from ..utils.name import ItemName
+from ..constants import COMPLETE, FILENAME, SIZE, TYPE
+from ..utils.date_funcs import get_maxlife
 from ..utils.http import ContentRange, DownloadRange
+from ..utils.name import ItemName
+from ..utils.permissions import CREATE, LIST, READ, may
 from ..utils.upload import Upload, background_compute_hash
-from ..utils.permissions import *
-from ..utils.date_funcs import time_unit_to_sec, get_maxlife
 
 
 class ItemUploadView(MethodView):
@@ -145,6 +143,7 @@ class ItemDetailView(MethodView):
             return jsonify({'uri': url_for('bepasty_apis.items_detail', name=name),
                             'file-meta': dict(item.meta)})
 
+
 class ItemDownloadView(MethodView):
     content_disposition = 'attachment'
 
@@ -202,10 +201,3 @@ class InfoView(MethodView):
     def get(self):
         return jsonify({'MAX_BODY_SIZE': current_app.config['MAX_BODY_SIZE'],
                         'MAX_ALLOWED_FILE_SIZE': current_app.config['MAX_ALLOWED_FILE_SIZE']})
-
-
-
-blueprint.add_url_rule('/rest', view_func=InfoView.as_view('api_info'))
-blueprint.add_url_rule('/rest/items', view_func=ItemUploadView.as_view('items'))
-blueprint.add_url_rule('/rest/items/<itemname:name>', view_func=ItemDetailView.as_view('items_detail'))
-blueprint.add_url_rule('/rest/items/<itemname:name>/download', view_func=ItemDownloadView.as_view('items_download'))
