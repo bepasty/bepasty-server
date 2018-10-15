@@ -15,11 +15,17 @@
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import os
+import sys
+sys.path.insert(0, os.path.abspath('../src'))
 
-from bepasty import project, version, copyright_years, author, description
+from bepasty._version import version
+
+# General information about the project.
+project = 'bepasty'
+author = 'The %s Team' % project
+copyright = '2018, %s' % author
+description = 'a binary pastebin / file upload service'
 
 # -- General configuration ------------------------------------------------
 
@@ -46,10 +52,6 @@ source_suffix = '.rst'
 
 # The master toctree document.
 master_doc = 'index'
-
-# General information about the project.
-project = project
-copyright = copyright_years + ', ' + author
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
