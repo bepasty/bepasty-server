@@ -79,7 +79,9 @@ The following headers *can (cursive)* or **must (bold)** be delivered by every p
 *Maxlife-Unit*
     The maxlife-unit can be used with the maxlife-value header to define a lifetime for the file that is uploaded.
     The unit has to be one of these::
+
         ['MINUTES', 'HOURS', 'DAYS', 'WEEKS', 'MONTHS', 'YEARS', 'FOREVER']
+
     If this header is ommited the unit will be forever
 
 *Maxlife-Value*

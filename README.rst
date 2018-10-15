@@ -5,7 +5,7 @@ bepasty is like a pastebin for all kinds of files (text, image, audio, video,
 documents, ..., binary).
 
 The documentation is there:
-http://bepasty-server.readthedocs.org/en/latest/
+https://bepasty-server.readthedocs.org/en/latest/
 
 Features
 --------

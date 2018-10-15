@@ -24,17 +24,10 @@ setup(
     maintainer_email='tw@waldmann-edv.de',
     description='a binary pastebin / file upload service',
     long_description=long_description,
-    url='http://github.com/bepasty/bepasty-server/',
+    url='https://github.com/bepasty/bepasty-server/',
     keywords="text image audio video binary pastebin upload download service wsgi flask",
     packages=find_packages('src'),
     package_dir={'': 'src'},
-    package_data={
-        'bepasty': [
-            'src/static/app/css/*.css',
-            'src/static/app/js/*.js',
-            'src/templates/*',
-        ],
-    },
     include_package_data=True,
     zip_safe=False,
     entry_points={
