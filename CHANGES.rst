@@ -1,8 +1,8 @@
 ChangeLog
 =========
 
-Release 0.5.0 (not released yet)
---------------------------------
+Release 0.5.0 (2018-10-15)
+--------------------------
 
 Compatibility:
 
@@ -11,6 +11,8 @@ Compatibility:
 * thus, you now need python 2.7 or python >= 3.4
 * changes in source code layout: package bepasty is below src/ now
 * thus, you need to install bepasty now: pip install -e .
+* changed maxlife default from FOREVER to 1 MONTH. this avoids creating an
+  ever-growing pastebin. users can still give other value if they like.
 
 Fixes:
 
@@ -21,6 +23,7 @@ Fixes:
 * fix display of "undefined", should be "never", #129
 * abort button now works w/ multiple files, #111
 * upload form: don't linebreak in numbers, #122
+* +list: work around 0-byte .meta files breaking the view, #147
 
 New features:
 
@@ -33,7 +36,9 @@ Other changes:
 * re-style upload form
 * add a favicon.ico (plus svg source)
 * docs updates
+* docs/config: clarify config updating, credentials/secrets, #151
 * lots of cleanups for packaging, testing, source code
+* upgrade xstatic package requirements, #171
 
 
 Release 0.4.0 (2014-11-11)
