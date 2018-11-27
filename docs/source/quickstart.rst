@@ -9,7 +9,7 @@ You can install bepasty either from PyPi (latest release) or from the git reposi
 ::
 
     # from PyPi:
-    pip install bepasty-server
+    pip install bepasty
 
     # from git repo
     pip install -e git+https://github.com/bepasty/bepasty-server.git#egg=bepasty-server
