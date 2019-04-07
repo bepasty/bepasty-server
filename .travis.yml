@@ -14,10 +14,6 @@ matrix:
           os: linux
           dist: xenial
           env: TOXENV=py27
-        - python: 3.4
-          os: linux
-          dist: xenial
-          env: TOXENV=py34
         - python: 3.5
           os: linux
           dist: xenial
