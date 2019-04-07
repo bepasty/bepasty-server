@@ -8,6 +8,11 @@
         </h1>
         <div class="btn-group">
             {% if not item.meta['locked'] or may(ADMIN) %}
+                <form id="qr-frm" action="{{ url_for('bepasty.qr', name=name) }}" method="get" class="btn-group">
+                    <button id="qr-btn" type="submit" class="btn btn-info">
+                        <span class="glyphicon glyphicon-qrcode"></span> QR
+                    </button>
+                </form>
                 <form id="download-frm" action="{{ url_for('bepasty.download', name=name) }}" method="get" class="btn-group">
                     <button id="download-btn" type="submit" class="btn btn-info">
                         <span class="glyphicon glyphicon-download-alt"></span> Download
