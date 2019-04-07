@@ -55,7 +55,13 @@ class UploadView(MethodView):
         maxtime = get_maxlife(request.form, underscore=False)
         maxlife_timestamp = int(time.time()) + maxtime if maxtime > 0 else maxtime
         name = create_item(f, filename, size, content_type, content_type_hint, maxlife_stamp=maxlife_timestamp)
-        return redirect_next('bepasty.display', name=name, _anchor=url_quote(filename))
+        kw = {}
+        kw['_anchor'] = url_quote(filename)
+        if content_type == 'text/x-bepasty-redirect':
+            # after creating a redirect, we want to stay on the bepasty
+            # redirect display, so the user can copy the URL.
+            kw['delay'] = '9999'
+        return redirect_next('bepasty.display', name=name, **kw)
 
 
 class UploadNewView(MethodView):
