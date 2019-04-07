@@ -1,7 +1,7 @@
 import errno
 import time
 
-from flask import current_app, render_template, Markup, url_for
+from flask import current_app, render_template, Markup, url_for, request
 from flask.views import MethodView
 from werkzeug.exceptions import NotFound, Forbidden
 from pygments import highlight
@@ -89,6 +89,10 @@ class DisplayView(MethodView):
                         names = read_data(item).decode('utf-8').splitlines()
                         files = sorted(file_infos(names), key=lambda f: f[FILENAME])
                         rendered_content = Markup(render_template('filelist_tableonly.html', files=files))
+                    elif ct == 'text/x-bepasty-redirect':
+                        url = read_data(item).decode('utf-8')
+                        delay = request.args.get('delay', '3')
+                        return render_template('redirect.html', url=url, delay=delay)
                     else:
                         rendered_content = u"Can't render this content type."
                 elif ct.startswith('image/'):

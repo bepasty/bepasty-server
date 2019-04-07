@@ -35,6 +35,12 @@ Features
 
   - we show the html5 player for it (format support depends on browser)
 
+* URLs:
+
+  - we support linking to / redirecting to external URLs, you can use
+    this as a link shortener (avoiding privacy / data protection issues
+    that may exist with other link shorteners)
+
 * PDFs:
 
   - we support rendering PDFs in your browser (if your browser is able to)
