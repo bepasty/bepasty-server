@@ -1,0 +1,104 @@
+<html>
+<head>
+<script src="{{ url_for('static', filename='app/js/qrcode.js') }}" type="text/javascript"></script>
+
+<script>
+
+// code based on borgbackup's paperkey.html (written by https://github.com/textshell, BSD licensed),
+// modified and simplified for the usage by bepasty by Thomas Waldmann.
+
+"use strict";
+
+function create_qrcode(text, errorCorrectionLevel) {
+    for (var typeNumber = 1; typeNumber <= 40; typeNumber++) {
+        try {
+            var qr = qrcode(typeNumber, errorCorrectionLevel);
+            qr.addData(text);
+            qr.make();
+            return qr.createSvgTag();
+        } catch (e) {
+            if (!e.message || !e.message.startsWith("code length overflow")) {
+                throw e;
+            }
+        }
+    }
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 194 194" width="194px" height="194px">' +
+                '<path d="m 186,8 0,14 -14,0 0,-14 m 12,12 0,-10 -10,0 0,10 m -162,-8 0,6 6,0 0,-6 m 164,6 -6,0 0,-6 6,0 z M 10,10 20,10 20,20 10,20 M 8,8 8,22 22,22 22,8 m 150,166 0,-2 2,0 0,2 z m 6,-6 -10,0 0,10 10,0 m -8,-8 6,0 0,6 -6,0 z m -158,12 0,-6 6,0 0,6 m 2,-8 0,10 -10,0 0,-10 m 0,0 10,0 m 2,-2 -14,0 0,14 14,0" style="fill: #ddd;"/>' +
+                '<text style="font-size:10px;fill:#ddd;stroke:none;stroke-width:1px;" x="30" y="90">Data too long for this</text>' +
+                '<text style="font-size:10px;fill:#ddd;stroke:none;stroke-width:1px;" x="30" y="110">error correction level.</text>' +
+            '</svg>'
+}
+
+function update() {
+    var text = document.getElementById('text').value;
+    var ecl = document.getElementById('errorCorrectionLevel').value;
+    var target = document.getElementById('qr');
+    target.innerHTML = create_qrcode(text, ecl);
+    var svg = target.children[0];
+    svg.setAttribute("viewBox", "0 0 " +
+                     svg.getAttribute("width").replace("px", "")  +
+                     " " +
+                     svg.getAttribute("height").replace("px", ""));
+
+    var size = document.getElementById('qrsize').value;
+    svg.setAttribute("width", size + "mm");
+    svg.setAttribute("height", size + "mm");
+}
+
+function call_soon(func, wait) {
+    var timeout;
+    return function() {
+        clearTimeout(timeout);
+        timeout = setTimeout(function() {
+            timeout = null;
+            func();
+        }, wait);
+    };
+}
+
+function loaded() {
+    document.getElementById('text').addEventListener('input', call_soon(update), false);
+    document.getElementById('qrsize').addEventListener('change', update, false);
+    document.getElementById('qrsize').addEventListener('input', call_soon(update), false);
+    document.getElementById('errorCorrectionLevel').addEventListener('change', update, false);
+    update();
+}
+
+window.addEventListener("load", loaded, false);
+</script>
+
+<style>
+    html {
+      padding: 10px;
+      background: #FFF;
+    }
+
+    .label {
+      padding: 0 0 0 20px;
+    }
+
+    #qr {
+      padding: 10px;
+      text-align: center;
+    }
+</style>
+</head>
+
+<body>
+    <div class="block">
+        <span class="label">Content:</span>
+        <input id="text" size="80" value="{{ text }}">
+        <span class="label">Error correction:</span>
+        <select id="errorCorrectionLevel" name="e">
+            <option value="L">7% (L)</option>
+            <option value="M">15% (M)</option>
+            <option value="Q">25% (Q)</option>
+            <option value="H" selected="selected">30% (H)</option>
+        </select>
+        <span class="label">Size:</span>
+        <input type="range" id="qrsize" min="45" max="500" value="100">
+        <input type="button" value="update" onclick="update()"/>
+        <div id="qr"></div>
+    </div>
+</body>
+</html>
