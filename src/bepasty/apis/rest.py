@@ -69,9 +69,9 @@ class ItemUploadView(MethodView):
                             name, maxlife_stamp=maxlife_timestamp)
         else:
             # Get file name from Transaction-ID and open from Storage
-            transaction_id_s = request.headers.get(TRANSACTION_ID)
-            transaction_id_b = transaction_id_s if isinstance(transaction_id_s, bytes_type) else transaction_id_s.encode()
-            name_b = base64.b64decode(transaction_id_b)
+            trans_id_s = request.headers.get(TRANSACTION_ID)
+            trans_id_b = trans_id_s if isinstance(trans_id_s, bytes_type) else trans_id_s.encode()
+            name_b = base64.b64decode(trans_id_b)
             name = name_b if isinstance(name_b, str) else name_b.decode()
             item = current_app.storage.openwrite(name)
 
@@ -98,9 +98,9 @@ class ItemUploadView(MethodView):
         # Make a Response and create Transaction-ID from ItemName
         response = make_response()
         name_b = name if isinstance(name, bytes_type) else name.encode()
-        transaction_id_b = base64.b64encode(name_b)
-        transaction_id_s = transaction_id_b if isinstance(transaction_id_b, str) else transaction_id_b.decode()
-        response.headers[TRANSACTION_ID] = transaction_id_s
+        trans_id_b = base64.b64encode(name_b)
+        trans_id_s = trans_id_b if isinstance(trans_id_b, str) else trans_id_b.decode()
+        response.headers[TRANSACTION_ID] = trans_id_s
 
         # Check if file is completely uploaded and set meta
         if file_range.is_complete:
