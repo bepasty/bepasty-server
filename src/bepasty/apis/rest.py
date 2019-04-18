@@ -101,21 +101,19 @@ class ItemUploadView(MethodView):
         transaction_id_b = base64.b64encode(name_b)
         transaction_id_s = transaction_id_b if isinstance(transaction_id_b, str) else transaction_id_b.decode()
         response.headers[TRANSACTION_ID] = transaction_id_s
-        response.status = '200'
 
         # Check if file is completely uploaded and set meta
         if file_range.is_complete:
             Upload.meta_complete(item, '')
             item.meta[SIZE] = item.data.size
             item.close()
-
             background_compute_hash(current_app.storage, name)
             # Set status 'successful' and return the new URL for the uploaded file
             response.status = '201'
             response.headers["Content-Location"] = url_for('bepasty_apis.items_detail', name=name)
-            response.headers[TRANSACTION_ID] = transaction_id_s
         else:
             item.close()
+            response.status = '200'
 
         return response
 
