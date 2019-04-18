@@ -6,7 +6,7 @@ from io import BytesIO
 from flask import Response, make_response, url_for, jsonify, stream_with_context, request, current_app
 from flask.views import MethodView
 
-from ..constants import COMPLETE, FILENAME, SIZE, TYPE
+from ..constants import COMPLETE, FILENAME, SIZE, TYPE, TRANSACTION_ID
 from ..utils._compat import bytes_type
 from ..utils.date_funcs import get_maxlife
 from ..utils.http import ContentRange, DownloadRange
@@ -27,15 +27,15 @@ class ItemUploadView(MethodView):
         * Content-Filename: The filename of the file. This will be used when downloading.
         * Content-Range: The Content-Range of the Chunk that is currently being uploaded.
             Follows the HTTP-Header Specifications.
-        * Transaction-Id: The Transaction-Id for Chunked Uploads.
+        * Transaction-ID: The Transaction-ID for Chunked Uploads.
             Needs to be delivered when uploading in chunks (after the first chunk).
 
         To start an upload, the HTTP Headers need to be delivered.
         The body of the request needs to be the base64 encoded file contents.
         Content-Length is the original file size before base64 encoding.
         Content-Range follows the same logic.
-        After the first chunk is uploaded, bepasty will return the Transaction-Id to continue the upload.
-        Deliver the Transaction-Id and the correct Content-Range to continue upload.
+        After the first chunk is uploaded, bepasty will return the Transaction-ID to continue the upload.
+        Deliver the Transaction-ID and the correct Content-Range to continue upload.
         After the file is completely uploaded, the file will be marked as complete and
         a 201 HTTP Status will be returned.
         The Content-Location Header will contain the api url to the uploaded Item.
@@ -55,7 +55,7 @@ class ItemUploadView(MethodView):
         Upload.filter_size(file_size)
 
         # Check if Transaction-ID is available for continued upload
-        if not request.headers.get("Transaction-Id"):
+        if not request.headers.get(TRANSACTION_ID):
             # Create ItemName and empty file in Storage
             name = ItemName.create(current_app.storage)
             item = current_app.storage.create(name, 0)
@@ -69,7 +69,7 @@ class ItemUploadView(MethodView):
                             name, maxlife_stamp=maxlife_timestamp)
         else:
             # Get file name from Transaction-ID and open from Storage
-            transaction_id_s = request.headers.get("Transaction-Id")
+            transaction_id_s = request.headers.get(TRANSACTION_ID)
             transaction_id_b = transaction_id_s if isinstance(transaction_id_s, bytes_type) else transaction_id_s.encode()
             name_b = base64.b64decode(transaction_id_b)
             name = name_b if isinstance(name_b, str) else name_b.decode()
@@ -100,7 +100,7 @@ class ItemUploadView(MethodView):
         name_b = name if isinstance(name, bytes_type) else name.encode()
         transaction_id_b = base64.b64encode(name_b)
         transaction_id_s = transaction_id_b if isinstance(transaction_id_b, str) else transaction_id_b.decode()
-        response.headers["transaction-id"] = transaction_id_s
+        response.headers[TRANSACTION_ID] = transaction_id_s
         response.status = '200'
 
         # Check if file is completely uploaded and set meta
@@ -113,7 +113,7 @@ class ItemUploadView(MethodView):
             # Set status 'successful' and return the new URL for the uploaded file
             response.status = '201'
             response.headers["Content-Location"] = url_for('bepasty_apis.items_detail', name=name)
-            response.headers["Transaction-ID"] = transaction_id_s
+            response.headers[TRANSACTION_ID] = transaction_id_s
         else:
             item.close()
 
