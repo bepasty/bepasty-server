@@ -7,6 +7,7 @@ from flask import Response, make_response, url_for, jsonify, stream_with_context
 from flask.views import MethodView
 
 from ..constants import COMPLETE, FILENAME, SIZE, TYPE
+from ..utils._compat import bytes_type
 from ..utils.date_funcs import get_maxlife
 from ..utils.http import ContentRange, DownloadRange
 from ..utils.name import ItemName
@@ -68,7 +69,10 @@ class ItemUploadView(MethodView):
                             name, maxlife_stamp=maxlife_timestamp)
         else:
             # Get file name from Transaction-ID and open from Storage
-            name = base64.b64decode(request.headers.get("Transaction-Id"))
+            transaction_id_s = request.headers.get("Transaction-Id")
+            transaction_id_b = transaction_id_s if isinstance(transaction_id_s, bytes_type) else transaction_id_s.encode()
+            name_b = base64.b64decode(transaction_id_b)
+            name = name_b if isinstance(name_b, str) else name_b.decode()
             item = current_app.storage.openwrite(name)
 
         # Check the actual size of the file on the server against limit
@@ -93,7 +97,10 @@ class ItemUploadView(MethodView):
 
         # Make a Response and create Transaction-ID from ItemName
         response = make_response()
-        response.headers["transaction-id"] = base64.b64encode(name)
+        name_b = name if isinstance(name, bytes_type) else name.encode()
+        transaction_id_b = base64.b64encode(name_b)
+        transaction_id_s = transaction_id_b if isinstance(transaction_id_b, str) else transaction_id_b.decode()
+        response.headers["transaction-id"] = transaction_id_s
         response.status = '200'
 
         # Check if file is completely uploaded and set meta
@@ -106,7 +113,7 @@ class ItemUploadView(MethodView):
             # Set status 'successful' and return the new URL for the uploaded file
             response.status = '201'
             response.headers["Content-Location"] = url_for('bepasty_apis.items_detail', name=name)
-            response.headers["Transaction-ID"] = base64.b64encode(name)
+            response.headers["Transaction-ID"] = transaction_id_s
         else:
             item.close()
 

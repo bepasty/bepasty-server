@@ -12,9 +12,11 @@ if PY2:
     from urlparse import urlparse, urljoin
 
     range_type = xrange  # noqa: F821
+    bytes_type = str
     iteritems = lambda d: d.iteritems()  # noqa: E731
 else:
     from urllib.parse import urlparse, urljoin
 
     range_type = range
+    bytes_type = bytes
     iteritems = lambda d: iter(d.items())  # noqa: E731
