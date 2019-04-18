@@ -1,6 +1,31 @@
 ChangeLog
 =========
 
+Release 0.6.0 (not released yet)
+--------------------------------
+
+Compatibility:
+
+* drop python 3.4 support, fixes #195
+
+Fixes:
+
+* fix bad types for b64(en|de)code, fixes #200
+
+New features:
+
+* show QR code with link to bepasty item, fixes #176
+* support text/x-bepasty-redirect for URL redirects
+  just paste the target URL and choose this as mimetype to create a
+  redirect. you may use the delay=<seconds> url argument to adjust
+  the delay, default is 3s.
+
+Other changes:
+
+* move development section from README to project docs, fixes #192
+* use twine to upload releases, qubes gpg support, fixes #197
+
+
 Release 0.5.0 (2018-10-15)
 --------------------------
 
