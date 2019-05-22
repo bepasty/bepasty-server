@@ -35,6 +35,10 @@ Features
 
   - we show the html5 player for it (format support depends on browser)
 
+* asciinema recordings:
+
+  - we show the asciinema player for .cast files
+
 * URLs:
 
   - we support linking to / redirecting to external URLs, you can use

@@ -68,9 +68,12 @@
 {% block extra_link %}
 <!-- Pygments styles -->
 <link rel="stylesheet" href="{{ url_for('bepasty.xstatic', name='pygments', filename='css/colorful.css') }}" type="text/css">
+<!-- asciinema styles -->
+<link rel="stylesheet" href="{{ url_for('bepasty.xstatic', name='asciinema_player', filename='asciinema-player.css') }}" type="text/css">
 {% endblock %}
 
 {% block extra_script %}
 <script src="{{ url_for('bepasty.xstatic', name='bootbox', filename='bootbox.min.js') }}" type="text/javascript"></script>
+<script src="{{ url_for('bepasty.xstatic', name='asciinema_player', filename='asciinema-player.js') }}" type="text/javascript"></script>
 <script src="{{ url_for('static', filename='app/js/utils.js') }}" type="text/javascript"></script>
 {% endblock extra_script %}

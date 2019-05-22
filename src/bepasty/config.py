@@ -23,6 +23,10 @@ class Config(object):
     #: uploaded file, set this to True.
     UPLOAD_LOCKED = False
 
+    #: The asciinema player theme (one of asciinema, tango, solarized-dark,
+    #: solarized-light, monokai)
+    ASCIINEMA_THEME = 'asciinema'
+
     #: The site admin can set some maximum allowed file size he wants to
     #: accept here. This is the maximum size an uploaded file may have.
     MAX_ALLOWED_FILE_SIZE = 5 * 1000 * 1000 * 1000

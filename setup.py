@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 import os
 
@@ -41,6 +41,7 @@ setup(
         'Flask',
         'Pygments',
         'xstatic',
+        'XStatic-asciinema-player',
         'xstatic-bootbox',
         'xstatic-bootstrap<4.0.0.0',
         'xstatic-jquery',
