@@ -6,7 +6,7 @@ from io import BytesIO
 from flask import Response, make_response, url_for, jsonify, stream_with_context, request, current_app
 from flask.views import MethodView
 
-from ..constants import COMPLETE, FILENAME, SIZE, TYPE, TRANSACTION_ID
+from ..constants import COMPLETE, FILENAME, LOCKED, SIZE, TYPE, TRANSACTION_ID
 from ..utils._compat import bytes_type
 from ..utils.date_funcs import get_maxlife
 from ..utils.http import ContentRange, DownloadRange
@@ -163,7 +163,7 @@ class ItemDownloadView(MethodView):
                 return 'File not found', 404
             raise
 
-        if item.meta.get():
+        if item.meta.get(LOCKED):
             error = 'File Locked.'
         elif not item.meta.get(COMPLETE):
             error = 'Upload incomplete. Try again later.'
