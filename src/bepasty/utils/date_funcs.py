@@ -6,7 +6,7 @@ from ..constants import FOREVER, TIMESTAMP_MAX_LIFE
 
 def get_maxlife(data, underscore):
     unit_key = 'maxlife_unit' if underscore else 'maxlife-unit'
-    unit_default = 'MONTH'
+    unit_default = 'MONTHS'
     unit = data.get(unit_key, unit_default).upper()
     value_key = 'maxlife_value' if underscore else 'maxlife-value'
     value_default = '1'

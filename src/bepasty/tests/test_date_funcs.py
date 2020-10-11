@@ -1,7 +1,12 @@
 import pytest
 
 from bepasty.constants import FOREVER
-from bepasty.utils.date_funcs import time_unit_to_sec
+from bepasty.utils.date_funcs import get_maxlife, time_unit_to_sec
+
+
+def test_get_maxlife():
+    assert get_maxlife({}, underscore=False) == 60 * 60 * 24 * 30
+    assert get_maxlife({}, underscore=True) == 60 * 60 * 24 * 30
 
 
 @pytest.mark.parametrize('unit,expectation', [
