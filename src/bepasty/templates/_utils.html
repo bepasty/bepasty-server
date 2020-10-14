@@ -42,21 +42,15 @@
                 </td>
                 <td>
                     <div class="btn-group">
-                        <form action="{{ url_for('bepasty.display', name=file['id']) }}" method="get" class="btn-group">
-                            <button type="submit" class="btn btn-xs btn-info">
-                                display
-                            </button>
-                        </form>
-                        <form action="{{ url_for('bepasty.download', name=file['id']) }}" method="get" class="btn-group">
-                            <button type="submit" class="btn btn-xs btn-info">
-                                download
-                            </button>
-                        </form>
-                        <form action="{{ url_for('bepasty.inline', name=file['id']) }}" method="get" class="btn-group">
-                            <button type="submit" class="btn btn-xs btn-info">
-                                inline
-                            </button>
-                        </form>
+                        <a href="{{ url_for('bepasty.display', name=file['id']) }}" class="btn btn-xs btn-info">
+                            display
+                        </a>
+                        <a href="{{ url_for('bepasty.download', name=file['id']) }}" class="btn btn-xs btn-info">
+                            download
+                        </a>
+                        <a href="{{ url_for('bepasty.inline', name=file['id']) }}" class="btn btn-xs btn-info">
+                            inline
+                        </a>
                         {% if may(DELETE) %}
                             <form action="{{ url_for('bepasty.delete', name=file['id']) }}" method="post" class="btn-group">
                                 <button type="submit" class="btn btn-xs btn-danger">
