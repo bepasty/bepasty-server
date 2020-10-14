@@ -5,6 +5,7 @@ from io import BytesIO
 
 from flask import Response, make_response, url_for, jsonify, stream_with_context, request, current_app
 from flask.views import MethodView
+from werkzeug.exceptions import HTTPException, InternalServerError, MethodNotAllowed
 
 from ..constants import COMPLETE, FILENAME, LOCKED, SIZE, TYPE, TRANSACTION_ID
 from ..utils._compat import bytes_type
@@ -15,7 +16,44 @@ from ..utils.permissions import CREATE, LIST, READ, may
 from ..utils.upload import Upload, background_compute_hash
 
 
-class ItemUploadView(MethodView):
+# This wrapper to handle exception of REST api.
+# @blueprint.add_errorhandler decorator can do it though. We have
+# "/lodgeit/" in same blueprint, and didn't find the way to exclude
+# "/lodgeit/" from add_errorhandler to handle exception as web site,
+# not REST api.
+def rest_errorhandler(func):
+    def error_message(description, code):
+        # maybe better to return error as json?
+        return description, code
+
+    def handler(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except HTTPException as e:
+            return error_message(e.description, e.code)
+        except Exception:
+            if current_app.propagate_exceptions:
+                # if testing/debug mode, re-raise
+                raise
+            exc = InternalServerError()
+            return error_message(exc.description, exc.code)
+
+    return handler
+
+
+# Default handlers for REST api to handle error
+class RestBase(MethodView):
+    @rest_errorhandler
+    def get(self, *args, **kwargs):
+        raise MethodNotAllowed()
+
+    @rest_errorhandler
+    def post(self, *args, **kwargs):
+        raise MethodNotAllowed()
+
+
+class ItemUploadView(RestBase):
+    @rest_errorhandler
     def post(self):
         """
         Upload file via REST-API. Chunked Upload is supported.
@@ -117,6 +155,7 @@ class ItemUploadView(MethodView):
 
         return response
 
+    @rest_errorhandler
     def get(self):
         """
         Return the list of all files in bepasty, including metadata in the form:
@@ -139,7 +178,8 @@ class ItemUploadView(MethodView):
         return jsonify(ret)
 
 
-class ItemDetailView(MethodView):
+class ItemDetailView(RestBase):
+    @rest_errorhandler
     def get(self, name):
         if not may(READ):
             return 'Missing Permissions', 403
@@ -149,9 +189,10 @@ class ItemDetailView(MethodView):
                             'file-meta': dict(item.meta)})
 
 
-class ItemDownloadView(MethodView):
+class ItemDownloadView(RestBase):
     content_disposition = 'attachment'
 
+    @rest_errorhandler
     def get(self, name):
         if not may(READ):
             return 'Missing Permissions', 403
@@ -202,7 +243,8 @@ class ItemDownloadView(MethodView):
         return ret
 
 
-class InfoView(MethodView):
+class InfoView(RestBase):
+    @rest_errorhandler
     def get(self):
         return jsonify({'MAX_BODY_SIZE': current_app.config['MAX_BODY_SIZE'],
                         'MAX_ALLOWED_FILE_SIZE': current_app.config['MAX_ALLOWED_FILE_SIZE']})
