@@ -1,19 +1,20 @@
-import errno
 import base64
 import time
 from io import BytesIO
 
 from flask import Response, make_response, url_for, jsonify, stream_with_context, request, current_app
 from flask.views import MethodView
-from werkzeug.exceptions import HTTPException, InternalServerError, MethodNotAllowed
+from werkzeug.exceptions import HTTPException, Conflict, InternalServerError, MethodNotAllowed
 
-from ..constants import COMPLETE, FILENAME, LOCKED, SIZE, TYPE, TRANSACTION_ID
+from ..constants import FILENAME, ID, SIZE, TYPE, TRANSACTION_ID
 from ..utils._compat import bytes_type
 from ..utils.date_funcs import get_maxlife
 from ..utils.http import ContentRange, DownloadRange
 from ..utils.name import ItemName
-from ..utils.permissions import CREATE, LIST, READ, may
+from ..utils.permissions import CREATE, LIST, may
 from ..utils.upload import Upload, background_compute_hash
+from ..views.filelist import file_infos
+from ..views.download import DownloadView
 
 
 # This wrapper to handle exception of REST api.
@@ -171,76 +172,51 @@ class ItemUploadView(RestBase):
         if not may(LIST):
             return 'Missing Permissions', 403
         ret = {}
-        for name in current_app.storage:
-            item = current_app.storage.open(name)
+        for meta in file_infos():
+            name = meta.pop(ID)
             ret[name] = {'uri': url_for('bepasty_apis.items_detail', name=name),
-                         'file-meta': dict(item.meta)}
+                         'file-meta': meta}
         return jsonify(ret)
 
 
-class ItemDetailView(RestBase):
-    @rest_errorhandler
-    def get(self, name):
-        if not may(READ):
-            return 'Missing Permissions', 403
+class ItemDetailView(DownloadView, RestBase):
+    def err_incomplete(self, item, error):
+        raise Conflict(description=error)
 
-        with current_app.storage.open(name) as item:
-            return jsonify({'uri': url_for('bepasty_apis.items_detail', name=name),
-                            'file-meta': dict(item.meta)})
-
-
-class ItemDownloadView(RestBase):
-    content_disposition = 'attachment'
+    def response(self, item, name):
+        return jsonify({'uri': url_for('bepasty_apis.items_detail', name=name),
+                        'file-meta': dict(item.meta)})
 
     @rest_errorhandler
     def get(self, name):
-        if not may(READ):
-            return 'Missing Permissions', 403
+        return super(ItemDetailView, self).get(name)
 
-        try:
-            item = current_app.storage.open(name)
-        except (OSError, IOError) as e:
-            if e.errno == errno.ENOENT:
-                return 'File not found', 404
-            raise
 
-        if item.meta.get(LOCKED):
-            error = 'File Locked.'
-        elif not item.meta.get(COMPLETE):
-            error = 'Upload incomplete. Try again later.'
-        else:
-            error = None
-        if error:
-            item.close()
-            return error, 403
-
+class ItemDownloadView(ItemDetailView):
+    def response(self, item, name):
         request_range = DownloadRange.from_request()
         if not request_range:
-            range_end = item.data.size - 1
-            range_begin = 0
+            size = item.data.size
+            start = 0
         else:
             if request_range.end == -1:
-                range_end = item.data.size - 1
+                size = item.data.size
             else:
-                range_end = min(request_range.end, item.data.size - 1)
-            range_begin = request_range.begin
+                size = min(request_range.end + 1, item.data.size)
+            start = request_range.begin
 
-        def stream(begin, end):
-            offset = max(0, begin)
-            with item as _item:
-                while offset <= end:
-                    buf = _item.data.read(16 * 1024, offset)
-                    offset += len(buf)
-                    yield buf
-
-        ret = Response(stream_with_context(stream(range_begin, range_end)))
+        ret = Response(stream_with_context(self.stream(item, start, size)))
         ret.headers['Content-Disposition'] = '{0}; filename="{1}"'.format(
             self.content_disposition, item.meta[FILENAME])
-        ret.headers['Content-Length'] = (range_end - range_begin) + 1
+        ret.headers['Content-Length'] = size - start
         ret.headers['Content-Type'] = item.meta[TYPE]  # 'application/octet-stream'
         ret.status = '200'
-        ret.headers['Content-Range'] = ('bytes %d-%d/%d' % (range_begin, range_end, item.data.size))
+        ret.headers['Content-Range'] = ('bytes %d-%d/%d' % (start, size - 1, item.data.size))
         return ret
+
+    @rest_errorhandler
+    def get(self, name):
+        return super(ItemDetailView, self).get(name)
 
 
 class InfoView(RestBase):

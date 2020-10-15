@@ -659,8 +659,8 @@ def test_incomplete(client_fixture):
     # detail should error with incomplete
     url = RestUrl(fid)
     response = client.get(url.detail, headers=add_auth('user', 'full'))
-    check_err_response(response, 403)
+    check_err_response(response, 409)
 
     # download should error with incomplete
     response = client.get(url.download, headers=add_auth('user', 'full'))
-    check_err_response(response, 403)
+    check_err_response(response, 409)
