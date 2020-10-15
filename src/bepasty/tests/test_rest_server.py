@@ -7,6 +7,7 @@ import base64
 import threading
 import time
 import hashlib
+import re
 from requests.auth import _basic_auth_str
 
 import pytest
@@ -142,8 +143,13 @@ def check_response(response, code, ftype='application/json', check_data=True):
         assert int(response.headers['Content-Length']) == len(response.data)
 
 
+re_html_tag = re.compile(r'<.+>')
+
+
 def check_err_response(response, code, check_data=True):
     check_response(response, code, 'text/html; charset=utf-8', check_data)
+    # check if doesn't have html tag
+    assert not re_html_tag.match(response.data.decode())
 
 
 def check_data_response(response, meta, data, offset=None, total_size=None,
