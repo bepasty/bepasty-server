@@ -3,6 +3,7 @@
 # License: BSD 2-clause, see LICENSE for details.
 
 import sys
+import base64
 
 __all__ = ['urljoin', 'urlparse']
 
@@ -14,9 +15,15 @@ if PY2:
     range_type = xrange  # noqa: F821
     bytes_type = str
     iteritems = lambda d: d.iteritems()  # noqa: E731
+
+    def base64_b64decode(data):
+        return base64.b64decode(data)
 else:
     from urllib.parse import urlparse, urljoin
 
     range_type = range
     bytes_type = bytes
     iteritems = lambda d: iter(d.items())  # noqa: E731
+
+    def base64_b64decode(data):
+        return base64.b64decode(data, validate=True)
