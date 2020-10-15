@@ -67,17 +67,33 @@ class ContentRange(collections.namedtuple('ContentRange', ('begin', 'end', 'comp
         Parse Content-Range header.
         Format is "bytes 0-524287/2000000".
         """
-        range_type, range_count = content_range.split(' ', 1)
+        try:
+            range_type, range_count = content_range.split(' ', 1)
+        except ValueError:
+            raise BadRequest(description='Content-Range Header is incorrect')
         # There are no other types then "bytes"
         if range_type != 'bytes':
             raise BadRequest
 
-        range_count, range_complete = range_count.split('/', 1)
-        range_begin, range_end = range_count.split('-', 1)
+        try:
+            range_count, range_complete = range_count.split('/', 1)
+        except ValueError:
+            raise BadRequest(description='Content-Range Header is incorrect')
 
-        range_begin = int(range_begin)
-        range_end = int(range_end)
-        range_complete = int(range_complete)
+        try:
+            # For now, */2000000 format is not supported
+            range_begin, range_end = range_count.split('-', 1)
+
+            range_begin = int(range_begin)
+            range_end = int(range_end)
+        except ValueError:
+            raise BadRequest(description='Content-Range Header has invalid range')
+
+        # For now, 0-10/* format is not supported
+        try:
+            range_complete = int(range_complete)
+        except ValueError:
+            raise BadRequest(description='Content-Range Header has invalid length')
 
         if range_begin <= range_end < range_complete:
             return ContentRange(range_begin, range_end, range_complete)
@@ -114,20 +130,30 @@ class DownloadRange(collections.namedtuple('DownloadRange', ('begin', 'end'))):
         Parse Range header.
         Format is "bytes=0-524287".
         """
-        range_type, range_count = content_range.split('=', 1)
+        try:
+            range_type, range_count = content_range.split('=', 1)
+        except ValueError:
+            raise BadRequest(description='Range Header is incorrect')
         # There are no other types than "bytes"
         if range_type != 'bytes':
             raise BadRequest(description='Range Header is incorrect')
 
-        range_begin, range_end = range_count.split('-', 1)
+        try:
+            range_begin, range_end = range_count.split('-', 1)
+        except ValueError:
+            raise BadRequest(description='Range Header is incorrect')
 
         try:
             range_begin = int(range_begin)
         except ValueError:
-            raise BadRequest(description='Range Header has no start')
+            raise BadRequest(description='Range Header has invalid first')
 
         if range_end:
-            range_end = int(range_end)
+            # For now, set of ranges (e.g. 0-1,2-10) is not supported
+            try:
+                range_end = int(range_end)
+            except ValueError:
+                raise BadRequest(description='Range Header has invalid last')
         else:
             range_end = -1
 
