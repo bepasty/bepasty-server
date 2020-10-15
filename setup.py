@@ -40,6 +40,7 @@ setup(
     install_requires=[
         'Flask',
         'Pygments',
+        # 'python-magic',
         'xstatic',
         'xstatic-bootbox',
         'xstatic-bootstrap<4.0.0.0',

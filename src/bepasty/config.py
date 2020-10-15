@@ -72,6 +72,10 @@ class Config(object):
         '': 1 * 1000 * 1000,
     }
 
+    #: Use python-magic module to guess mime type additionally, if
+    #: mime type is not determined from filename
+    USE_PYTHON_MAGIC = True
+
     #: Define storage backend, choose from:
     #:
     #: - 'filesystem'

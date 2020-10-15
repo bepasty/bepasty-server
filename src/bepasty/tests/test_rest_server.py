@@ -806,6 +806,7 @@ def test_incomplete(client_fixture):
     response = _upload(client, data, token='full', filename=filename,
                        ftype=ftype, range_str=range_str)
     check_upload_response(response, 200)
+    assert len(response.headers[TRANSACTION_ID]) > 0
 
     # get incomplete item from list
     url = RestUrl()
@@ -825,3 +826,60 @@ def test_incomplete(client_fixture):
     # download should error with incomplete
     response = client.get(url.download, headers=add_auth('user', 'full'))
     check_err_response(response, 409)
+
+
+def test_magic(client_fixture):
+    _, client, _ = client_fixture
+
+    filename = None
+    ftype = None
+
+    # upload a half of data to make incomplete with auto mime
+    # detection (meta has 'type-hint' internally)
+    sep = 10
+    data = UPLOAD_DATA[:sep]
+    range_str = 'bytes {}-{}/{}'.format(0, sep - 1, len(UPLOAD_DATA))
+    response = _upload(client, data, token='full', filename=filename,
+                       ftype=ftype, range_str=range_str)
+    check_upload_response(response, 200)
+    assert len(response.headers[TRANSACTION_ID]) > 0
+    trans_id = response.headers[TRANSACTION_ID]
+
+    # get incomplete item from list
+    url = RestUrl()
+    headers = add_auth('user', 'full')
+    response = client.get(url.list, headers=headers)
+    check_response(response, 200)
+    assert len(response.json) == 1
+
+    fid = list(response.json.keys())[0]
+    meta = list(response.json.values())[0]
+
+    # 'type-hint' should be invisible
+    assert meta['file-meta'] is not None
+    assert meta['file-meta'].get('type-hint') is None
+
+    # 'type' is 'application/octet-stream' for now
+    assert meta['file-meta'][TYPE] == 'application/octet-stream'
+
+    try:
+        import magic
+        assert magic is not None
+
+        # complete upload
+        data = UPLOAD_DATA[sep:]
+        range_str = 'bytes {}-{}/{}'.format(sep, len(UPLOAD_DATA) - 1,
+                                            len(UPLOAD_DATA))
+        response = _upload(client, data, token='full', range_str=range_str,
+                           trans_id=trans_id)
+        check_upload_response(response)
+
+        # get detail to check python-magic auto detection
+        url = RestUrl(fid)
+        response = client.get(url.detail, headers=add_auth('user', 'full'))
+        check_json_response(response, None, check_data=False)
+
+        assert response.json['file-meta'] is not None
+        assert response.json['file-meta'][TYPE] != 'application/octet-stream'
+    except ImportError:
+        pass

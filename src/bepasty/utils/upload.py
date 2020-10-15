@@ -5,6 +5,14 @@ from werkzeug.exceptions import BadRequest, RequestEntityTooLarge
 
 from flask import current_app
 
+try:
+    import magic
+    mag = magic.Magic(mime=True)
+    mag_bufsz = mag.getparam(magic.MAGIC_PARAM_BYTES_MAX)
+except ImportError:
+    mag = None
+    mag_bufsz = None
+
 from ..constants import (
     COMPLETE,
     FILENAME,
@@ -16,6 +24,8 @@ from ..constants import (
     TIMESTAMP_MAX_LIFE,
     TIMESTAMP_UPLOAD,
     TYPE,
+    TYPE_HINT,
+    internal_meta,
 )
 from .name import ItemName
 from .decorators import threaded
@@ -72,8 +82,8 @@ class Upload(object):
         if not ct and filename:
             ct, encoding = mimetypes.guess_type(filename)
         if not ct:
-            return ct_hint
-        return cls._type_re.sub('', ct)[:50]
+            return ct_hint, True
+        return cls._type_re.sub('', ct)[:50], False
 
     @classmethod
     def meta_new(cls, item, input_size, input_filename, input_type,
@@ -82,7 +92,10 @@ class Upload(object):
             input_filename, storage_name, input_type, input_type_hint
         )
         item.meta[SIZE] = cls.filter_size(input_size)
-        item.meta[TYPE] = cls.filter_type(input_type, input_type_hint, input_filename)
+        ct, hint = cls.filter_type(input_type, input_type_hint, input_filename)
+        item.meta[TYPE] = ct
+        if hint and mag and current_app.config['USE_PYTHON_MAGIC']:
+            item.meta[TYPE_HINT] = hint
         item.meta[TIMESTAMP_UPLOAD] = int(time.time())
         item.meta[TIMESTAMP_DOWNLOAD] = 0
         item.meta[LOCKED] = current_app.config['UPLOAD_LOCKED']
@@ -92,6 +105,12 @@ class Upload(object):
 
     @classmethod
     def meta_complete(cls, item, file_hash):
+        # update TYPE by python-magic if not decided yet
+        if item.meta.get(TYPE_HINT):
+            del item.meta[TYPE_HINT]
+            if mag and current_app.config['USE_PYTHON_MAGIC']:
+                if item.meta[TYPE] == 'application/octet-stream':
+                    item.meta[TYPE] = mag.from_buffer(item.data.read(mag_bufsz, 0))
         item.meta[COMPLETE] = True
         item.meta[HASH] = file_hash
 
@@ -136,6 +155,13 @@ def create_item(f, filename, size, content_type, content_type_hint,
                         name, maxlife_stamp=maxlife_stamp)
         Upload.meta_complete(item, file_hash)
     return name
+
+
+def filter_internal(meta):
+    """
+    filter internal meta data out.
+    """
+    return {k: v for k, v in meta.items() if k not in internal_meta}
 
 
 @threaded
