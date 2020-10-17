@@ -120,6 +120,18 @@ class RestUrl:
     def download(self):
         return '/apis/rest/items/{}/download'.format(self.fid)
 
+    @property
+    def delete(self):
+        return '/apis/rest/items/{}/delete'.format(self.fid)
+
+    @property
+    def lock(self):
+        return '/apis/rest/items/{}/lock'.format(self.fid)
+
+    @property
+    def unlock(self):
+        return '/apis/rest/items/{}/unlock'.format(self.fid)
+
 
 def add_auth(user, password, headers=None):
     if headers is None:
@@ -793,6 +805,90 @@ def test_download_range(client_fixture):
                             total_size=len(data))
 
 
+def test_delete_basic(client_fixture):
+    app, client, faketime = client_fixture
+
+    faketime.set_time(100)
+
+    datas, metas = upload_files(client)
+
+    url = RestUrl('abcdefgh')
+
+    # delete ENOENT item
+    response = client.post(url.delete, headers=add_auth('user', 'admin'))
+    check_err_response(response, 404)
+
+    for fid in metas.keys():
+        url = RestUrl(fid)
+
+        # no permission
+        response = client.post(url.delete, headers=add_auth('user', 'invalid'))
+        check_err_response(response, 403)
+
+        # has permission
+        response = client.post(url.delete, headers=add_auth('user', 'full'))
+        check_err_response(response, 200)
+
+        # should already be deleted
+        response = client.post(url.delete, headers=add_auth('user', 'full'))
+        check_err_response(response, 404)
+
+
+def test_lock_basic(client_fixture):
+    app, client, faketime = client_fixture
+
+    faketime.set_time(100)
+
+    datas, metas = upload_files(client)
+
+    url = RestUrl('abcdefgh')
+
+    for u in (url.lock, url.unlock):
+        # lock/unlock ENOENT item
+        response = client.post(u, headers=add_auth('user', 'admin'))
+        check_err_response(response, 404)
+
+    for fid in metas.keys():
+        url = RestUrl(fid)
+
+        for u in (url.lock, url.unlock):
+            # lock/unlock, no permission (invalid user)
+            response = client.post(u, headers=add_auth('user', 'invalid'))
+            check_err_response(response, 403)
+
+            # lock/unlock, no permission (not admin)
+            response = client.post(u, headers=add_auth('user', 'full'))
+            check_err_response(response, 403)
+
+            # lock/unlock, has permission
+            response = client.post(u, headers=add_auth('user', 'admin'))
+            check_err_response(response, 200)
+
+        # lock item
+        response = client.post(url.lock, headers=add_auth('user', 'admin'))
+        check_err_response(response, 200)
+
+        # download locked item (should fail)
+        response = client.get(url.download, headers=add_auth('user', 'full'))
+        check_err_response(response, 403)
+
+        # download locked item with admin (should success)
+        response = client.get(url.download, headers=add_auth('user', 'admin'))
+        check_data_response(response, metas[fid], datas[fid])
+
+        # delete locked item (should fail)
+        response = client.post(url.delete, headers=add_auth('user', 'full'))
+        check_err_response(response, 403)
+
+        # delete locked item with admin (should success)
+        response = client.post(url.delete, headers=add_auth('user', 'admin'))
+        check_err_response(response, 200)
+
+        # deleted item
+        response = client.post(url.delete, headers=add_auth('user', 'admin'))
+        check_err_response(response, 404)
+
+
 def test_incomplete(client_fixture):
     _, client, _ = client_fixture
 
@@ -818,14 +914,31 @@ def test_incomplete(client_fixture):
     fid = list(response.json.keys())[0]
     # meta = list(response.json.values())[0]
 
-    # detail should error with incomplete
     url = RestUrl(fid)
+
+    # detail should error with incomplete
     response = client.get(url.detail, headers=add_auth('user', 'full'))
     check_err_response(response, 409)
 
     # download should error with incomplete
     response = client.get(url.download, headers=add_auth('user', 'full'))
     check_err_response(response, 409)
+
+    # lock should error with incomplete
+    response = client.post(url.lock, headers=add_auth('user', 'admin'))
+    check_err_response(response, 409)
+
+    # unlock should error with incomplete
+    response = client.post(url.unlock, headers=add_auth('user', 'admin'))
+    check_err_response(response, 409)
+
+    # delete should error with incomplete
+    response = client.post(url.delete, headers=add_auth('user', 'full'))
+    check_err_response(response, 409)
+
+    # delete by admin with incomplete should success
+    response = client.post(url.delete, headers=add_auth('user', 'admin'))
+    check_err_response(response, 200)
 
 
 def test_magic(client_fixture):

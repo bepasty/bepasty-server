@@ -15,7 +15,9 @@ from ..utils.name import ItemName
 from ..utils.permissions import CREATE, LIST, may
 from ..utils.upload import Upload, filter_internal, background_compute_hash
 from ..views.filelist import file_infos
+from ..views.delete import DeleteView
 from ..views.download import DownloadView
+from ..views.setkv import LockView, UnlockView
 
 
 # This wrapper to handle exception of REST api.
@@ -241,6 +243,42 @@ class ItemDownloadView(ItemDetailView):
     @rest_errorhandler
     def get(self, name):
         return super(ItemDetailView, self).get(name)
+
+
+class ItemDeleteView(DeleteView, RestBase):
+    def error(self, item, error):
+        raise Conflict(description=error)
+
+    def response(self, name):
+        return make_response()
+
+    @rest_errorhandler
+    def post(self, name):
+        return super(ItemDeleteView, self).post(name)
+
+
+class ItemLockView(LockView, RestBase):
+    def error(self, item, error):
+        raise Conflict(description=error)
+
+    def response(self, name):
+        return make_response()
+
+    @rest_errorhandler
+    def post(self, name):
+        return super(ItemLockView, self).post(name)
+
+
+class ItemUnlockView(UnlockView, RestBase):
+    def error(self, item, error):
+        raise Conflict(description=error)
+
+    def response(self, name):
+        return make_response()
+
+    @rest_errorhandler
+    def post(self, name):
+        return super(ItemUnlockView, self).post(name)
 
 
 class InfoView(RestBase):

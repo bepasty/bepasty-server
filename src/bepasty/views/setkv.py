@@ -19,6 +19,12 @@ class SetKeyValueView(MethodView):
     KEY = None
     NEXT_VALUE = None
 
+    def error(self, item, error):
+        return render_template('error.html', heading=item.meta[FILENAME], body=error), 409
+
+    def response(self, name):
+        return redirect_next_referrer('bepasty.display', name=name)
+
     def post(self, name):
         if self.REQUIRED_PERMISSION is not None and not may(self.REQUIRED_PERMISSION):
             raise Forbidden()
@@ -31,9 +37,9 @@ class SetKeyValueView(MethodView):
                 else:
                     error = None
                 if error:
-                    return render_template('error.html', heading=item.meta[FILENAME], body=error), 409
+                    return self.error(item, error)
                 item.meta[self.KEY] = self.NEXT_VALUE
-            return redirect_next_referrer('bepasty.display', name=name)
+            return self.response(name)
 
         except (OSError, IOError) as e:
             if e.errno == errno.ENOENT:

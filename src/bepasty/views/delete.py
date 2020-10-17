@@ -10,6 +10,12 @@ from ..utils.permissions import ADMIN, DELETE, may
 
 
 class DeleteView(MethodView):
+    def error(self, item, error):
+        return render_template('error.html', heading=item.meta[FILENAME], body=error), 409
+
+    def response(self, name):
+        return redirect_next_referrer('bepasty.index')
+
     def post(self, name):
         if not may(DELETE):
             raise Forbidden()
@@ -17,7 +23,7 @@ class DeleteView(MethodView):
             with current_app.storage.open(name) as item:
                 if not item.meta[COMPLETE] and not may(ADMIN):
                     error = 'Upload incomplete. Try again later.'
-                    return render_template('error.html', heading=item.meta[FILENAME], body=error), 409
+                    self.error(item, error)
 
                 if item.meta[LOCKED] and not may(ADMIN):
                     raise Forbidden()
@@ -29,4 +35,4 @@ class DeleteView(MethodView):
                 raise NotFound()
             raise
 
-        return redirect_next_referrer('bepasty.index')
+        return self.response(name)
