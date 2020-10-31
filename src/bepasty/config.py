@@ -17,6 +17,12 @@ class Config(object):
     #: into SCRIPT_NAME (== APP_BASE_PATH) and the rest of PATH_INFO.
     APP_BASE_PATH = None  # '/bepasty'
 
+    #: Enable reverse proxy setup. This must set the public URL,
+    #: i.e. the URL as seen by user's browser.
+    #: Also it may use values set on proxy server,
+    #: X-Forwarded-Proto, X-Forwarded-Host, and X-Forwarded-Prefix.
+    PUBLIC_URL = None  # 'https://example.org:5000/bepasty'
+
     #: Whether files are automatically locked after upload.
     #:
     #: If you want to require admin approval and manual unlocking for each

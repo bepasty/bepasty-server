@@ -1,5 +1,6 @@
 import os
 import time
+import re
 
 from flask import (
     Flask,
@@ -32,14 +33,43 @@ class PrefixMiddleware(object):
         self.app = app
         self.prefix = prefix
 
-    def __call__(self, environ, start_response):
+    def __call__(self, environ, start_response, set_script_name=True):
         if environ['PATH_INFO'].startswith(self.prefix):
             environ['PATH_INFO'] = environ['PATH_INFO'][len(self.prefix):]
-            environ['SCRIPT_NAME'] = self.prefix
+            if set_script_name:
+                environ['SCRIPT_NAME'] = self.prefix
             return self.app(environ, start_response)
         else:
             start_response('404', [('Content-Type', 'text/plain')])
             return ['This URL does not belong to the bepasty app.'.encode()]
+
+
+class ReverseProxyMiddleware(PrefixMiddleware):
+    def __init__(self, app, scheme, server, script_name='', prefix=None):
+        self.app = app
+        self.scheme = scheme
+        self.server = server
+        self.script_name = script_name or ''
+        self.prefix = prefix
+        if prefix is not None:
+            super(ReverseProxyMiddleware, self).__init__(app, prefix=prefix)
+
+    def __call__(self, environ, start_response):
+        scheme = environ.get('HTTP_X_FORWARDED_PROTO') or self.scheme
+        if scheme:
+            environ['wsgi.url_scheme'] = scheme
+        host = environ.get('HTTP_X_FORWARDED_HOST') or self.server
+        if host:
+            environ['HTTP_HOST'] = host
+        script_name = environ.get('HTTP_X_FORWARDED_PREFIX') or self.script_name
+        environ['SCRIPT_NAME'] = script_name
+
+        if self.prefix is not None:
+            return super(ReverseProxyMiddleware, self).__call__(
+                environ, start_response, set_script_name=False
+            )
+        else:
+            return self.app(environ, start_response)
 
 
 def create_app():
@@ -49,8 +79,19 @@ def create_app():
     if os.environ.get('BEPASTY_CONFIG'):
         app.config.from_envvar('BEPASTY_CONFIG')
 
+    public_url = app.config.get('PUBLIC_URL')
     prefix = app.config.get('APP_BASE_PATH')
-    if prefix is not None:
+    if public_url is not None:
+        m = re.match('(https?)://([^/]+)(/.*)?', public_url.rstrip('/'))
+        if m:
+            app.wsgi_app = ReverseProxyMiddleware(app.wsgi_app,
+                                                  scheme=m.group(1),
+                                                  server=m.group(2),
+                                                  script_name=m.group(3),
+                                                  prefix=prefix)
+        else:
+            raise Exception("could not parse PUBLIC_URL [%s]" % public_url)
+    elif prefix is not None:
         app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix=prefix)
 
     app.storage = create_storage(app)
