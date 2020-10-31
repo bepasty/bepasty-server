@@ -106,6 +106,41 @@ def test_proxy(app_fixture):
     assert response.data == 'done'.encode()
 
 
+def test_proxy_env(app_fixture):
+    Config.APP_BASE_PATH = None
+    public_base = '/bepasty1'
+    Config.PUBLIC_URL = 'https://example.org' + public_base
+    env_public_proto = 'https'
+    env_public_host = 'example2.org'
+    env_public_port = '5000'
+    env_public_base = '/bepasty3'
+    env_public_url = '{}://{}:{}{}'.format(env_public_proto, env_public_host,
+                                           env_public_port, env_public_base)
+
+    def proxy_callback():
+        url = url_for('test.test_call')
+        assert url == env_public_base + request.path
+        url = url_for('test.test_call', _external=True)
+        assert url == env_public_url + request.path
+
+    app, client = prepare(proxy_callback)
+
+    # public url is overwritten by proxy environ
+    client.environ_base['HTTP_X_FORWARDED_PROTO'] = env_public_proto
+    client.environ_base['HTTP_X_FORWARDED_HOST'] = env_public_host
+    client.environ_base['HTTP_X_FORWARDED_PORT'] = env_public_port
+    client.environ_base['HTTP_X_FORWARDED_PREFIX'] = env_public_base
+
+    response = client.get('/bepasty2/test_call')
+    assert response.status_code == 404
+    response = client.get('/bepasty1/test_call')
+    assert response.status_code == 404
+
+    response = client.get('/test_call')
+    assert response.status_code == 200
+    assert response.data == 'done'.encode()
+
+
 def test_proxy_prefix(app_fixture):
     Config.APP_BASE_PATH = '/bepasty2'
     public_base = '/bepasty1'

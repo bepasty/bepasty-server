@@ -10,6 +10,7 @@ from flask import (
     render_template,
     session,
 )
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from .apis import blueprint as blueprint_apis
 from .storage import create_storage
@@ -55,14 +56,13 @@ class ReverseProxyMiddleware(PrefixMiddleware):
             super(ReverseProxyMiddleware, self).__init__(app, prefix=prefix)
 
     def __call__(self, environ, start_response):
-        scheme = environ.get('HTTP_X_FORWARDED_PROTO') or self.scheme
-        if scheme:
-            environ['wsgi.url_scheme'] = scheme
-        host = environ.get('HTTP_X_FORWARDED_HOST') or self.server
-        if host:
-            environ['HTTP_HOST'] = host
-        script_name = environ.get('HTTP_X_FORWARDED_PREFIX') or self.script_name
-        environ['SCRIPT_NAME'] = script_name
+        # setup environ if not setup by ProxyFix()
+        if not environ.get('HTTP_X_FORWARDED_PROTO'):
+            environ['wsgi.url_scheme'] = self.scheme
+        if not environ.get('HTTP_X_FORWARDED_HOST'):
+            environ['HTTP_HOST'] = self.server
+        if not environ.get('HTTP_X_FORWARDED_PREFIX'):
+            environ['SCRIPT_NAME'] = self.script_name
 
         if self.prefix is not None:
             return super(ReverseProxyMiddleware, self).__call__(
@@ -91,6 +91,10 @@ def create_app():
                                                   prefix=prefix)
         else:
             raise Exception("could not parse PUBLIC_URL [%s]" % public_url)
+
+        # For now, x_for==1. I.e. assuming not nested proxies.
+        app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1,
+                                x_host=1, x_port=1, x_prefix=1)
     elif prefix is not None:
         app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix=prefix)
 

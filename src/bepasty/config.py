@@ -20,7 +20,8 @@ class Config(object):
     #: Enable reverse proxy setup. This must set the public URL,
     #: i.e. the URL as seen by user's browser.
     #: Also it may use values set on proxy server,
-    #: X-Forwarded-Proto, X-Forwarded-Host, and X-Forwarded-Prefix.
+    #: X-Forwarded-For, X-Forwarded-Proto, X-Forwarded-Host, X-Forwarded-Port,
+    #: and X-Forwarded-Prefix.
     PUBLIC_URL = None  # 'https://example.org:5000/bepasty'
 
     #: Whether files are automatically locked after upload.
