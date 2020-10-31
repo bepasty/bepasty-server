@@ -1,8 +1,9 @@
-import collections
 import os
 import pickle
 import logging
 import tempfile
+
+from ...utils._compat import MutableMapping
 
 logger = logging.getLogger(__name__)
 
@@ -122,7 +123,7 @@ class Data(object):
         return self._file.write(data)
 
 
-class Meta(collections.MutableMapping):
+class Meta(MutableMapping):
     """
     Meta-data of item.
     """
