@@ -80,6 +80,7 @@ class ItemName(str):
         if we can't find a unique name even for longer lengths up to max_length,
         we'll raise RuntimeError.
         """
+        name = None  # avoid false alarm about reference before assignment
         while length <= max_length:
             tries = 0
             while tries < max_tries:
