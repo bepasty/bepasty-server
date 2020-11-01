@@ -110,6 +110,11 @@ class DisplayView(MethodView):
                     src = url_for('bepasty.inline', name=name)
                     link_txt = u'Click to see PDF'
                     rendered_content = Markup(u'<a href="%s">%s</a>' % (src, link_txt))
+                elif ct == 'application/x-asciinema-recording':
+                    src = url_for('bepasty.download', name=name)
+                    rendered_content = Markup(u'<asciinema-player src="%s" title="%s" theme="%s" autoplay>' %
+                                              (src, item.meta[FILENAME],
+                                               current_app.config.get('ASCIINEMA_THEME', 'asciinema')))
                 elif use_pygments:
                     text = read_data(item)
                     # TODO we don't have the coding in metadata
