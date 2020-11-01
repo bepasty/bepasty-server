@@ -26,6 +26,9 @@ from .utils.permissions import (
 )
 from .views import blueprint
 
+import mimetypes
+mimetypes.add_type('application/x-asciinema-recording', '.cast')
+
 
 class PrefixMiddleware(object):
     def __init__(self, app, prefix=''):

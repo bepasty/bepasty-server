@@ -4,7 +4,6 @@ bepasty-server commandline interface
 
 from __future__ import print_function
 import argparse
-import mimetypes
 
 from ..app import create_app
 
@@ -17,9 +16,6 @@ def main():
 
     args = argparser.parse_args()
     app = create_app()
-
-    mimetypes.add_type('application/x-asciinema-recording', '.cast')
-
     print(" * Starting bepasty server...")
     app.run(host=args.host, port=args.port, debug=args.debug)
 
