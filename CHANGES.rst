@@ -7,13 +7,18 @@ Release 0.6.0 (not released yet)
 Compatibility:
 
 * drop python 3.4 support, fixes #195
+* note: this will likely be the last bepasty release supporting
+  Python 2.x (2.7) and 3.5 (both are not supported by Python
+  development any more).
 
 Fixes:
 
 * fix bad types for b64(en|de)code, fixes #200
+* use simple links in list/display view instead of <form> tags
 
 New features:
 
+* add support for asciinema recordings, fixes #175
 * show QR code with link to bepasty item, fixes #176
 * support text/x-bepasty-redirect for URL redirects
   just paste the target URL and choose this as mimetype to create a
@@ -22,8 +27,11 @@ New features:
 
 Other changes:
 
+* support / test on py38, py39, fixes #223
 * move development section from README to project docs, fixes #192
 * use twine to upload releases, qubes gpg support, fixes #197
+* add config for readthedocs, fixes #191
+* code: some cleanups, fix warnings, fix minor errors
 
 
 Release 0.5.0 (2018-10-15)
