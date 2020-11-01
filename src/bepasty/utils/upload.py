@@ -27,7 +27,7 @@ MAX_FILENAME_LENGTH = 250
 
 
 class Upload(object):
-    _filename_re = re.compile(r'[^a-zA-Z0-9 \*+:;.,_-]+')
+    _filename_re = re.compile(r'[^a-zA-Z0-9 *+:;.,_-]+')
     _type_re = re.compile(r'[^a-zA-Z0-9/+.-]+')
 
     @classmethod

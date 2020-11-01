@@ -30,6 +30,7 @@ def encode(x, length, alphabet=all_chars):
 
     :param x: integer number
     :param length: length of return sequence
+    :param alphabet: alphabet to choose characters from (default: all_chars)
     :return: sequence of alphabet members [list]
     """
     if x < 0:
@@ -79,6 +80,7 @@ class ItemName(str):
         if we can't find a unique name even for longer lengths up to max_length,
         we'll raise RuntimeError.
         """
+        name = None  # avoid false alarm about reference before assignment
         while length <= max_length:
             tries = 0
             while tries < max_tries:
