@@ -30,6 +30,7 @@ def encode(x, length, alphabet=all_chars):
 
     :param x: integer number
     :param length: length of return sequence
+    :param alphabet: alphabet to choose characters from (default: all_chars)
     :return: sequence of alphabet members [list]
     """
     if x < 0:

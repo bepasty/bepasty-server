@@ -82,7 +82,7 @@ The following headers *can (cursive)* or **must (bold)** be delivered by every p
 
         ['MINUTES', 'HOURS', 'DAYS', 'WEEKS', 'MONTHS', 'YEARS', 'FOREVER']
 
-    If this header is ommited the unit will be forever
+    If this header is omitted the unit will be forever
 
 *Maxlife-Value*
     The maxlife-value header defines the value of the maxlife-unit.
@@ -142,7 +142,7 @@ Example Response::
     *Complete*
         True if the file upload is completed. False if it isn't
     *Locked*
-        Wether the file is locked or not.
+        Whether the file is locked or not.
     *Hash*
         The sha256 hash of the file uploaded. Calculated by the server.
     *Type*
