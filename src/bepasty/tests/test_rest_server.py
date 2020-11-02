@@ -8,6 +8,7 @@ import threading
 import time
 import copy
 import hashlib
+import re
 from requests.auth import _basic_auth_str
 from flask import current_app
 from flask import url_for
@@ -145,6 +146,8 @@ def check_response(response, code, ftype='application/json', check_data=True):
 
 def check_err_response(response, code, check_data=True):
     check_response(response, code, 'text/html; charset=utf-8', check_data)
+    # check if doesn't have html tag
+    assert not re.match(r'<.+>', response.data.decode())
 
 
 def check_data_response(response, meta, data, offset=0, total_size=None,

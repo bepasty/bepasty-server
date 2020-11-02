@@ -4,7 +4,7 @@ from io import BytesIO
 
 from flask import Response, make_response, url_for, jsonify, stream_with_context, request, current_app
 from flask.views import MethodView
-from werkzeug.exceptions import HTTPException, Conflict, InternalServerError, MethodNotAllowed
+from werkzeug.exceptions import HTTPException, BadRequest, Conflict, Forbidden, InternalServerError, MethodNotAllowed
 
 from ..constants import FILENAME, ID, SIZE, TYPE, TRANSACTION_ID
 from ..utils._compat import bytes_type
@@ -57,19 +57,19 @@ class ItemUploadView(RestBase):
 
         # Check Content-Range. Needs to be specified, even if only one chunk
         if not request.headers.get("Content-Range"):
-            return 'Content-Range not specified', 400
+            raise BadRequest(description='Content-Range not specified')
 
         # Get Content-Range and check if Range is consistent with server state
         file_range = ContentRange.from_request()
         if not item.data.size == file_range.begin:
-            return ('Content-Range inconsistent. Last byte on Server: %d' % item.data.size), 409
+            raise Conflict(description='Content-Range inconsistent. Last byte on Server: %d' % item.data.size)
 
         # Decode Base64 encoded request data
         try:
             raw_data = base64.b64decode(request.data)
             file_data = BytesIO(raw_data)
         except (base64.binascii.Error, TypeError):
-            return 'Could not decode data body', 400
+            raise BadRequest(description='Could not decode data body')
 
         # Write data chunk to item
         Upload.data(item, file_data, len(raw_data), file_range.begin)
@@ -125,7 +125,7 @@ class ItemUploadView(RestBase):
         The first check is the provided Content-Length. The second is the actual file size on the server.
         """
         if not may(CREATE):
-            return 'Missing Permissions', 403
+            raise Forbidden()
 
         # Collect all expected data from the Request
         file_type = request.headers.get("Content-Type")
@@ -158,13 +158,13 @@ class ItemUploadView(RestBase):
             item = current_app.storage.openwrite(name)
             new_item = False
 
-        res = None
+        response = None
         try:
-            res = self.update_item(item, name)
-            return res
+            response = self.update_item(item, name)
+            return response
         finally:
             # If error response or exception on a new item path, remove item
-            if new_item and not isinstance(res, Response):
+            if new_item and not isinstance(response, Response):
                 current_app.storage.remove(name)
 
     @rest_errorhandler
@@ -181,7 +181,7 @@ class ItemUploadView(RestBase):
             }
         """
         if not may(LIST):
-            return 'Missing Permissions', 403
+            raise Forbidden()
         ret = {}
         for meta in file_infos():
             name = meta.pop(ID)
