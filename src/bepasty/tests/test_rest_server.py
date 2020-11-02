@@ -539,6 +539,12 @@ def test_bad_data(client_fixture):
     filename = 'test.py'
     ftype = 'text/x-python'
 
+    # upload without Content-Length
+    range_str = 'bytes 0-{}/{}'.format(len(UPLOAD_DATA) - 1, len(UPLOAD_DATA))
+    response = _upload(client, None, token='full', filename=filename,
+                       ftype=ftype, range_str=range_str, encode=False)
+    check_err_response(response, 400)
+
     # upload invalid base64 encode
     range_str = 'bytes 0-{}/{}'.format(len(UPLOAD_DATA) - 1, len(UPLOAD_DATA))
     response = _upload(client, UPLOAD_DATA, token='full', filename=filename,

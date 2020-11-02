@@ -1,8 +1,9 @@
 import re
 import time
 import mimetypes
+from werkzeug.exceptions import BadRequest, RequestEntityTooLarge
 
-from flask import abort, current_app
+from flask import current_app
 
 from ..constants import (
     COMPLETE,
@@ -36,9 +37,12 @@ class Upload(object):
         Filter size.
         Check for advertised size.
         """
-        i = int(i)
+        try:
+            i = int(i)
+        except (ValueError, TypeError):
+            raise BadRequest(description='Size is invalid')
         if i > current_app.config['MAX_ALLOWED_FILE_SIZE']:
-            abort(413)
+            raise RequestEntityTooLarge()
         return i
 
     @classmethod
