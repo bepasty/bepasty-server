@@ -224,7 +224,7 @@ def test_config(client_fixture):
 
 
 def _upload(client, data, token=None, filename=None, ftype=None, lifetime=None,
-            range_str=None, trans_id=None, encode=True):
+            range_str=None, trans_id=None, encode=True, set_range=True):
     if data:
         payload = base64.b64encode(data) if encode else data
         payload_len = len(payload)
@@ -235,9 +235,10 @@ def _upload(client, data, token=None, filename=None, ftype=None, lifetime=None,
     headers = {
         'Content-Length': str(payload_len),
     }
-    if range_str is None:
-        range_str = 'bytes 0-{}/{}'.format(payload_len - 1, payload_len)
-    headers['Content-Range'] = range_str
+    if set_range:
+        if range_str is None:
+            range_str = 'bytes 0-{}/{}'.format(payload_len - 1, payload_len)
+        headers['Content-Range'] = range_str
     if filename is not None:
         headers['Content-Filename'] = filename
     if ftype is not None:
@@ -437,10 +438,70 @@ def test_upload_range(client_fixture):
     filename = 'test.py'
     ftype = 'text/x-python'
 
-    # upload first part of data
     sep = 10
     data = UPLOAD_DATA[:sep]
-    range_str = 'bytes {}-{}/{}'.format(0, sep - 1, sep + 1)
+
+    # (invalid no Content-Range:)
+    response = _upload(client, data, token='full', filename=filename,
+                       ftype=ftype, set_range=False)
+    check_err_response(response, 400)
+
+    # Content-Range: invalid (invalid format)
+    range_str = 'invalid'
+    response = _upload(client, data, token='full', filename=filename,
+                       ftype=ftype, range_str=range_str)
+    check_err_response(response, 400)
+
+    # Content-Range: bytes invalid (invalid format)
+    range_str = 'bytes invalid'
+    response = _upload(client, data, token='full', filename=filename,
+                       ftype=ftype, range_str=range_str)
+    check_err_response(response, 400)
+
+    # Content-Range: other 0-<sep - 1>/<len(data)> (invalid unit)
+    range_str = 'other {}-{}/{}'.format(0, sep - 1, len(UPLOAD_DATA))
+    response = _upload(client, data, token='full', filename=filename,
+                       ftype=ftype, range_str=range_str)
+    check_err_response(response, 400)
+
+    # Content-Range: bytes invalid-<sep - 1>/<len(data)> (invalid first)
+    range_str = 'bytes invalid-{}/{}'.format(sep - 1, len(UPLOAD_DATA))
+    response = _upload(client, data, token='full', filename=filename,
+                       ftype=ftype, range_str=range_str)
+    check_err_response(response, 400)
+
+    # Content-Range: bytes 0-invalid/<len(data)> (invalid last)
+    range_str = 'bytes {}-invalid/{}'.format(0, len(UPLOAD_DATA))
+    response = _upload(client, data, token='full', filename=filename,
+                       ftype=ftype, range_str=range_str)
+    check_err_response(response, 400)
+
+    # Content-Range: bytes <sep - 1>-0/<len(data)> (invalid first > last)
+    range_str = 'bytes {}-{}/{}'.format(sep - 1, 0, len(UPLOAD_DATA))
+    response = _upload(client, data, token='full', filename=filename,
+                       ftype=ftype, range_str=range_str)
+    check_err_response(response, 400)
+
+    # Content-Range: bytes 0-<sep - 1>/* (not supported)
+    range_str = 'bytes {}-{}/*'.format(0, sep - 1)
+    response = _upload(client, data, token='full', filename=filename,
+                       ftype=ftype, range_str=range_str)
+    check_err_response(response, 400)
+
+    # Content-Range: bytes */<len(data)> (not supported)
+    range_str = 'bytes */{}'.format(len(UPLOAD_DATA))
+    response = _upload(client, data, token='full', filename=filename,
+                       ftype=ftype, range_str=range_str)
+    check_err_response(response, 400)
+
+    # Content-Range: bytes */* (not supported)
+    range_str = 'bytes */*'
+    response = _upload(client, data, token='full', filename=filename,
+                       ftype=ftype, range_str=range_str)
+    check_err_response(response, 400)
+
+    # upload first part of data
+    range_str = 'bytes {}-{}/{}'.format(0, sep - 1, len(UPLOAD_DATA))
     response = _upload(client, data, token='full', filename=filename,
                        ftype=ftype, range_str=range_str)
     check_upload_response(response, 200)
@@ -594,6 +655,20 @@ def test_download_range(client_fixture):
         url = RestUrl(item_id=item_id)
         headers = add_auth('user', 'full')
 
+        # Range: other (invalid format)
+        offset = 0
+        limit = 10
+        headers['Range'] = 'other'
+        response = client.get(url.download, headers=headers)
+        check_err_response(response, 400)
+
+        # Range: bytes=invalid (invalid format)
+        offset = 0
+        limit = 10
+        headers['Range'] = 'bytes=invalid'
+        response = client.get(url.download, headers=headers)
+        check_err_response(response, 400)
+
         # Range: other=0-10 (invalid unit)
         offset = 0
         limit = 10
@@ -601,10 +676,31 @@ def test_download_range(client_fixture):
         response = client.get(url.download, headers=headers)
         check_err_response(response, 400)
 
-        # Range: bytes=10-0 (invalid range)
+        # Range: bytes=invalid-10 (invalid first)
+        offset = 0
+        limit = 10
+        headers['Range'] = 'bytes=invalid-{}'.format(limit - 1)
+        response = client.get(url.download, headers=headers)
+        check_err_response(response, 400)
+
+        # Range: bytes=0-invalid (invalid last)
+        offset = 0
+        limit = 10
+        headers['Range'] = 'other={}-invalid'.format(offset)
+        response = client.get(url.download, headers=headers)
+        check_err_response(response, 400)
+
+        # Range: bytes=10-0 (invalid first > last)
         offset = 0
         limit = 10
         headers['Range'] = 'bytes={}-{}'.format(limit - 1, offset)
+        response = client.get(url.download, headers=headers)
+        check_err_response(response, 400)
+
+        # Range: bytes=0-9,10-<limit - 1> (not supported for now)
+        offset = 0
+        limit = len(data)
+        headers['Range'] = 'bytes={}-9,10-{}'.format(offset, limit - 1)
         response = client.get(url.download, headers=headers)
         check_err_response(response, 400)
 
