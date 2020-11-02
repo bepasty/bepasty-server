@@ -569,6 +569,29 @@ def test_upload_maxlife(client_fixture):
     assert response.status_code == 400
 
 
+def test_upload_transaction_id(client_fixture):
+    app, client, faketime = client_fixture
+
+    faketime.set_time(100)
+
+    sep = 10
+    data = UPLOAD_DATA[sep:]
+    range_str = 'bytes {}-{}/{}'.format(sep, len(UPLOAD_DATA) - 1,
+                                        len(UPLOAD_DATA))
+
+    # upload with invalid Transaction-ID
+    trans_id = 'invalid'
+    response = _upload(client, data, token='full', range_str=range_str,
+                       trans_id=trans_id)
+    check_err_response(response, 400)
+
+    # upload with Transaction-ID for invalid filename
+    trans_id = base64.b64encode(b'invalid')
+    response = _upload(client, data, token='full', range_str=range_str,
+                       trans_id=trans_id)
+    check_err_response(response, 400)
+
+
 def test_upload_too_big(client_fixture):
     app, client, _ = client_fixture
 

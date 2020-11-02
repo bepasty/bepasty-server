@@ -1,3 +1,4 @@
+import errno
 import base64
 import time
 from io import BytesIO
@@ -153,9 +154,17 @@ class ItemUploadView(RestBase):
             # Get file name from Transaction-ID and open from Storage
             trans_id_s = request.headers.get(TRANSACTION_ID)
             trans_id_b = trans_id_s if isinstance(trans_id_s, bytes_type) else trans_id_s.encode()
-            name_b = base64.b64decode(trans_id_b)
+            try:
+                name_b = base64.b64decode(trans_id_b)
+            except (base64.binascii.Error, TypeError):
+                raise BadRequest(description='Could not decode {}'.format(TRANSACTION_ID))
             name = name_b if isinstance(name_b, str) else name_b.decode()
-            item = current_app.storage.openwrite(name)
+            try:
+                item = current_app.storage.openwrite(name)
+            except (OSError, IOError) as e:
+                if e.errno == errno.ENOENT:
+                    raise BadRequest(description='Could not find storage item for transaction id')
+                raise
             new_item = False
 
         response = None
