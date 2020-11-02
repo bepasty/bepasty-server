@@ -50,6 +50,52 @@ class RestBase(MethodView):
 
 
 class ItemUploadView(RestBase):
+    def update_item(self, item, name):
+        # Check the actual size of the file on the server against limit
+        # Either 0 if new file or n bytes of already uploaded file
+        Upload.filter_size(item.data.size)
+
+        # Check Content-Range. Needs to be specified, even if only one chunk
+        if not request.headers.get("Content-Range"):
+            return 'Content-Range not specified', 400
+
+        # Get Content-Range and check if Range is consistent with server state
+        file_range = ContentRange.from_request()
+        if not item.data.size == file_range.begin:
+            return ('Content-Range inconsistent. Last byte on Server: %d' % item.data.size), 409
+
+        # Decode Base64 encoded request data
+        try:
+            raw_data = base64.b64decode(request.data)
+            file_data = BytesIO(raw_data)
+        except (base64.binascii.Error, TypeError):
+            return 'Could not decode data body', 400
+
+        # Write data chunk to item
+        Upload.data(item, file_data, len(raw_data), file_range.begin)
+
+        # Make a Response and create Transaction-ID from ItemName
+        response = make_response()
+        name_b = name if isinstance(name, bytes_type) else name.encode()
+        trans_id_b = base64.b64encode(name_b)
+        trans_id_s = trans_id_b if isinstance(trans_id_b, str) else trans_id_b.decode()
+        response.headers[TRANSACTION_ID] = trans_id_s
+
+        # Check if file is completely uploaded and set meta
+        if file_range.is_complete:
+            Upload.meta_complete(item, '')
+            item.meta[SIZE] = item.data.size
+            item.close()
+            background_compute_hash(current_app.storage, name)
+            # Set status 'successful' and return the new URL for the uploaded file
+            response.status = '201'
+            response.headers["Content-Location"] = url_for('bepasty_apis.items_detail', name=name)
+        else:
+            item.close()
+            response.status = '200'
+
+        return response
+
     @rest_errorhandler
     def post(self):
         """
@@ -102,6 +148,7 @@ class ItemUploadView(RestBase):
             Upload.meta_new(item, 0, file_name, file_type,
                             'application/octet-stream',
                             name, maxlife_stamp=maxlife_timestamp)
+            new_item = True
         else:
             # Get file name from Transaction-ID and open from Storage
             trans_id_s = request.headers.get(TRANSACTION_ID)
@@ -109,48 +156,16 @@ class ItemUploadView(RestBase):
             name_b = base64.b64decode(trans_id_b)
             name = name_b if isinstance(name_b, str) else name_b.decode()
             item = current_app.storage.openwrite(name)
+            new_item = False
 
-        # Check the actual size of the file on the server against limit
-        # Either 0 if new file or n bytes of already uploaded file
-        Upload.filter_size(item.data.size)
-
-        # Check Content-Range. Needs to be specified, even if only one chunk
-        if not request.headers.get("Content-Range"):
-            return 'Content-Range not specified', 400
-
-        # Get Content-Range and check if Range is consistent with server state
-        file_range = ContentRange.from_request()
-        if not item.data.size == file_range.begin:
-            return ('Content-Range inconsistent. Last byte on Server: %d' % item.data.size), 409
-
-        # Decode Base64 encoded request data
-        raw_data = base64.b64decode(request.data)
-        file_data = BytesIO(raw_data)
-
-        # Write data chunk to item
-        Upload.data(item, file_data, len(raw_data), file_range.begin)
-
-        # Make a Response and create Transaction-ID from ItemName
-        response = make_response()
-        name_b = name if isinstance(name, bytes_type) else name.encode()
-        trans_id_b = base64.b64encode(name_b)
-        trans_id_s = trans_id_b if isinstance(trans_id_b, str) else trans_id_b.decode()
-        response.headers[TRANSACTION_ID] = trans_id_s
-
-        # Check if file is completely uploaded and set meta
-        if file_range.is_complete:
-            Upload.meta_complete(item, '')
-            item.meta[SIZE] = item.data.size
-            item.close()
-            background_compute_hash(current_app.storage, name)
-            # Set status 'successful' and return the new URL for the uploaded file
-            response.status = '201'
-            response.headers["Content-Location"] = url_for('bepasty_apis.items_detail', name=name)
-        else:
-            item.close()
-            response.status = '200'
-
-        return response
+        res = None
+        try:
+            res = self.update_item(item, name)
+            return res
+        finally:
+            # If error response or exception on a new item path, remove item
+            if new_item and not isinstance(res, Response):
+                current_app.storage.remove(name)
 
     @rest_errorhandler
     def get(self):

@@ -469,6 +469,22 @@ def test_upload_range(client_fixture):
     check_err_response(response, 409)
 
 
+def test_bad_data(client_fixture):
+    app, client, _ = client_fixture
+
+    filename = 'test.py'
+    ftype = 'text/x-python'
+
+    # upload invalid base64 encode
+    range_str = 'bytes 0-{}/{}'.format(len(UPLOAD_DATA) - 1, len(UPLOAD_DATA))
+    response = _upload(client, UPLOAD_DATA, token='full', filename=filename,
+                       ftype=ftype, range_str=range_str, encode=False)
+    check_err_response(response, 400)
+
+    # server must not have left garbage files
+    assert len(os.listdir(app.config['STORAGE_FILESYSTEM_DIRECTORY'])) == 0
+
+
 def test_upload_too_big(client_fixture):
     app, client, _ = client_fixture
 
