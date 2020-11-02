@@ -13,6 +13,35 @@ from ..utils.permissions import ADMIN, READ, may
 class DownloadView(MethodView):
     content_disposition = 'attachment'  # to trigger download
 
+    def err_incomplete(self, item, error):
+        return render_template('error.html', heading=item.meta[FILENAME], body=error), 409
+
+    def stream(self, item, start, limit):
+        with item as _item:
+            # Stream content from storage
+            offset = max(0, start)
+            while offset < limit:
+                buf = _item.data.read(min(limit - offset, 16 * 1024), offset)
+                offset += len(buf)
+                yield buf
+            item.meta[TIMESTAMP_DOWNLOAD] = int(time.time())
+
+    def response(self, item, name):
+        ct = item.meta[TYPE]
+        dispo = self.content_disposition
+        if dispo != 'attachment':
+            # no simple download, so we must be careful about XSS
+            if ct.startswith("text/"):
+                ct = 'text/plain'  # only send simple plain text
+
+        ret = Response(stream_with_context(self.stream(item, 0, item.data.size)))
+        ret.headers['Content-Disposition'] = '{0}; filename="{1}"'.format(
+            dispo, item.meta[FILENAME])
+        ret.headers['Content-Length'] = item.meta[SIZE]
+        ret.headers['Content-Type'] = ct
+        ret.headers['X-Content-Type-Options'] = 'nosniff'  # yes, we really mean it
+        return ret
+
     def get(self, name):
         if not may(READ):
             raise Forbidden()
@@ -23,47 +52,22 @@ class DownloadView(MethodView):
                 raise NotFound()
             raise
 
-        if not item.meta[COMPLETE]:
-            error = 'Upload incomplete. Try again later.'
-        else:
-            error = None
-        if error:
-            try:
-                return render_template('error.html', heading=item.meta[FILENAME], body=error), 409
-            finally:
+        try:
+            need_close = True
+            if not item.meta[COMPLETE]:
+                return self.err_incomplete(item, 'Upload incomplete. Try again later.')
+
+            if item.meta[LOCKED] and not may(ADMIN):
+                raise Forbidden()
+
+            if delete_if_lifetime_over(item, name):
+                raise NotFound()
+            need_close = False
+        finally:
+            if need_close:
                 item.close()
 
-        if item.meta[LOCKED] and not may(ADMIN):
-            raise Forbidden()
-
-        if delete_if_lifetime_over(item, name):
-            raise NotFound()
-
-        def stream():
-            with item as _item:
-                # Stream content from storage
-                offset = 0
-                size = _item.data.size
-                while offset < size:
-                    buf = _item.data.read(16 * 1024, offset)
-                    offset += len(buf)
-                    yield buf
-                item.meta[TIMESTAMP_DOWNLOAD] = int(time.time())
-
-        ct = item.meta[TYPE]
-        dispo = self.content_disposition
-        if dispo != 'attachment':
-            # no simple download, so we must be careful about XSS
-            if ct.startswith("text/"):
-                ct = 'text/plain'  # only send simple plain text
-
-        ret = Response(stream_with_context(stream()))
-        ret.headers['Content-Disposition'] = '{0}; filename="{1}"'.format(
-            dispo, item.meta[FILENAME])
-        ret.headers['Content-Length'] = item.meta[SIZE]
-        ret.headers['Content-Type'] = ct
-        ret.headers['X-Content-Type-Options'] = 'nosniff'  # yes, we really mean it
-        return ret
+        return self.response(item, name)
 
 
 class InlineView(DownloadView):
