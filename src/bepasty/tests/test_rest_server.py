@@ -546,6 +546,20 @@ def test_bad_data(client_fixture):
     assert len(os.listdir(app.config['STORAGE_FILESYSTEM_DIRECTORY'])) == 0
 
 
+def test_upload_maxlife(client_fixture):
+    """upload maxlife"""
+
+    _, client, _ = client_fixture
+
+    lifetime = ['foo', 'MINUTES']
+    response = _upload(client, UPLOAD_DATA, token='full', lifetime=lifetime)
+    assert response.status_code == 400
+
+    lifetime = ['1', 'foo']
+    response = _upload(client, UPLOAD_DATA, token='full', lifetime=lifetime)
+    assert response.status_code == 400
+
+
 def test_upload_too_big(client_fixture):
     app, client, _ = client_fixture
 
