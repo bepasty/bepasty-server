@@ -160,7 +160,9 @@ def check_response(response, code, ftype='application/json', check_data=True):
 
 
 def check_err_response(response, code, check_data=True):
-    check_response(response, code, 'text/html; charset=utf-8', check_data)
+    check_response(response, code, check_data=check_data)
+    if check_data:
+        assert code == response.json['error']['code']
     # check if doesn't have html tag
     assert not re.match(r'<.+>', response.data.decode())
 

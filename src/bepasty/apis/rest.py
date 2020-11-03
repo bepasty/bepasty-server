@@ -26,17 +26,22 @@ from ..views.setkv import LockView, UnlockView
 # "/lodgeit/" in the same blueprint and there is no way to exclude
 # from using the same error handler ("/lodgeit/" is not REST api).
 def rest_errorhandler(func):
+    def error_message(description, code):
+        return jsonify({
+            'error': {'code': code, 'message': description},
+        }), code
+
     def handler(*args, **kwargs):
         try:
             return func(*args, **kwargs)
         except HTTPException as exc:
-            return exc.description, exc.code
+            return error_message(exc.description, exc.code)
         except Exception:
             if current_app.propagate_exceptions:
                 # if testing/debug mode, re-raise
                 raise
             exc = InternalServerError()
-            return exc.description, exc.code
+            return error_message(exc.description, exc.code)
 
     return handler
 
