@@ -9,20 +9,20 @@
         <div class="btn-group">
             {% if not item.meta['locked'] or may(ADMIN) %}
                 <a id="qr-btn" href="{{ url_for('bepasty.qr', name=name) }}" class="btn btn-info">
-                    <span class="glyphicon glyphicon-qrcode"></span> QR
+                    <span class="fa fa-qrcode"></span> QR
                 </a>
                 <a id="download-btn" href="{{ url_for('bepasty.download', name=name) }}" class="btn btn-info">
-                    <span class="glyphicon glyphicon-download-alt"></span> Download
+                    <span class="fa fa-download"></span> Download
                 </a>
                 <a id="inline-btn" href="{{ url_for('bepasty.inline', name=name) }}" class="btn btn-info">
-                    <span class="glyphicon glyphicon-asterisk"></span> Inline
+                    <span class="fa fa-asterisk"></span> Inline
                 </a>
             {% endif %}
             {% if may(DELETE) %}
                 <form id="del-frm" action="{{ url_for('bepasty.delete', name=name) }}" method="post" class="btn-group">
                     <input type="hidden" name="next" value="{{ url_for('bepasty.index') }}">
                     <button id="del-btn" type="button" class="btn btn-danger">
-                        <span class="glyphicon glyphicon-remove"></span> Delete
+                        <span class="fa fa-remove"></span> Delete
                     </button>
                 </form>
             {% endif %}
@@ -30,13 +30,13 @@
             {% if not item.meta['locked'] %}
                 <form id="lock-frm" action="{{ url_for('bepasty.lock', name=name) }}" method="post" class="btn-group">
                     <button id="lock-btn" type="submit" class="btn btn-danger">
-                        <span class="glyphicon glyphicon-lock"></span> Lock
+                        <span class="fa fa-lock"></span> Lock
                     </button>
                 </form>
             {% else %}
                 <form id="unlock-frm" action="{{ url_for('bepasty.unlock', name=name) }}" method="post" class="btn-group">
                     <button id="unlock-btn" type="submit" class="btn btn-info">
-                        <span class="glyphicon glyphicon-heart"></span> Unlock
+                        <span class="fa fa-unlock"></span> Unlock
                     </button>
                 </form>
             {% endif %}

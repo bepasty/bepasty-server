@@ -44,6 +44,7 @@ setup(
         'XStatic-asciinema-player',
         'xstatic-bootbox',
         'xstatic-bootstrap<4.0.0.0',
+        'xstatic-font-awesome',
         'xstatic-jquery',
         'xstatic-jquery-ui',
         'xstatic-jquery-file-upload',
