@@ -79,6 +79,8 @@ class ItemUploadView(RestBase):
 
         # Make a Response and create Transaction-ID from ItemName
         response = make_response()
+        response.headers['Content-Type'] = 'application/json'
+        response.data = '{}'
         name_b = name if isinstance(name, bytes_type) else name.encode()
         trans_id_b = base64.b64encode(name_b)
         trans_id_s = trans_id_b if isinstance(trans_id_b, str) else trans_id_b.decode()
