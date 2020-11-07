@@ -160,7 +160,9 @@ def check_response(response, code, ftype='application/json', check_data=True):
 
 
 def check_err_response(response, code, check_data=True):
-    check_response(response, code, 'text/html; charset=utf-8', check_data)
+    check_response(response, code, check_data=check_data)
+    if check_data:
+        assert code == response.json['error']['code']
     # check if doesn't have html tag
     assert not re.match(r'<.+>', response.data.decode())
 
@@ -183,14 +185,14 @@ def check_data_response(response, meta, data, offset=0, total_size=None,
         assert data == response.data
 
 
-def check_json_response(response, metas, check_data=True):
-    check_response(response, 200, check_data=check_data)
+def check_json_response(response, metas, code=200, check_data=True):
+    check_response(response, code, check_data=check_data)
     if check_data:
         assert metas == response.json
 
 
 def check_upload_response(response, code=201, check_data=True):
-    check_response(response, code, 'text/html; charset=utf-8', check_data)
+    check_json_response(response, {}, code=code, check_data=check_data)
 
     if code == 200:
         assert len(response.headers[TRANSACTION_ID]) > 0
