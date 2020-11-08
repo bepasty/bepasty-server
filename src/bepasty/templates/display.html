@@ -1,20 +1,20 @@
 {% extends "_layout.html" %}
 
 {% block content %}
-<div class="panel panel-default">
-    <div class="panel-heading">
+<div class="card">
+    <div class="card-header">
         <h1>
             {{ item.meta['filename'] }}
         </h1>
-        <div class="btn-group">
+        <div class="btn-group flex-wrap flex-md-nowrap" role="group">
             {% if not item.meta['locked'] or may(ADMIN) %}
                 <a id="qr-btn" href="{{ url_for('bepasty.qr', name=name) }}" class="btn btn-info">
                     <span class="fa fa-qrcode"></span> QR
                 </a>
-                <a id="download-btn" href="{{ url_for('bepasty.download', name=name) }}" class="btn btn-info">
+                <a id="download-btn" href="{{ url_for('bepasty.download', name=name) }}" class="btn btn-info" role="button">
                     <span class="fa fa-download"></span> Download
                 </a>
-                <a id="inline-btn" href="{{ url_for('bepasty.inline', name=name) }}" class="btn btn-info">
+                <a id="inline-btn" href="{{ url_for('bepasty.inline', name=name) }}" class="btn btn-info" role="button">
                     <span class="fa fa-asterisk"></span> Inline
                 </a>
             {% endif %}
@@ -43,7 +43,7 @@
             {% endif %}
         </div>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
         <p>
         Type: {{ item.meta['type'] }},
         Size: {{ item.meta['size'] }} bytes,
