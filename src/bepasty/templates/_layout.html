@@ -25,53 +25,54 @@
         <div id="wrapper">
             <!-- Begin header -->
             <div id="header" class="pb-3">
-                <div class="container">
-                    <nav class="navbar navbar-expand-lg navbar-light bg-light" role="navigation">
-                        <div class="container-fluid">
-                            <!-- Brand and toggle get grouped for better mobile display -->
-                            <a class="navbar-brand" href="{{ url_for('bepasty.index') }}">
-                                {{ config.SITENAME }} (Permissions: {% for permission, permission_icon in flaskg.icon_permissions %}<i class="fa fa-{{ permission_icon }}" title="{{ permission }}"></i>  {% endfor %})
-                            </a>
-                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
-                                <span class="navbar-toggler-icon"></span>
-                            </button>
+                <nav class="navbar navbar-expand-lg navbar-light bg-light" role="navigation">
+                    <div class="container-fluid">
+                        <!-- Brand and toggle get grouped for better mobile display -->
+                        <a class="navbar-brand" href="{{ url_for('bepasty.index') }}">
+                            {{ config.SITENAME }}
+                            <span class="navbar-text small">
+                                (Permissions:{% for permission, permission_icon in flaskg.icon_permissions %} <i class="fa fa-{{ permission_icon }}" title="{{ permission }}"></i>{% endfor %})
+                            </span>
+                        </a>
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
 
-                            <!-- Collect the nav links, forms, and other content for toggling -->
-                            <div class="collapse navbar-collapse" id="navbarHeader">
-                                <ul class="navbar-nav mr-auto">
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="http://bepasty-server.readthedocs.org/en/latest/">Documentation</a>
-                                    </li>
-                                    {% if may(LIST) %}
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="{{ url_for('bepasty.filelist') }}">List all Items</a>
-                                    </li>
-                                    {% endif %}
-                                </ul>
-                                {% if flaskg.logged_in %}
-                                <form class="form-inline" role="form" method="post" action="{{ url_for('bepasty.logout') }}">
-                                    <div class="form-row">
-                                        <div class="col">
-                                            <input class="btn btn-outline-secondary" type="submit" value="Logout">
-                                        </div>
-                                    </div>
-                                </form>
-                                {% else %}
-                                <form class="form-inline" role="form" method="post" action="{{ url_for('bepasty.login') }}">
-                                    <div class="form-row">
-                                        <div class="col">
-                                            <input class="form-control" type="password" name="token" placeholder="Password" autofocus>
-                                        </div>
-                                        <div class="col">
-                                            <button type="submit" class="btn btn-outline-secondary">Login</button>
-                                        </div>
-                                    </div>
-                                </form>
+                        <!-- Collect the nav links, forms, and other content for toggling -->
+                        <div class="collapse navbar-collapse" id="navbarHeader">
+                            <ul class="navbar-nav mr-auto">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="http://bepasty-server.readthedocs.org/en/latest/">Documentation</a>
+                                </li>
+                                {% if may(LIST) %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url_for('bepasty.filelist') }}">List all Items</a>
+                                </li>
                                 {% endif %}
-                            </div><!-- /.navbar-collapse -->
-                        </div><!-- /.container-fluid -->
-                    </nav>
-                </div>
+                            </ul>
+                            {% if flaskg.logged_in %}
+                            <form class="form-inline" role="form" method="post" action="{{ url_for('bepasty.logout') }}">
+                                <div class="form-row">
+                                    <div class="col">
+                                        <input class="btn btn-outline-secondary" type="submit" value="Logout">
+                                    </div>
+                                </div>
+                            </form>
+                            {% else %}
+                            <form class="form-inline" role="form" method="post" action="{{ url_for('bepasty.login') }}">
+                                <div class="form-row">
+                                    <div class="col">
+                                        <input class="form-control" type="password" name="token" placeholder="Password" autofocus>
+                                    </div>
+                                    <div class="col">
+                                        <button type="submit" class="btn btn-outline-secondary">Login</button>
+                                    </div>
+                                </div>
+                            </form>
+                            {% endif %}
+                        </div><!-- /.navbar-collapse -->
+                    </div><!-- /.container-fluid -->
+                </nav>
             </div>
             <!-- /.header -->
 
