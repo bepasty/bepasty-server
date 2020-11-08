@@ -96,6 +96,8 @@ body {
 /* override pygments table highlighting style */
 table.highlighttable {
     width: 100%;
+    border: 1px solid #ccc;
+    background-color: #f5f5f5;
 }
 
 .linenodiv pre, .highlight pre {
@@ -103,6 +105,7 @@ table.highlighttable {
     -webkit-border-radius: 0;
     -moz-border-radius: 0;
     border-radius: 0;
+    padding: 9.5px;
 }
 
 .highlight p {
@@ -121,6 +124,7 @@ table.highlighttable {
 .highlight pre {
     padding-left: 0;
     padding-right: 0;
+    border-left: 1px solid #ccc;
 }
 
 /* Set minimal width and let the contents push the block width */

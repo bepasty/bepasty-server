@@ -41,19 +41,19 @@
                     {% endif %}
                 </td>
                 <td>
-                    <div class="btn-group">
-                        <a href="{{ url_for('bepasty.display', name=file['id']) }}" class="btn btn-xs btn-info">
+                    <div class="btn-group flex-wrap flex-md-nowrap" role="group">
+                        <a href="{{ url_for('bepasty.display', name=file['id']) }}" class="btn btn-sm btn-info" role="button">
                             display
                         </a>
-                        <a href="{{ url_for('bepasty.download', name=file['id']) }}" class="btn btn-xs btn-info">
+                        <a href="{{ url_for('bepasty.download', name=file['id']) }}" class="btn btn-sm btn-info" role="button">
                             download
                         </a>
-                        <a href="{{ url_for('bepasty.inline', name=file['id']) }}" class="btn btn-xs btn-info">
+                        <a href="{{ url_for('bepasty.inline', name=file['id']) }}" class="btn btn-sm btn-info" role="button">
                             inline
                         </a>
                         {% if may(DELETE) %}
                             <form action="{{ url_for('bepasty.delete', name=file['id']) }}" method="post" class="btn-group">
-                                <button type="submit" class="btn btn-xs btn-danger">
+                                <button type="submit" class="btn btn-sm btn-danger">
                                     delete
                                 </button>
                             </form>
@@ -61,13 +61,13 @@
                         {% if may(ADMIN) %}
                         {% if not file['locked'] %}
                             <form action="{{ url_for('bepasty.lock', name=file['id']) }}" method="post" class="btn-group">
-                                <button type="submit" class="btn btn-xs btn-danger">
+                                <button type="submit" class="btn btn-sm btn-danger">
                                     lock
                                 </button>
                             </form>
                         {% else %}
                             <form action="{{ url_for('bepasty.unlock', name=file['id']) }}" method="post" class="btn-group">
-                                <button type="submit" class="btn btn-xs btn-info">
+                                <button type="submit" class="btn btn-sm btn-info">
                                     unlock
                                 </button>
                             </form>

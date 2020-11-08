@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta name="description" content="">
         <meta name="author" content="">
         <!-- Favicon -->
@@ -24,40 +24,48 @@
     <body>
         <div id="wrapper">
             <!-- Begin header -->
-            <div id="header">
+            <div id="header" class="pb-3">
                 <div class="container">
-                    <nav class="navbar navbar-default" role="navigation">
+                    <nav class="navbar navbar-expand-lg navbar-light bg-light" role="navigation">
                         <div class="container-fluid">
                             <!-- Brand and toggle get grouped for better mobile display -->
-                            <div class="navbar-header">
-                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse">
-                                    <span class="sr-only">Toggle navigation</span>
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
-                                </button>
-                                <a class="navbar-brand" href="{{ url_for('bepasty.index') }}">
-                                    {{ config.SITENAME }} (Permissions: {% for permission, permission_icon in flaskg.icon_permissions %}<i class="fa fa-{{ permission_icon }}" title="{{ permission }}"></i>  {% endfor %})
-                                </a>
-                            </div>
+                            <a class="navbar-brand" href="{{ url_for('bepasty.index') }}">
+                                {{ config.SITENAME }} (Permissions: {% for permission, permission_icon in flaskg.icon_permissions %}<i class="fa fa-{{ permission_icon }}" title="{{ permission }}"></i>  {% endfor %})
+                            </a>
+                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+
                             <!-- Collect the nav links, forms, and other content for toggling -->
-                            <div class="collapse navbar-collapse" id="navbar-collapse">
-                                <ul class="nav navbar-nav">
-                                    <li><a href="http://bepasty-server.readthedocs.org/en/latest/">Documentation</a></li>
+                            <div class="collapse navbar-collapse" id="navbarHeader">
+                                <ul class="navbar-nav mr-auto">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="http://bepasty-server.readthedocs.org/en/latest/">Documentation</a>
+                                    </li>
                                     {% if may(LIST) %}
-                                    <li><a href="{{ url_for('bepasty.filelist') }}">List all Items</a></li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url_for('bepasty.filelist') }}">List all Items</a>
+                                    </li>
                                     {% endif %}
                                 </ul>
                                 {% if flaskg.logged_in %}
-                                <form class="navbar-form navbar-right" role="form" method="post" action="{{ url_for('bepasty.logout') }}">
-                                    <input class="btn btn-default" type="submit" value="Logout">
+                                <form class="form-inline" role="form" method="post" action="{{ url_for('bepasty.logout') }}">
+                                    <div class="form-row">
+                                        <div class="col">
+                                            <input class="btn btn-outline-secondary" type="submit" value="Logout">
+                                        </div>
+                                    </div>
                                 </form>
                                 {% else %}
-                                <form class="navbar-form navbar-right form-inline" role="form" method="post" action="{{ url_for('bepasty.login') }}">
-                                    <div class="form-group">
-                                        <input class="form-control" type="password" name="token" autofocus>
+                                <form class="form-inline" role="form" method="post" action="{{ url_for('bepasty.login') }}">
+                                    <div class="form-row">
+                                        <div class="col">
+                                            <input class="form-control" type="password" name="token" placeholder="Password" autofocus>
+                                        </div>
+                                        <div class="col">
+                                            <button type="submit" class="btn btn-outline-secondary">Login</button>
+                                        </div>
                                     </div>
-                                    <button type="submit" class="btn btn-default">Login</button>
                                 </form>
                                 {% endif %}
                             </div><!-- /.navbar-collapse -->
@@ -87,7 +95,7 @@
         <!-- jQuery UI -->
         <script src="{{ url_for('bepasty.xstatic', name='jquery_ui', filename='jquery-ui.min.js') }}" type="text/javascript"></script>
         <!-- Bootstrap -->
-        <script src="{{ url_for('bepasty.xstatic', name='bootstrap', filename='js/bootstrap.min.js') }}" type="text/javascript"></script>
+        <script src="{{ url_for('bepasty.xstatic', name='bootstrap', filename='js/bootstrap.bundle.min.js') }}" type="text/javascript"></script>
         {% block extra_script %}{% endblock %}
     </body>
 </html>
