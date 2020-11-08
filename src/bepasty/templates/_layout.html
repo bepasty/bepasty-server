@@ -29,7 +29,10 @@
                     <div class="container-fluid">
                         <!-- Brand and toggle get grouped for better mobile display -->
                         <a class="navbar-brand" href="{{ url_for('bepasty.index') }}">
-                            {{ config.SITENAME }} (Permissions: {% for permission, permission_icon in flaskg.icon_permissions %}<i class="fa fa-{{ permission_icon }}" title="{{ permission }}"></i>  {% endfor %})
+                            {{ config.SITENAME }}
+                            <span class="navbar-text small">
+                                (Permissions:{% for permission, permission_icon in flaskg.icon_permissions %} <i class="fa fa-{{ permission_icon }}" title="{{ permission }}"></i>{% endfor %})
+                            </span>
                         </a>
                         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
                             <span class="navbar-toggler-icon"></span>
