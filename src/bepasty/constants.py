@@ -1,5 +1,6 @@
 FILENAME = 'filename'
 TYPE = 'type'
+TYPE_HINT = 'type-hint'
 LOCKED = 'locked'
 SIZE = 'size'
 COMPLETE = 'complete'
@@ -12,3 +13,6 @@ FOREVER = -1
 
 # headers
 TRANSACTION_ID = 'Transaction-ID'  # keep in sync with bepasty-cli
+
+# used internally only
+internal_meta = [TYPE_HINT]

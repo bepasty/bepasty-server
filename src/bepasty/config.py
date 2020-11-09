@@ -70,6 +70,14 @@ class Config(object):
         '': 1 * 1000 * 1000,
     }
 
+    # Whether to use the python-magic module to guess a file's mime
+    # type by looking into its content (if the mime type can not be
+    # determined from the filename extension).
+    # NOTE:
+    # libmagic may have security issues, so maybe you should only use
+    # it if you trust all users with upload permissions ('create').
+    USE_PYTHON_MAGIC = False
+
     #: Define storage backend, choose from:
     #:
     #: - 'filesystem'

@@ -50,6 +50,11 @@ setup(
         'xstatic-jquery-file-upload',
         'xstatic-pygments',
     ],
+    extras_require={
+        "magic": [
+            'python-magic'
+        ],
+    },
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
