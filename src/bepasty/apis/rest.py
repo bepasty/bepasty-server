@@ -13,7 +13,7 @@ from ..utils.date_funcs import get_maxlife
 from ..utils.http import ContentRange, DownloadRange
 from ..utils.name import ItemName
 from ..utils.permissions import CREATE, LIST, may
-from ..utils.upload import Upload, background_compute_hash
+from ..utils.upload import Upload, filter_internal, background_compute_hash
 from ..views.filelist import file_infos
 from ..views.delete import DeleteView
 from ..views.download import DownloadView
@@ -204,7 +204,7 @@ class ItemUploadView(RestBase):
         for meta in file_infos():
             name = meta.pop(ID)
             ret[name] = {'uri': url_for('bepasty_apis.items_detail', name=name),
-                         'file-meta': meta}
+                         'file-meta': filter_internal(meta)}
         return jsonify(ret)
 
 
@@ -214,7 +214,7 @@ class ItemDetailView(DownloadView, RestBase):
 
     def response(self, item, name):
         return jsonify({'uri': url_for('bepasty_apis.items_detail', name=name),
-                        'file-meta': dict(item.meta)})
+                        'file-meta': filter_internal(item.meta)})
 
     @rest_errorhandler
     def get(self, name):
