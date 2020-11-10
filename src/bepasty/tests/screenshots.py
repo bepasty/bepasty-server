@@ -195,6 +195,18 @@ echo "hello, world!"
         self.screen_shots("display")
         self.screenshot_seq += 1
 
+        modify = self.browser.find_element_by_id('modify-btn')
+        modify.click()
+        time.sleep(.5)
+
+        # NOTE: modify bootbox
+        self.screen_shots("modify")
+        self.screenshot_seq += 1
+
+        modify_cancel = self.browser.find_element_by_class_name('bootbox-cancel')
+        modify_cancel.click()
+        time.sleep(.5)
+
         lock = self.browser.find_element_by_id('lock-btn')
         lock.click()
         # NOTE: display with lock screen
