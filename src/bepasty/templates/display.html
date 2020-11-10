@@ -20,7 +20,7 @@
                     <span class="fa fa-asterisk"></span> Inline
                 </a>
             {% endif %}
-            {% if may(CREATE) %}
+            {% if may(MODIFY) %}
                 <div id="hidden-modify-frm" class="d-none" modalTitle="Modify Metadata" modalFocus="filename">
                     <!-- modify form that used by utils.js -->
                     <form id="modify-frm" action="{{ url_for('bepasty.modify', name=name) }}" method="post">
@@ -101,7 +101,7 @@
 <script src="{{ url_for('bepasty.xstatic', name='bootbox', filename='bootbox.min.js') }}" type="text/javascript"></script>
 <script src="{{ url_for('bepasty.xstatic', name='asciinema_player', filename='asciinema-player.js') }}" type="text/javascript"></script>
 <script src="{{ url_for('static', filename='app/js/utils.js') }}" type="text/javascript"></script>
-{% if may(CREATE) %}
+{% if may(MODIFY) %}
 <script>
     <!-- function that used by utils.js -->
     function contenttype_autocomplete(modal_box) {

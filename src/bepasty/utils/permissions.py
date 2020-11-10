@@ -6,6 +6,7 @@ from flask import g as flaskg
 ADMIN = 'admin'
 LIST = 'list'
 CREATE = 'create'
+MODIFY = 'modify'
 READ = 'read'
 DELETE = 'delete'
 
@@ -17,6 +18,7 @@ permission_icons = {
     'admin': 'user',
     'list': 'list',
     'create': 'plus',
+    'modify': 'edit',
     'read': 'book',
     'delete': 'trash'
 }

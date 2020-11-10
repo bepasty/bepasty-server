@@ -65,8 +65,8 @@ def wait_background():
 def client_fixture(tmp_path):
     with FakeTime() as faketime:
         Config.PERMISSIONS = {
-            'admin': 'admin,list,create,read,delete',
-            'full': 'list,create,read,delete',
+            'admin': 'admin,list,create,modify,read,delete',
+            'full': 'list,create,modify,read,delete',
             'none': '',
         }
         Config.STORAGE_FILESYSTEM_DIRECTORY = str(tmp_path)
