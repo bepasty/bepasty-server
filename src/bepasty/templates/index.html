@@ -1,5 +1,7 @@
 {% extends "_layout.html" %}
 
+{%- import '_utils.html' as utils %}
+
 {% macro maximum_lifetime() -%}
 <div class="row">
     <div class="col-lg-3 form-group">
@@ -29,10 +31,10 @@
             </div>
             <div class="row">
                 <div class="col-3 form-group">
-                    <input class="form-control" type="text" id="contenttype" name="contenttype" size="30" placeholder="Content-Type">
+                    {{ utils.input_contenttype() }}
                 </div>
                 <div class="col-6 form-group">
-                    <input class="form-control" type="text" id="filename" name="filename" size="40" placeholder="optional download-filename">
+                    {{ utils.input_filename() }}
                 </div>
                 <div class="col-3">
                     <button id="formupload-submit" class="btn btn-primary btn-block">Submit</button>
@@ -148,8 +150,7 @@
 
 <script>
     $(function() {
-        var availableTypes = ["{{ contenttypes | join('","') | safe}}"];
-        $("#contenttype").autocomplete({source: availableTypes});
+        {{ utils.contenttype_autocomplete('$("#contenttype")', contenttypes) }}
     });
 </script>
 {% endblock %}

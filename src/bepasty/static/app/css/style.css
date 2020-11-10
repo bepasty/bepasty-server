@@ -131,3 +131,8 @@ table.highlighttable {
 .linenos {
     width: 1px;
 }
+
+/* autocomplete for modify dialog */
+.ui-autocomplete {
+    z-index: 1065;
+}

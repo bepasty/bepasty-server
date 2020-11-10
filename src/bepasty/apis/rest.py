@@ -17,6 +17,7 @@ from ..utils.upload import Upload, filter_internal, background_compute_hash
 from ..views.filelist import file_infos
 from ..views.delete import DeleteView
 from ..views.download import DownloadView
+from ..views.modify import ModifyView
 from ..views.setkv import LockView, UnlockView
 
 
@@ -246,6 +247,28 @@ class ItemDownloadView(ItemDetailView):
     @rest_errorhandler
     def get(self, name):
         return super(ItemDetailView, self).get(name)
+
+
+class ItemModifyView(ModifyView, RestBase):
+    def error(self, item, error):
+        raise Conflict(description=error)
+
+    def response(self, name):
+        return make_response('{}', {'Content-Type': 'application/json'})
+
+    def get_params(self):
+        json = request.json
+        if json is None:
+            raise BadRequest(description='Content-Type or JSON format is invalid')
+
+        return {
+            FILENAME: json.get(FILENAME),
+            TYPE: json.get(TYPE),
+        }
+
+    @rest_errorhandler
+    def post(self, name):
+        return super(ItemModifyView, self).post(name)
 
 
 class ItemDeleteView(DeleteView, RestBase):

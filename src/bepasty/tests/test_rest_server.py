@@ -10,8 +10,7 @@ import copy
 import hashlib
 import re
 from requests.auth import _basic_auth_str
-from flask import current_app
-from flask import url_for
+from flask import current_app, url_for, json
 
 import pytest
 
@@ -19,7 +18,7 @@ from ..app import create_app
 from ..config import Config
 from ..constants import FILENAME, TYPE, LOCKED, SIZE, COMPLETE, HASH, \
     TIMESTAMP_DOWNLOAD, TIMESTAMP_UPLOAD, TIMESTAMP_MAX_LIFE, TRANSACTION_ID
-from ..utils.date_funcs import time_unit_to_sec
+from ..utils.date_funcs import get_maxlife
 
 UPLOAD_DATA = b"""\
 #!/usr/bin/python3
@@ -127,6 +126,11 @@ class RestUrl:
     def delete(self):
         with current_app.test_request_context():
             return url_for('bepasty_apis.items_delete', name=self.item_id)
+
+    @property
+    def modify(self):
+        with current_app.test_request_context():
+            return url_for('bepasty_apis.items_modify', name=self.item_id)
 
     @property
     def lock(self):
@@ -286,7 +290,12 @@ def make_meta(data, filename=None, ftype=None, lifetime=None, uri=None):
     if lifetime is None:
         # default maxlife is 1 MONTHS
         lifetime = [1, 'MONTHS']
-    maxlife = int(time.time()) + time_unit_to_sec(lifetime[0], lifetime[1])
+
+    maxtime = get_maxlife({
+        'maxlife_value': lifetime[0],
+        'maxlife_unit': lifetime[1]
+    }, True)
+    maxlife = int(time.time()) + maxtime if maxtime > 0 else maxtime
 
     meta = {
         'file-meta': {
@@ -800,6 +809,56 @@ def test_download_range(client_fixture):
                             total_size=len(data))
 
 
+def test_modify(client_fixture):
+    app, client, _ = client_fixture
+
+    meta = upload(client, UPLOAD_DATA, token='full', filename='test.py',
+                  ftype='text/x-python', lifetime=[1, 'FOREVER'])
+
+    item_id = os.path.basename(meta['uri'])
+    url = RestUrl(item_id)
+
+    check_detail_or_download(app, client, item_id, meta, None)
+
+    headers = {'Content-Type': 'application/json'}
+
+    # no permission
+    response = client.post(url.modify, headers=headers, data='{}')
+    check_err_response(response, 403)
+
+    headers = add_auth('user', 'full', headers)
+
+    # invalid name
+    response = client.post(RestUrl('abcdefgh').modify, headers=headers, data='{}')
+    check_err_response(response, 404)
+
+    # invalid Content-Type
+    response = client.post(url.modify, headers=add_auth('user', 'full'), data='{}')
+    check_err_response(response, 400)
+
+    # invalid json
+    response = client.post(url.modify, headers=headers, data='')
+    check_err_response(response, 400)
+
+    # change filename
+    filename = 'test2.py'
+    meta['file-meta'][FILENAME] = filename
+    data = json.dumps({FILENAME: filename})
+    response = client.post(url.modify, headers=headers, data=data)
+    check_json_response(response, {})
+
+    check_detail_or_download(app, client, item_id, meta, None)
+
+    # change type
+    content_type = 'text/plain'
+    meta['file-meta'][TYPE] = content_type
+    data = json.dumps({TYPE: content_type})
+    response = client.post(url.modify, headers=headers, data=data)
+    check_json_response(response, {})
+
+    check_detail_or_download(app, client, item_id, meta, None)
+
+
 def test_delete_basic(client_fixture):
     app, client, faketime = client_fixture
 
@@ -871,6 +930,16 @@ def test_lock_basic(client_fixture):
         response = client.get(url.download, headers=add_auth('user', 'admin'))
         check_data_response(response, metas[item_id], datas[item_id])
 
+        # modify locked item (should fail)
+        headers = add_auth('user', 'full', {'Content-Type': 'application/json'})
+        response = client.post(url.modify, headers=headers, data='{}')
+        check_err_response(response, 403)
+
+        # modify locked item with admin (should succeed)
+        headers = add_auth('user', 'admin', {'Content-Type': 'application/json'})
+        response = client.post(url.modify, headers=headers, data='{}')
+        check_json_response(response, {})
+
         # delete locked item (should fail)
         response = client.post(url.delete, headers=add_auth('user', 'full'))
         check_err_response(response, 403)
@@ -916,6 +985,11 @@ def test_incomplete(client_fixture):
 
     # download should error with incomplete
     response = client.get(url.download, headers=add_auth('user', 'full'))
+    check_err_response(response, 409)
+
+    # modify should error with incomplete
+    headers = add_auth('user', 'full', {'Content-Type': 'application/json'})
+    response = client.post(url.modify, headers=headers, data='{}')
     check_err_response(response, 409)
 
     # lock should error with incomplete

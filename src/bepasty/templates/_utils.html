@@ -80,3 +80,16 @@
         </tbody>
     </table>
 {% endmacro %}
+
+{% macro input_filename(value) -%}
+    <input class="form-control" type="text" id="filename" name="filename" size="40" placeholder="optional download-filename"{% if value is defined %} value="{{ value }}"{% endif %}>
+{%- endmacro %}
+
+{% macro input_contenttype(value) -%}
+    <input class="form-control" type="text" id="contenttype" name="contenttype" size="30" placeholder="Content-Type"{% if value is defined %} value="{{ value }}"{% endif %}>
+{%- endmacro %}
+
+{% macro contenttype_autocomplete(selector, contenttypes) -%}
+    var availableTypes = ["{{ contenttypes | join('","') | safe}}"];
+    {{ selector|safe }}.autocomplete({source: availableTypes});
+{%- endmacro %}
