@@ -17,6 +17,7 @@ passphrases) as credentials - there are no separate user names.
 The site admin can assign permissions to login credentials (and also to the anonymous, not logged-in user):
 
 * create: be able to create pastebins
+* modify: be able to modify pastebins
 * read: be able to read / download pastebins
 * delete: be able to delete pastebins
 * list: be able to list (discover) all pastebins

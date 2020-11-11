@@ -1,5 +1,7 @@
 {% extends "_layout.html" %}
 
+{%- import '_utils.html' as utils -%}
+
 {% block content %}
 <div class="card">
     <div class="card-header">
@@ -17,6 +19,29 @@
                 <a id="inline-btn" href="{{ url_for('bepasty.inline', name=name) }}" class="btn btn-info" role="button">
                     <span class="fa fa-asterisk"></span> Inline
                 </a>
+            {% endif %}
+            {% if may(MODIFY) %}
+                <div id="hidden-modify-frm" class="d-none" modalTitle="Modify Metadata" modalFocus="filename">
+                    <!-- modify form that used by utils.js -->
+                    <form id="modify-frm" action="{{ url_for('bepasty.modify', name=name) }}" method="post">
+                        <div class="form-group row">
+                            <label for="filename" class="col-2 form-label">Filename</label>
+                            <div class="col-10">
+                                {{ utils.input_filename(item.meta['filename']) }}
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="contenttype" class="col-2 form-label">Type</label>
+                            <div class="col-10">
+                                {{ utils.input_contenttype(item.meta['type']) }}
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary d-none">Submit</button>
+                    </form>
+                </div>
+                <button id="modify-btn" type="button" class="btn btn-info">
+                    <span class="fa fa-edit"></span> Modify
+                </button>
             {% endif %}
             {% if may(DELETE) %}
                 <form id="del-frm" action="{{ url_for('bepasty.delete', name=name) }}" method="post" class="btn-group">
@@ -76,4 +101,12 @@
 <script src="{{ url_for('bepasty.xstatic', name='bootbox', filename='bootbox.min.js') }}" type="text/javascript"></script>
 <script src="{{ url_for('bepasty.xstatic', name='asciinema_player', filename='asciinema-player.js') }}" type="text/javascript"></script>
 <script src="{{ url_for('static', filename='app/js/utils.js') }}" type="text/javascript"></script>
+{% if may(MODIFY) %}
+<script>
+    <!-- function that used by utils.js -->
+    function contenttype_autocomplete(modal_box) {
+        {{ utils.contenttype_autocomplete('$(modal_box).find("#contenttype")', contenttypes) }}
+    };
+</script>
+{% endif %}
 {% endblock extra_script %}

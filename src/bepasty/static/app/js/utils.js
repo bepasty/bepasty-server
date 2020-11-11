@@ -8,6 +8,37 @@ $(function () {
         });
     });
 
+    // Show a modify dialog box when trying to edit metadata.
+    $("#modify-btn").click(function() {
+        var form_name = "modify-frm"
+        var hidden_name_id = "#hidden-" + form_name
+        // Read form template from html
+        var modal_form = $(hidden_name_id).html();
+        var modal_title = $(hidden_name_id).attr('modalTitle');
+        var modal_focus = $(hidden_name_id).attr('modalFocus');
+        // A bit of a hack to avoid implementing this from scratch
+        // using .dialog().
+        var box = bootbox.confirm({
+            title: modal_title,
+            message: modal_form,
+            centerVertical: true,
+            onShown: function(e) {
+                if (modal_focus) {
+                    $(this).find("#" + modal_focus).trigger('focus');
+                }
+                // Support jquery-ui autocomplete
+                contenttype_autocomplete(this)
+            },
+            callback: function(result) {
+                // Please note that this is not called when hitting
+                // the Enter key on the input box.
+                if (result == true) {
+                    $(this).find("#" + form_name).submit();
+                }
+            }
+        });
+    });
+
     // Bind on click event to all line number anchor tags
     $('td.linenos a').on('click', function(e) {
         remove_highlights();

@@ -14,6 +14,7 @@ from ..utils.date_funcs import delete_if_lifetime_over
 from ..utils.formatters import CustomHtmlFormatter
 from ..utils.permissions import ADMIN, READ, may
 
+from .index import contenttypes_list
 from .filelist import file_infos
 
 
@@ -136,4 +137,5 @@ class DisplayView(MethodView):
                     rendered_content = u"Rendering not allowed (too big?). Try download"
 
             return render_template('display.html', name=name, item=item,
-                                   rendered_content=rendered_content)
+                                   rendered_content=rendered_content,
+                                   contenttypes=contenttypes_list())

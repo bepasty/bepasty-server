@@ -18,6 +18,7 @@ from .utils.permissions import (
     ADMIN,
     CREATE,
     DELETE,
+    MODIFY,
     LIST,
     READ,
     get_permission_icons,
@@ -142,6 +143,7 @@ def create_app():
     app.jinja_env.globals['ADMIN'] = ADMIN
     app.jinja_env.globals['LIST'] = LIST
     app.jinja_env.globals['CREATE'] = CREATE
+    app.jinja_env.globals['MODIFY'] = MODIFY
     app.jinja_env.globals['READ'] = READ
     app.jinja_env.globals['DELETE'] = DELETE
 

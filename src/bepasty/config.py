@@ -123,12 +123,12 @@ class Config(object):
     #: ::
     #:
     #:     PERMISSIONS = {
-    #:         'myadminsecret_1.21d-3!wdar34': 'admin,list,create,read,delete',
+    #:         'myadminsecret_1.21d-3!wdar34': 'admin,list,create,modify,read,delete',
     #:         'uploadersecret_rtghtrbrrrfsd': 'create,read',
     #:         'joe_doe_89359299887711335537': 'create,read,delete',
     #:     }
     PERMISSIONS = {
-        # 'foo': 'admin,list,create,read,delete',
+        # 'foo': 'admin,list,create,modify,read,delete',
     }
 
     #: not-logged-in users get these permissions -

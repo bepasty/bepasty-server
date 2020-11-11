@@ -17,6 +17,7 @@ class TestScreenShots(object):
     # bootstrap4 breakpoints
     screenshot_dir = 'screenshots'
     screen_sizes = [(450, 700), (576, 800), (768, 600), (992, 768), (1200, 1024)]
+    screenshot_seq = 1
 
     def setup_class(self):
         """
@@ -39,7 +40,8 @@ class TestScreenShots(object):
         if not os.path.isdir(self.screenshot_dir):
             os.mkdir(self.screenshot_dir)
         self.browser.save_screenshot(
-            '{}/{}-{}x{}.png'.format(self.screenshot_dir, name, w, h)
+            '{}/{:02d}-{}-{}x{}.png'.format(self.screenshot_dir,
+                                            self.screenshot_seq, name, w, h)
         )
 
     def screen_shots(self, name):
@@ -89,13 +91,15 @@ class TestScreenShots(object):
 
     def error_404(self):
         # NOTE: 404 error
-        self.screen_shots("01-error404")
+        self.screen_shots("error404")
+        self.screenshot_seq += 1
 
     def login(self):
         self.browser.get(self.url_base)
 
         # NOTE: login screen, 1 - close hamburger, 2 - open hamburger
-        self.top_screen_shots("02-top")
+        self.top_screen_shots("top")
+        self.screenshot_seq += 1
 
         token = self.browser.find_element_by_name("token")
         password = "foo"
@@ -105,7 +109,8 @@ class TestScreenShots(object):
         self.wait_present("//input[@value='Logout']")
 
         # NOTE: upload screen, 1 - close hamburger, 2 - open hamburger
-        self.top_screen_shots("03-upload")
+        self.top_screen_shots("upload")
+        self.screenshot_seq += 1
 
         try:
             self.browser.find_element_by_xpath("//input[@value='Logout']")
@@ -141,7 +146,7 @@ echo "hello, world!"
         self.scroll_to_bottom()
 
         # NOTE: uploaded screen
-        self.screen_shots("04-uploading1")
+        self.screen_shots("uploading1")
 
         # big file
         with tempfile.NamedTemporaryFile(suffix=".bin") as fp:
@@ -151,7 +156,8 @@ echo "hello, world!"
             self.scroll_to_bottom()
 
             # NOTE: in-progress uploading screen
-            self.screen_shots("05-uploading2")
+            self.screen_shots("uploading2")
+            self.screenshot_seq += 1
 
             # click abort
             abort = self.browser.find_element_by_id('fileupload-abort')
@@ -159,7 +165,8 @@ echo "hello, world!"
             time.sleep(.5)
 
             # NOTE: abort bootbox
-            self.screen_shots("06-abort")
+            self.screen_shots("abort")
+            self.screenshot_seq += 1
 
             ok = self.browser.find_element_by_class_name('bootbox-accept')
             ok.click()
@@ -167,12 +174,14 @@ echo "hello, world!"
             self.scroll_to_bottom()
 
             # NOTE: aborted upload screen
-            self.screen_shots("07-uploading3")
+            self.screen_shots("uploading3")
+            self.screenshot_seq += 1
 
     def list_view(self):
         self.browser.get(self.url_base + '/+list')
         # NOTE: list screen
-        self.screen_shots("08-list")
+        self.screen_shots("list")
+        self.screenshot_seq += 1
 
     def display_view(self):
         self.browser.get(self.url_base + '/+list')
@@ -183,17 +192,32 @@ echo "hello, world!"
         self.browser.get(self.browser.current_url + '#L-4')
 
         # NOTE: display screen
-        self.screen_shots("09-display")
+        self.screen_shots("display")
+        self.screenshot_seq += 1
+
+        modify = self.browser.find_element_by_id('modify-btn')
+        modify.click()
+        time.sleep(.5)
+
+        # NOTE: modify bootbox
+        self.screen_shots("modify")
+        self.screenshot_seq += 1
+
+        modify_cancel = self.browser.find_element_by_class_name('bootbox-cancel')
+        modify_cancel.click()
+        time.sleep(.5)
 
         lock = self.browser.find_element_by_id('lock-btn')
         lock.click()
         # NOTE: display with lock screen
-        self.screen_shots("10-lock")
+        self.screen_shots("lock")
+        self.screenshot_seq += 1
 
         qr = self.browser.find_element_by_id('qr-btn')
         qr.click()
         # NOTE: QR code screen
-        self.screen_shots("11-qr")
+        self.screen_shots("qr")
+        self.screenshot_seq += 1
 
     def test(self):
         self.error_404()

@@ -67,7 +67,7 @@ class TestMaxlifeFeature(object):
     def delete_current_file(self):
         self.browser.find_element_by_id("del-btn").click()
         time.sleep(.2)
-        self.browser.find_element_by_class_name("btn-primary").click()
+        self.browser.find_element_by_class_name("bootbox-accept").click()
 
     def test_paste_keep_forever(self):
         self.browser.find_element_by_xpath("//select[@name='maxlife-unit']/option[@value='forever']").click()
