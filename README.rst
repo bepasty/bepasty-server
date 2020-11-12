@@ -59,7 +59,7 @@ Features
 
 * Keeping some control:
 
-  - flexible permissions: create, read, delete, admin
+  - flexible permissions: read, create, modify, delete, list, admin
   - assign permissions to users of login secrets
   - assign default permissions to not-logged-in users
   - you can purge files from storage by age, inactivity, size, type, ...
