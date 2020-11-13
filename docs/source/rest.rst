@@ -5,14 +5,36 @@ Using bepasty's REST-API
 The Rest-API enables you to upload and download files, as well as retrieve informations
 about the file on the server.
 
-Currently (Version 0.3) the REST API provides four API Endpoints::
+Currently the REST API provides the following API Endpoints::
 
     GET  /apis/rest
     GET  /apis/rest/items
     POST /apis/rest/items
     GET  /apis/rest/items/<itemname>
     GET  /apis/rest/items/<itemname>/download
+    POST /apis/rest/items/<itemname>/modify
+    POST /apis/rest/items/<itemname>/delete
+    POST /apis/rest/items/<itemname>/lock
+    POST /apis/rest/items/<itemname>/unlock
 
+
+
+Errors
+======
+
+The error response from REST-API will set ``Content-Type: application/json``,
+and body as JSON format like the following example. (it was previously
+``Content-Type: text/html; charset=utf-8`` and partial HTML page or plain
+string)
+
+Example::
+
+    {
+        "error": {
+            "code": <HTTP status code>,
+            "message": "<error detail>"
+        }
+    }
 
 
 Retrieving information for uploading
@@ -198,3 +220,96 @@ Example Response::
     Content-Range: bytes 0-150225567/150225567
 
 Opens up a stream and delivers the binary data directly. The above headers can be found in the HTTP Response.
+
+
+Modifying metadata
+==================
+API Interface::
+
+    POST /apis/rest/items/<itemname>/modify
+
+Modify metadata specified by ``<itemname>``. (required permission:
+:ref:`modify <permissions>`)
+
+POST Request by the client
+--------------------------
+
+**itemname**
+    The itemname of the target file.
+
+**Content-Type**
+    The content-type header must be ``application/json``
+
+New metadata is specified by JSON in the request body.  Currently this API
+is supporting to modify ``filename`` and ``type``.  For example, if
+you want to modify the filename::
+
+    {"filename": "new-filename.txt"}
+
+if you want to modify both filename and type::
+
+    {"filename": "new-filename.txt", "type": "new-mimetype"}
+
+POST Response by the server
+---------------------------
+On success, status code == 200. Otherwise status code != 200.
+
+
+Deleting a file
+===============
+API Interface::
+
+    POST /apis/rest/items/<itemname>/delete
+
+Delete a file specified by ``<itemname>``. (required permission:
+:ref:`delete <permissions>`)
+
+POST Request by the client
+--------------------------
+
+**itemname**
+    The itemname of the target file.
+
+POST Response by the server
+---------------------------
+On success, status code == 200. Otherwise status code != 200.
+
+
+Locking a file
+==============
+API Interface::
+
+    POST /apis/rest/items/<itemname>/lock
+
+Lock a file specified by ``<itemname>``. (required permission:
+:ref:`admin <permissions>`)
+
+POST Request by the client
+--------------------------
+
+**itemname**
+    The itemname of the target file.
+
+POST Response by the server
+---------------------------
+On success, status code == 200. Otherwise status code != 200.
+
+
+Unlocking a file
+================
+API Interface::
+
+    POST /apis/rest/items/<itemname>/unlock
+
+Lock a file specified by ``<itemname>``. (required permission:
+:ref:`admin <permissions>`)
+
+POST Request by the client
+--------------------------
+
+**itemname**
+    The itemname of the target file.
+
+POST Response by the server
+---------------------------
+On success, status code == 200. Otherwise status code != 200.
