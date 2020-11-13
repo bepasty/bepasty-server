@@ -68,7 +68,9 @@ API Interface::
     POST /apis/rest/items
 
 When uploading a file, chunked upload is mandatory. Check the MAX_BODY_SIZE for the maximum chunk size that can
-be sent to the server. The body of the post request contains the base64 encoded binary of the file to be uploaded.
+be sent to the server. The body of the post request contains the
+base64 encoded binary of the file to be uploaded. (required
+permission: :ref:`create <permissions>`)
 
 POST Request by the client
 --------------------------
@@ -123,6 +125,8 @@ API Interface::
 
     GET /apis/rest/items/<itemname>
 
+(required permission: :ref:`read <permissions>`)
+
 GET Request by the client
 -------------------------
 
@@ -176,6 +180,8 @@ API Interface::
 
     GET /apis/rest/items
 
+(required permission: :ref:`list <permissions>`)
+
 GET Request by the client
 -------------------------
 
@@ -210,6 +216,8 @@ Downloading a file
 API Interface::
 
     GET /apis/rest/items/<itemname>/download
+
+(required permission: :ref:`read <permissions>`)
 
 GET Response by the server
 --------------------------
