@@ -1,8 +1,8 @@
 ChangeLog
 =========
 
-Release 0.6.0 (not released yet)
---------------------------------
+Release 0.6.0 (2020-11-14)
+--------------------------
 
 Compatibility:
 
