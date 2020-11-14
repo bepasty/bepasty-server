@@ -15,6 +15,12 @@ Fixes:
 
 * fix bad types for b64(en|de)code, fixes #200
 * use simple links in list/display view instead of <form> tags
+* security fix: if PERMISSIONS in config are changed, we invalidate old
+  clientside cookies now.
+* fix creating empty file in storage/*
+* fix dealing with expired items
+* fix item.meta.get() in ItemDownloadView(), must be called with an argument.
+* fix typo in get_maxlife (MONTH => MONTHS).
 
 New features:
 
@@ -24,6 +30,15 @@ New features:
   just paste the target URL and choose this as mimetype to create a
   redirect. you may use the delay=<seconds> url argument to adjust
   the delay, default is 3s.
+* add "modify" operation to modify uploaded data (web UI and REST),
+  this is controlled by "modify" permissions entry.
+* add optional python-magic support for application/octet-stream.
+  Disabled by default, you can enable via: USE_PYTHON_MAGIC = True
+* REST api:
+
+  - add delete/lock/unlock REST api
+  - use json for error response of REST api
+  - use application/json for upload REST api
 
 Other changes:
 
@@ -32,6 +47,23 @@ Other changes:
 * use twine to upload releases, qubes gpg support, fixes #197
 * add config for readthedocs, fixes #191
 * code: some cleanups, fix warnings, fix minor errors
+* theme:
+
+  - upgrade to use bootstrap 4
+  - use font-awesome everywhere, remove font-glyphicon, #232
+  - use xstatic package for local font delivery
+  - sort permission icons
+  - misc. cosmetic fixes
+* robustness / consistency improvements:
+
+  - handle bad Transaction-ID, bad Content-Length, bad Maxlife-{Value,Unit},
+    bad Range/Content-Range header
+  - add exception handler for REST api to get consistent behaviour.
+* tests:
+
+  - add test for APP_BASE_PATH (for our prefix middleware)
+  - add screen shots test for UI
+  - add REST api tests
 
 
 Release 0.5.0 (2018-10-15)
