@@ -2,6 +2,8 @@
 Using bepasty's web interface
 =============================
 
+.. _permissions:
+
 Logging in and Permissions
 ==========================
 
