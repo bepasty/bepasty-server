@@ -52,7 +52,7 @@ setup(
     ],
     extras_require={
         "magic": [
-            'python-magic'
+            'python-magic',
         ],
     },
     classifiers=[

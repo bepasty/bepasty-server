@@ -59,7 +59,6 @@ GET Response by the server:
     available.
 
     MAX_BODY_SIZE
-
         The maximum size of a post request's body. This is limited by
         the webserver and other middleware. See the documentation for
         more information. This also gives you the maximum size for the
@@ -124,7 +123,6 @@ POST Request by the client:
         characters.
 
     *Maxlife-Unit*
-
         The maxlife-unit can be used with the maxlife-value header to
         define a lifetime for the file that is uploaded.  The unit has
         to be one of these::
