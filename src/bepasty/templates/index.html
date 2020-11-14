@@ -1,106 +1,114 @@
 {% extends "_layout.html" %}
 
+{%- import '_utils.html' as utils %}
+
 {% macro maximum_lifetime() -%}
 <div class="row">
-  <div class="col-md-3 form-group">
-    <input class="form-control" name="maxlife-value" type="number" min="1" value="1" /><br>
-  </div>
-  <div class="col-md-9 form-group">
-    <select class="form-control" name="maxlife-unit" size="1">
-      <option value="months">Months</option>
-      <option value="weeks">Weeks</option>
-      <option value="days">Days</option>
-      <option value="hours">Hours</option>
-      <option value="minutes">Minutes</option>
-      <option value="years">Years</option>
-      <option value="forever">Keep Forever</option>
-    </select>
-  </div>
+    <div class="col-lg-3 form-group">
+        <input class="form-control" name="maxlife-value" type="number" min="1" value="1" /><br>
+    </div>
+    <div class="col-lg-9 form-group">
+        <select class="form-control" name="maxlife-unit" size="1">
+            <option value="months">Months</option>
+            <option value="weeks">Weeks</option>
+            <option value="days">Days</option>
+            <option value="hours">Hours</option>
+            <option value="minutes">Minutes</option>
+            <option value="years">Years</option>
+            <option value="forever">Keep Forever</option>
+        </select>
+    </div>
 </div>
 {% endmacro %}
 
 {% block content %}
 {% if may(CREATE) %}
 <div class="row">
-  <div class="col-sm-8">
-    <form action="{{ url_for('bepasty.upload') }}" method="POST" enctype="multipart/form-data">
-      <div class="form-group">
-        <textarea class="form-control" id="formupload" name="text" placeholder="Paste text here..." autofocus></textarea>
-      </div>
-      <div class="row">
-        <div class="col-xs-3 form-group">
-          <input class="form-control" type="text" id="contenttype" name="contenttype" size="30" placeholder="Content-Type">
-        </div>
-        <div class="col-xs-6 form-group">
-          <input class="form-control" type="text" id="filename" name="filename" size="40" placeholder="optional download-filename">
-        </div>
-        <div class="col-xs-3">
-          <button id="formupload-submit" class="btn btn-success btn-block">Submit</button>
-        </div>
-      </div>
-      <hr>
-      <label>Maximum lifetime value (choose before dragging or submitting)</label>
-      {{ maximum_lifetime() }}
-      <span class="btn btn-default fileinput-button dropzone">
-        <i class="glyphicon glyphicon-upload"></i>
-        <span>drag and drop files here - or click to select files</span>
-        <!-- Input for file upload widget -->
-        <input id="fileupload" type="file" name="file" multiple style="height: 100%; width: 100%;">
-      </span>
-      <noscript><br><button id="fileupload-submit" class="btn btn-success btn-block">Upload</button></noscript>
-    </form>
-  </div>
-  <div class="col-sm-4">
-    <!-- item name list assembled here and offered for submission -->
-    <form id="filelist-form" style="display: none" action="{{ url_for('bepasty.upload') }}" method="POST" enctype="multipart/form-data">
-      <div class="form-group">
-        <textarea class="form-control" id="filelist" name="text" rows="10" cols="40"></textarea>
-      </div>
-      {{ maximum_lifetime() }}
-      <input type="hidden" name="contenttype" value="text/x-bepasty-list">
-      <div class="row">
-        <div class="col-md-7 form-group">
-          <input class="form-control" type="text" id="filelist-filename" name="filename" size="23" placeholder="optional list-name">
-        </div>
-        <div class="col-md-5">
-          <button class="btn btn-success btn-block">Create List Item</button>
-        </div>
-      </div>
-    </form>
-    <button id="fileupload-abort" class="btn btn-danger pull-right" style="visibility: hidden">abort</button>
-    <!-- The progress bar -->
-    <div id="fileupload-progress" class="progress progress-striped active" style="visibility: hidden">
-      <div class="progress-bar"></div>
+    <div class="col-md-8">
+        <form action="{{ url_for('bepasty.upload') }}" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <textarea class="form-control" id="formupload" name="text" placeholder="Paste text here..." autofocus></textarea>
+            </div>
+            <div class="row">
+                <div class="col-3 form-group">
+                    {{ utils.input_contenttype() }}
+                </div>
+                <div class="col-6 form-group">
+                    {{ utils.input_filename() }}
+                </div>
+                <div class="col-3">
+                    <button id="formupload-submit" class="btn btn-primary btn-block">Submit</button>
+                </div>
+            </div>
+            <hr>
+            <label>Maximum lifetime value (choose before dragging or submitting)</label>
+            {{ maximum_lifetime() }}
+            <span class="btn btn-light fileinput-button dropzone">
+                <i class="fa fa-upload"></i>
+                <span>drag and drop files here - or click to select files</span>
+                <!-- Input for file upload widget -->
+                <input id="fileupload" type="file" class="form-control-file" name="file" multiple style="height: 100%; width: 100%;">
+            </span>
+            <noscript><br><button id="fileupload-submit" class="btn btn-success btn-block">Upload</button></noscript>
+        </form>
     </div>
-    <!-- Uploaded files -->
-    <div id="files" class="files"></div>
-  </div>
+    <div class="col-md-4">
+        <!-- item name list assembled here and offered for submission -->
+        <form id="filelist-form" style="display: none" action="{{ url_for('bepasty.upload') }}" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <textarea class="form-control" id="filelist" name="text" rows="10" cols="40"></textarea>
+            </div>
+            {{ maximum_lifetime() }}
+            <input type="hidden" name="contenttype" value="text/x-bepasty-list">
+            <div class="row">
+                <div class="col-lg-7 form-group">
+                    <input class="form-control" type="text" id="filelist-filename" name="filename" size="23" placeholder="optional list-name">
+                </div>
+                <div class="col-lg-5">
+                    <button class="btn btn-success btn-block text-nowrap">Create List</button>
+                </div>
+            </div>
+        </form>
+        <div class="d-flex pt-3 pb-3 align-items-center">
+            <!-- The progress bar -->
+            <div class="col-lg-9 pl-0 pr-0">
+                <div id="fileupload-progress" class="progress" style="visibility: hidden">
+                    <div class="progress-bar progress-bar-striped active" role="progressbar"></div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <button id="fileupload-abort" class="btn btn-danger" style="visibility: hidden">abort</button>
+            </div>
+        </div>
+        <!-- Uploaded files -->
+        <div id="files" class="files"></div>
+    </div>
 </div>
 
 {% else %}
-<div class="page-header">
+<div class="pb-2 mt-4 mb-2 border-bottom">
     <h1>bepasty, the Binary File Upload Site</h1>
 </div>
 <div class="jumbotron">
     <div class="row">
-        <div class="col-sm-3">
-            <span class="glyphicon glyphicon-thumbs-up"></span>
+        <div class="col-md-3">
+            <span class="fa fa-thumbs-o-up"></span>
             <h2>Free and Nice</h2>
             <p>
                 A pastebin for <em>all</em> the stuff,<br>
                 not just for text.
             </p>
         </div>
-        <div class="col-sm-6">
-            <span class="glyphicon glyphicon-eye-open"></span>
+        <div class="col-md-6">
+            <span class="fa fa-eye"></span>
             <h2>Free and Open Source</h2>
             <p>
                 bepasty is free and open source software.<br>
                 <a href="https://github.com/bepasty/">bepasty project on github</a>
             </p>
         </div>
-        <div class="col-sm-3">
-            <span class="glyphicon glyphicon-heart-empty"></span>
+        <div class="col-md-3">
+            <span class="fa fa-heart-o"></span>
             <h2>Awesome Code</h2>
             <p>
                 Powered by <a href="http://python.org">Python</a> and
@@ -134,16 +142,15 @@
 <script src="{{ url_for('bepasty.xstatic', name='bootbox', filename='bootbox.min.js') }}" type="text/javascript"></script>
 <!-- fileuploader -->
 <script type="application/javascript">
-MAX_ALLOWED_FILE_SIZE = {{ config.MAX_ALLOWED_FILE_SIZE }};
-MAX_BODY_SIZE = {{ config.MAX_BODY_SIZE }};
-UPLOAD_NEW_URL = "{{ url_for('bepasty.upload_new') }}";
+    MAX_ALLOWED_FILE_SIZE = {{ config.MAX_ALLOWED_FILE_SIZE }};
+    MAX_BODY_SIZE = {{ config.MAX_BODY_SIZE }};
+    UPLOAD_NEW_URL = "{{ url_for('bepasty.upload_new') }}";
 </script>
 <script src="{{ url_for('static', filename='app/js/fileuploader.js') }}" type="text/javascript"></script>
 
 <script>
-$(function() {
-    var availableTypes = ["{{ contenttypes | join('","') | safe}}"];
-    $("#contenttype").autocomplete({source: availableTypes});
-});
+    $(function() {
+        {{ utils.contenttype_autocomplete('$("#contenttype")', contenttypes) }}
+    });
 </script>
 {% endblock %}

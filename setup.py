@@ -42,13 +42,19 @@ setup(
         'Pygments',
         'xstatic',
         'XStatic-asciinema-player',
-        'xstatic-bootbox',
-        'xstatic-bootstrap<4.0.0.0',
+        'xstatic-bootbox>=5.4.0',
+        'xstatic-bootstrap>=4.0.0.0,<5.0.0.0',
+        'xstatic-font-awesome',
         'xstatic-jquery',
         'xstatic-jquery-ui',
         'xstatic-jquery-file-upload',
         'xstatic-pygments',
     ],
+    extras_require={
+        "magic": [
+            'python-magic',
+        ],
+    },
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',

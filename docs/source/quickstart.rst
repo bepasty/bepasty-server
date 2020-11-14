@@ -11,9 +11,11 @@ You can install bepasty either from PyPi (latest release) or from the git reposi
     # from PyPi:
     pip install bepasty
 
+    # if you'ld like to have python-magic to help determining files' mime types, use:
+    pip install bepasty[magic]
+
     # from git repo
     pip install -e git+https://github.com/bepasty/bepasty-server.git#egg=bepasty-server
-
 
 Configuring bepasty
 -------------------

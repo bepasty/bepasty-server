@@ -1,29 +1,69 @@
 ChangeLog
 =========
 
-Release 0.6.0 (not released yet)
---------------------------------
+Release 0.6.0 (2020-11-14)
+--------------------------
 
 Compatibility:
 
-* drop python 3.4 support, fixes #195
+* drop python 3.4 support, #195
+* note: this will likely be the last bepasty release supporting
+  Python 2.x (2.7) and 3.5 (both are not supported by Python
+  development any more).
 
 Fixes:
 
-* fix bad types for b64(en|de)code, fixes #200
+* fix bad types for b64(en|de)code, #200
+* use simple links in list/display view instead of <form> tags
+* security fix: if PERMISSIONS in config are changed, we invalidate old
+  clientside cookies now.
+* fix creating empty file in storage/*
+* fix dealing with expired items
+* fix item.meta.get() in ItemDownloadView(), must be called with an argument.
+* fix typo in get_maxlife (MONTH => MONTHS).
 
 New features:
 
-* show QR code with link to bepasty item, fixes #176
-* support text/x-bepasty-redirect for URL redirects
+* add support for asciinema recordings, #175
+* show QR code with link to bepasty item, #176
+* support text/x-bepasty-redirect for URL redirects:
   just paste the target URL and choose this as mimetype to create a
   redirect. you may use the delay=<seconds> url argument to adjust
   the delay, default is 3s.
+* add "modify" operation to modify uploaded data (web UI and REST),
+  this is controlled by "modify" permissions entry.
+* add optional python-magic support for application/octet-stream.
+  Disabled by default, you can enable via: USE_PYTHON_MAGIC = True
+* REST api:
+
+  - add delete/lock/unlock REST api
+  - use json for error response of REST api
+  - use application/json for upload REST api
 
 Other changes:
 
-* move development section from README to project docs, fixes #192
-* use twine to upload releases, qubes gpg support, fixes #197
+* support / test on py38, py39, #223
+* move development section from README to project docs, #192
+* use twine to upload releases, qubes gpg support, #197
+* add config for readthedocs, #191
+* code: some cleanups, fix warnings, fix minor errors
+* theme:
+
+  - upgrade to use bootstrap 4
+  - use font-awesome everywhere, remove font-glyphicon, #232
+  - use xstatic package for local font delivery
+  - sort permission icons
+  - misc. cosmetic fixes
+* robustness / consistency improvements:
+
+  - handle bad Transaction-ID, bad Content-Length, bad Maxlife-{Value,Unit},
+    bad Range/Content-Range header
+  - add exception handler for REST api to get consistent behaviour.
+* tests:
+
+  - add test for APP_BASE_PATH (for our prefix middleware)
+  - add screen shots test for UI
+  - add REST api tests
 
 
 Release 0.5.0 (2018-10-15)

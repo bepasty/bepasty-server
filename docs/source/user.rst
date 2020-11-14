@@ -2,6 +2,8 @@
 Using bepasty's web interface
 =============================
 
+.. _permissions:
+
 Logging in and Permissions
 ==========================
 
@@ -17,6 +19,7 @@ passphrases) as credentials - there are no separate user names.
 The site admin can assign permissions to login credentials (and also to the anonymous, not logged-in user):
 
 * create: be able to create pastebins
+* modify: be able to modify pastebins
 * read: be able to read / download pastebins
 * delete: be able to delete pastebins
 * list: be able to list (discover) all pastebins
@@ -89,6 +92,7 @@ bepasty also supports directly displaying the data, for these content types:
 * lists of files (if a list item was created at upload time)
 * text files (highlighted depending on the content-type)
 * PDFs (if you browser can render PDFs or has a plugin doing that)
+* asciinema cast files
 * image files, like jpeg, png and svg
 * audio/video files (using the html5 player widget, format support might depend on your browser and OS)
 * for other file types, you need to download them and open them with the appropriate application

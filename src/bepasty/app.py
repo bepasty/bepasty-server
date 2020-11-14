@@ -1,5 +1,6 @@
 import os
 import time
+import hashlib
 
 from flask import (
     Flask,
@@ -17,6 +18,7 @@ from .utils.permissions import (
     ADMIN,
     CREATE,
     DELETE,
+    MODIFY,
     LIST,
     READ,
     get_permission_icons,
@@ -45,12 +47,33 @@ class PrefixMiddleware(object):
             return ['This URL does not belong to the bepasty app.'.encode()]
 
 
+def setup_secret_key(app):
+    """
+    The secret key is used to sign cookies and cookies not signed with the
+    current secret key are considered invalid.
+
+    Here, we amend the configured secret key, so it depends on some
+    other config values. Changing any of these values will change the
+    computed secret key (and thus invalidate all previously made
+    cookies).
+
+    Currently supported secret-changing config values: PERMISSIONS
+    """
+    # if app.config['SECRET_KEY'] is empty, keep as NullSession
+    if app.config['SECRET_KEY']:
+        perms = sorted(k + v for k, v in app.config['PERMISSIONS'].items())
+        perms = ''.join(perms).encode()
+        app.config['SECRET_KEY'] += hashlib.sha256(perms).hexdigest()
+
+
 def create_app():
     app = Flask(__name__)
 
     app.config.from_object('bepasty.config.Config')
     if os.environ.get('BEPASTY_CONFIG'):
         app.config.from_envvar('BEPASTY_CONFIG')
+
+    setup_secret_key(app)
 
     prefix = app.config.get('APP_BASE_PATH')
     if prefix is not None:
@@ -120,6 +143,7 @@ def create_app():
     app.jinja_env.globals['ADMIN'] = ADMIN
     app.jinja_env.globals['LIST'] = LIST
     app.jinja_env.globals['CREATE'] = CREATE
+    app.jinja_env.globals['MODIFY'] = MODIFY
     app.jinja_env.globals['READ'] = READ
     app.jinja_env.globals['DELETE'] = DELETE
 

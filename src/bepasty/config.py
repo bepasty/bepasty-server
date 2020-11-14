@@ -70,6 +70,14 @@ class Config(object):
         '': 1 * 1000 * 1000,
     }
 
+    # Whether to use the python-magic module to guess a file's mime
+    # type by looking into its content (if the mime type can not be
+    # determined from the filename extension).
+    # NOTE:
+    # libmagic may have security issues, so maybe you should only use
+    # it if you trust all users with upload permissions ('create').
+    USE_PYTHON_MAGIC = False
+
     #: Define storage backend, choose from:
     #:
     #: - 'filesystem'
@@ -115,12 +123,12 @@ class Config(object):
     #: ::
     #:
     #:     PERMISSIONS = {
-    #:         'myadminsecret_1.21d-3!wdar34': 'admin,list,create,read,delete',
+    #:         'myadminsecret_1.21d-3!wdar34': 'admin,list,create,modify,read,delete',
     #:         'uploadersecret_rtghtrbrrrfsd': 'create,read',
     #:         'joe_doe_89359299887711335537': 'create,read,delete',
     #:     }
     PERMISSIONS = {
-        # 'foo': 'admin,list,create,read,delete',
+        # 'foo': 'admin,list,create,modify,read,delete',
     }
 
     #: not-logged-in users get these permissions -

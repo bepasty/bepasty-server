@@ -1,17 +1,24 @@
 import time
 from flask import current_app
+from werkzeug.exceptions import BadRequest
 
 from ..constants import FOREVER, TIMESTAMP_MAX_LIFE
 
 
 def get_maxlife(data, underscore):
     unit_key = 'maxlife_unit' if underscore else 'maxlife-unit'
-    unit_default = 'MONTH'
+    unit_default = 'MONTHS'
     unit = data.get(unit_key, unit_default).upper()
     value_key = 'maxlife_value' if underscore else 'maxlife-value'
     value_default = '1'
-    value = int(data.get(value_key, value_default))
-    return time_unit_to_sec(value, unit)
+    try:
+        value = int(data.get(value_key, value_default))
+    except (ValueError, TypeError):
+        raise BadRequest(description='{} header is incorrect'.format(value_key))
+    try:
+        return time_unit_to_sec(value, unit)
+    except KeyError:
+        raise BadRequest(description='{} header is incorrect'.format(unit_key))
 
 
 def time_unit_to_sec(value, unit):
