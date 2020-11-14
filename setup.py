@@ -55,6 +55,7 @@ setup(
             'python-magic',
         ],
     },
+    python_requires=">=3.5",
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
