@@ -1,5 +1,5 @@
 import collections
-from ._compat import urlparse, urljoin
+from urllib.parse import urlparse, urljoin
 
 from flask import request, redirect, url_for
 from werkzeug.exceptions import BadRequest

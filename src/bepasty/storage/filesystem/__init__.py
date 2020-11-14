@@ -3,7 +3,7 @@ import pickle
 import logging
 import tempfile
 
-from ...utils._compat import MutableMapping
+from collections.abc import MutableMapping
 
 logger = logging.getLogger(__name__)
 
