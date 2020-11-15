@@ -8,7 +8,6 @@ from flask.views import MethodView
 from werkzeug.exceptions import HTTPException, BadRequest, Conflict, Forbidden, InternalServerError, MethodNotAllowed
 
 from ..constants import FILENAME, ID, SIZE, TYPE, TRANSACTION_ID
-from ..utils._compat import bytes_type
 from ..utils.date_funcs import get_maxlife
 from ..utils.http import ContentRange, DownloadRange
 from ..utils.name import ItemName
@@ -87,7 +86,7 @@ class ItemUploadView(RestBase):
         response = make_response()
         response.headers['Content-Type'] = 'application/json'
         response.data = '{}'
-        name_b = name if isinstance(name, bytes_type) else name.encode()
+        name_b = name if isinstance(name, bytes) else name.encode()
         trans_id_b = base64.b64encode(name_b)
         trans_id_s = trans_id_b if isinstance(trans_id_b, str) else trans_id_b.decode()
         response.headers[TRANSACTION_ID] = trans_id_s
@@ -163,7 +162,7 @@ class ItemUploadView(RestBase):
         else:
             # Get file name from Transaction-ID and open from Storage
             trans_id_s = request.headers.get(TRANSACTION_ID)
-            trans_id_b = trans_id_s if isinstance(trans_id_s, bytes_type) else trans_id_s.encode()
+            trans_id_b = trans_id_s if isinstance(trans_id_s, bytes) else trans_id_s.encode()
             try:
                 name_b = base64.b64decode(trans_id_b)
             except (base64.binascii.Error, TypeError):

@@ -1,6 +1,5 @@
 import pytest
 
-from bepasty.utils._compat import range_type
 from bepasty.utils.name import ItemName, encode, make_id
 
 
@@ -15,7 +14,7 @@ def test_create_many():
     length = 1
     count = 400  # way more than we can do with this name length
     max_seen_length = 0
-    for i in range_type(count):
+    for i in range(count):
         name = ItemName.create(fake_storage, length=length, max_length=length * 4, max_tries=10)
         # use the name in storage, so it is not available any more
         fake_storage[name] = None
@@ -31,7 +30,7 @@ def test_make_id_type():
 
 
 def test_make_id_length():
-    for length in range_type(10):
+    for length in range(10):
         assert len(make_id(length)) == length
 
 
@@ -42,7 +41,7 @@ def test_make_id_alphabet():
 
 def test_make_id_unique():
     length, count = 6, 10000
-    ids = set(make_id(length) for i in range_type(count))
+    ids = set(make_id(length) for i in range(count))
     # if we did not encounter duplicates, set size must be <count>
     # of course, in extremely rare cases, this test might fail
     assert len(ids) == count

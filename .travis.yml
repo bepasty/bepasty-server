@@ -8,9 +8,6 @@ os: linux
 
 matrix:
     include:
-        - python: 2.7
-          dist: xenial
-          env: TOXENV=py27
         - python: 3.5
           dist: xenial
           env: TOXENV=py35

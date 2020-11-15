@@ -9,7 +9,6 @@ from pygments.lexers import get_lexer_for_mimetype
 from pygments.util import ClassNotFound as NoPygmentsLexer
 
 from ..constants import COMPLETE, FILENAME, LOCKED, SIZE, TIMESTAMP_DOWNLOAD, TYPE
-from ..utils._compat import iteritems
 from ..utils.date_funcs import delete_if_lifetime_over
 from ..utils.formatters import CustomHtmlFormatter
 from ..utils.permissions import ADMIN, READ, may
@@ -31,7 +30,7 @@ def rendering_allowed(item_type, item_size, use_pygments, complete):
         # if we use pygments, special restrictions apply
         item_type = 'HIGHLIGHT_TYPES'
     # create a tuple list [(content_type_prefix, max_size), ...] with long prefixes first
-    ct_size = sorted(iteritems(current_app.config['MAX_RENDER_SIZE']), key=lambda e: len(e[0]), reverse=True)
+    ct_size = sorted(current_app.config['MAX_RENDER_SIZE'].items(), key=lambda e: len(e[0]), reverse=True)
     for ct, size in ct_size:
         if item_type.startswith(ct):
             return item_size <= size
