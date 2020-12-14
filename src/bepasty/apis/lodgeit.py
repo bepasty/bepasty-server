@@ -22,6 +22,8 @@ class LodgeitUpload(MethodView):
     for lexer in get_all_lexers():
         # (name, aliases, filetypes, mimetypes)
         # e.g. ('Diff', ('diff',), ('*.diff', '*.patch'), ('text/x-diff', 'text/x-patch'))
+        if len(lexer[1]) == 0:
+            continue
         name = lexer[1][0]
         cts = lexer[3]
         # find a content-type, preferably one with text/*
