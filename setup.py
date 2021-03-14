@@ -57,7 +57,7 @@ setup(
     },
     python_requires=">=3.5",
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',

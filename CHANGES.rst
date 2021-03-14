@@ -10,8 +10,8 @@ Compatibility:
 
 Fixes:
 
-* pygments compatibility fix, #258
-  don't crash on ``('JSONBareObject', (), (), ())``
+* pygments compatibility fix, #258.
+  don't crash on ``('JSONBareObject', (), (), ())``.
 
 Other changes:
 
