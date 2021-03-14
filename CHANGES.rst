@@ -1,6 +1,23 @@
 ChangeLog
 =========
 
+Release 1.0.0 (2021-03-14)
+--------------------------
+
+Compatibility:
+
+* require Python >= 3.5, drop Python 2.x support
+
+Fixes:
+
+* pygments compatibility fix, #258
+  don't crash on ``('JSONBareObject', (), (), ())``
+
+Other changes:
+
+* move away from Travis-CI, use github workflow for CI
+
+
 Release 0.6.0 (2020-11-14)
 --------------------------
 
