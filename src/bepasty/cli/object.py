@@ -2,7 +2,6 @@
 bepasty-object commandline interface
 """
 
-from __future__ import print_function
 
 import os
 import argparse
@@ -27,7 +26,7 @@ from ..utils.hashing import compute_hash
 from ..storage import create_storage
 
 
-class Main(object):
+class Main:
     argparser = argparse.ArgumentParser(prog='bepasty-object')
     _subparsers = argparser.add_subparsers()
     argparser.add_argument('--config', dest='config', metavar='CONFIG', help='bepasty configuration file')

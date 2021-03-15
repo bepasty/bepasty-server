@@ -166,11 +166,11 @@ class ItemUploadView(RestBase):
             try:
                 name_b = base64.b64decode(trans_id_b)
             except (base64.binascii.Error, TypeError):
-                raise BadRequest(description='Could not decode {}'.format(TRANSACTION_ID))
+                raise BadRequest(description=f'Could not decode {TRANSACTION_ID}')
             name = name_b if isinstance(name_b, str) else name_b.decode()
             try:
                 item = current_app.storage.openwrite(name)
-            except (OSError, IOError) as e:
+            except OSError as e:
                 if e.errno == errno.ENOENT:
                     raise BadRequest(description='Could not find storage item for transaction id')
                 raise
@@ -218,7 +218,7 @@ class ItemDetailView(DownloadView, RestBase):
 
     @rest_errorhandler
     def get(self, name):
-        return super(ItemDetailView, self).get(name)
+        return super().get(name)
 
 
 class ItemDownloadView(ItemDetailView):
@@ -235,7 +235,7 @@ class ItemDownloadView(ItemDetailView):
             range_begin = request_range.begin
 
         ret = Response(stream_with_context(self.stream(item, range_begin, range_end + 1)))
-        ret.headers['Content-Disposition'] = '{0}; filename="{1}"'.format(
+        ret.headers['Content-Disposition'] = '{}; filename="{}"'.format(
             self.content_disposition, item.meta[FILENAME])
         ret.headers['Content-Length'] = (range_end - range_begin) + 1
         ret.headers['Content-Type'] = item.meta[TYPE]  # 'application/octet-stream'
@@ -267,7 +267,7 @@ class ItemModifyView(ModifyView, RestBase):
 
     @rest_errorhandler
     def post(self, name):
-        return super(ItemModifyView, self).post(name)
+        return super().post(name)
 
 
 class ItemDeleteView(DeleteView, RestBase):
@@ -279,7 +279,7 @@ class ItemDeleteView(DeleteView, RestBase):
 
     @rest_errorhandler
     def post(self, name):
-        return super(ItemDeleteView, self).post(name)
+        return super().post(name)
 
 
 class ItemLockView(LockView, RestBase):
@@ -291,7 +291,7 @@ class ItemLockView(LockView, RestBase):
 
     @rest_errorhandler
     def post(self, name):
-        return super(ItemLockView, self).post(name)
+        return super().post(name)
 
 
 class ItemUnlockView(UnlockView, RestBase):
@@ -303,7 +303,7 @@ class ItemUnlockView(UnlockView, RestBase):
 
     @rest_errorhandler
     def post(self, name):
-        return super(ItemUnlockView, self).post(name)
+        return super().post(name)
 
 
 class InfoView(RestBase):

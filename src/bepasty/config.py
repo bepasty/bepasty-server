@@ -1,4 +1,4 @@
-class Config(object):
+class Config:
     """
     This is the basic configuration class for bepasty.
 

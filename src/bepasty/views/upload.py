@@ -126,8 +126,7 @@ class UploadContinueView(MethodView):
                 'name': name,
                 'filename': item.meta[FILENAME],
                 'size': item.meta[SIZE],
-                'url': "{0}#{1}".format(url_for('bepasty.display', name=name),
-                                        item.meta[FILENAME]),
+                'url': "{}#{}".format(url_for('bepasty.display', name=name), item.meta[FILENAME]),
             }]})
 
         if is_complete and not file_hash:
@@ -143,7 +142,7 @@ class UploadAbortView(MethodView):
 
         try:
             item = current_app.storage.open(name)
-        except (OSError, IOError) as e:
+        except OSError as e:
             if e.errno == errno.ENOENT:
                 return 'No file found.', 404
             raise
@@ -157,7 +156,7 @@ class UploadAbortView(MethodView):
 
         try:
             item = current_app.storage.remove(name)
-        except (OSError, IOError) as e:
+        except OSError as e:
             if e.errno == errno.ENOENT:
                 raise NotFound()
             raise

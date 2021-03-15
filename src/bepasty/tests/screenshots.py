@@ -12,7 +12,7 @@ import tempfile
 
 
 @pytest.mark.needs_server
-class TestScreenShots(object):
+class TestScreenShots:
     url_base = 'http://localhost:5000'
     # bootstrap4 breakpoints
     screenshot_dir = 'screenshots'
@@ -79,12 +79,12 @@ class TestScreenShots(object):
         self.set_largest_window_size()
 
     def top_screen_shots(self, name):
-        self.screen_shots('{}1'.format(name))
+        self.screen_shots(f'{name}1')
 
         # open hamburger
         self.toggle_hamburger()
 
-        self.screen_shots('{}2'.format(name))
+        self.screen_shots(f'{name}2')
 
         # close hamburger
         self.toggle_hamburger()
@@ -130,7 +130,7 @@ class TestScreenShots(object):
         # small files
         for i in (1, 2, 3):
             with tempfile.NamedTemporaryFile(suffix=".sh") as fp:
-                fp.write("""\
+                fp.write(b"""\
 #!/bin/sh
 
 if [ $# -le 0 ]; then
@@ -139,7 +139,7 @@ if [ $# -le 0 ]; then
 fi
 
 echo "hello, world!"
-""".encode())
+""")
                 fp.flush()
                 self.upload_file(fp.name)
 

@@ -14,7 +14,7 @@ def create_storage(app):
     return Storage(storage_dir)
 
 
-class Storage(object):
+class Storage:
     """
     Filesystem storage - store meta and data into separate files in a directory.
     """
@@ -56,26 +56,25 @@ class Storage(object):
         try:
             os.remove(file_data)
         except OSError as e:
-            logger.error("Could not delete file: %s\n %s" % (file_data, str(e)))
+            logger.error("Could not delete file: {}\n {}".format(file_data, str(e)))
             raise
         try:
             os.remove(file_meta)
         except OSError as e:
-            logger.error("Could not delete file: %s\n %s" % (file_meta, str(e)))
+            logger.error("Could not delete file: {}\n {}".format(file_meta, str(e)))
             raise
 
     def __iter__(self):
         names = [fn[:-5] for fn in os.listdir(self.directory)
                  if fn.endswith('.meta')]
-        for name in names:
-            yield name
+        yield from names
 
     def __contains__(self, name):
         meta_filename = self._filename(name) + '.meta'
         return os.path.exists(meta_filename)
 
 
-class Item(object):
+class Item:
     """
     Represents an open item.
 
@@ -99,7 +98,7 @@ class Item(object):
     close = __exit__
 
 
-class Data(object):
+class Data:
     """
     Data of item.
     """
