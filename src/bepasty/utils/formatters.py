@@ -4,7 +4,7 @@ from pygments.formatters.html import HtmlFormatter
 class CustomHtmlFormatter(HtmlFormatter):
     """Custom HTML formatter. Adds an option to wrap lines into HTML <p> tags."""
     def __init__(self, **options):
-        super(CustomHtmlFormatter, self).__init__(**options)
+        super().__init__(**options)
         self.lineparagraphs = options.get('lineparagraphs', '')
 
     def _wrap_lineparagraphs(self, inner):

@@ -36,12 +36,12 @@ def test_make_id_length():
 
 def test_make_id_alphabet():
     # id must contain alphabet chars ONLY
-    assert set(make_id(10, alphabet="abc")) <= set(['a', 'b', 'c'])
+    assert set(make_id(10, alphabet="abc")) <= {'a', 'b', 'c'}
 
 
 def test_make_id_unique():
     length, count = 6, 10000
-    ids = set(make_id(length) for i in range(count))
+    ids = {make_id(length) for i in range(count)}
     # if we did not encounter duplicates, set size must be <count>
     # of course, in extremely rare cases, this test might fail
     assert len(ids) == count

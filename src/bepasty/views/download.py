@@ -35,7 +35,7 @@ class DownloadView(MethodView):
                 ct = 'text/plain'  # only send simple plain text
 
         ret = Response(stream_with_context(self.stream(item, 0, item.data.size)))
-        ret.headers['Content-Disposition'] = '{0}; filename="{1}"'.format(
+        ret.headers['Content-Disposition'] = '{}; filename="{}"'.format(
             dispo, item.meta[FILENAME])
         ret.headers['Content-Length'] = item.meta[SIZE]
         ret.headers['Content-Type'] = ct
@@ -47,7 +47,7 @@ class DownloadView(MethodView):
             raise Forbidden()
         try:
             item = current_app.storage.openwrite(name)
-        except (OSError, IOError) as e:
+        except OSError as e:
             if e.errno == errno.ENOENT:
                 raise NotFound()
             raise

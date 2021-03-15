@@ -44,7 +44,7 @@ class DisplayView(MethodView):
             raise Forbidden()
         try:
             item = current_app.storage.openwrite(name)
-        except (OSError, IOError) as e:
+        except OSError as e:
             if e.errno == errno.ENOENT:
                 raise NotFound()
             raise
@@ -94,25 +94,25 @@ class DisplayView(MethodView):
                         delay = request.args.get('delay', '3')
                         return render_template('redirect.html', url=url, delay=delay)
                     else:
-                        rendered_content = u"Can't render this content type."
+                        rendered_content = "Can't render this content type."
                 elif ct.startswith('image/'):
                     src = url_for('bepasty.download', name=name)
-                    rendered_content = Markup(u'<img src="%s" alt="the image" width="800">' % src)
+                    rendered_content = Markup('<img src="%s" alt="the image" width="800">' % src)
                 elif ct.startswith('audio/'):
                     src = url_for('bepasty.download', name=name)
-                    alt_msg = u'html5 audio element not supported by your browser.'
-                    rendered_content = Markup(u'<audio controls src="%s">%s</audio>' % (src, alt_msg))
+                    alt_msg = 'html5 audio element not supported by your browser.'
+                    rendered_content = Markup(f'<audio controls src="{src}">{alt_msg}</audio>')
                 elif ct.startswith('video/'):
                     src = url_for('bepasty.download', name=name)
-                    alt_msg = u'html5 video element not supported by your browser.'
-                    rendered_content = Markup(u'<video controls src="%s">%s</video>' % (src, alt_msg))
+                    alt_msg = 'html5 video element not supported by your browser.'
+                    rendered_content = Markup(f'<video controls src="{src}">{alt_msg}</video>')
                 elif ct in ['application/pdf', 'application/x-pdf', ]:
                     src = url_for('bepasty.inline', name=name)
-                    link_txt = u'Click to see PDF'
-                    rendered_content = Markup(u'<a href="%s">%s</a>' % (src, link_txt))
+                    link_txt = 'Click to see PDF'
+                    rendered_content = Markup(f'<a href="{src}">{link_txt}</a>')
                 elif ct == 'application/x-asciinema-recording':
                     src = url_for('bepasty.download', name=name)
-                    rendered_content = Markup(u'<asciinema-player src="%s" title="%s" theme="%s" autoplay>' %
+                    rendered_content = Markup('<asciinema-player src="%s" title="%s" theme="%s" autoplay>' %
                                               (src, item.meta[FILENAME],
                                                current_app.config.get('ASCIINEMA_THEME', 'asciinema')))
                 elif use_pygments:
@@ -128,12 +128,12 @@ class DisplayView(MethodView):
                                                     lineparagraphs="L", anchorlinenos=True)
                     rendered_content = Markup(highlight(text, lexer, formatter))
                 else:
-                    rendered_content = u"Can't render this content type."
+                    rendered_content = "Can't render this content type."
             else:
                 if not complete:
-                    rendered_content = u"Rendering not allowed (not complete). Is it still being uploaded?"
+                    rendered_content = "Rendering not allowed (not complete). Is it still being uploaded?"
                 else:
-                    rendered_content = u"Rendering not allowed (too big?). Try download"
+                    rendered_content = "Rendering not allowed (too big?). Try download"
 
             return render_template('display.html', name=name, item=item,
                                    rendered_content=rendered_content,

@@ -178,7 +178,7 @@ def check_data_response(response, meta, data, offset=0, total_size=None,
     if total_size is None:
         total_size = len(data)
 
-    disposition = 'attachment; filename="{}"'.format(filename)
+    disposition = f'attachment; filename="{filename}"'
     range_str = 'bytes {}-{}/{}'.format(offset, offset + len(data) - 1,
                                         total_size)
 
@@ -333,7 +333,7 @@ def upload_files(client):
 print('hello,world {}')
 """.format(i).encode()
 
-        filename = '{}-test.py'.format(i)
+        filename = f'{i}-test.py'
         lifetime = [1, 'YEARS']
         ftype = 'text/x-python'
 
@@ -758,7 +758,7 @@ def test_download_range(client_fixture):
         # Range: bytes=0-invalid (invalid last)
         offset = 0
         limit = 10
-        headers['Range'] = 'other={}-invalid'.format(offset)
+        headers['Range'] = f'other={offset}-invalid'
         response = client.get(url.download, headers=headers)
         check_err_response(response, 400)
 
@@ -803,7 +803,7 @@ def test_download_range(client_fixture):
         # Range: bytes=10-
         offset = 10
         limit = len(data)
-        headers['Range'] = 'bytes={}-'.format(offset)
+        headers['Range'] = f'bytes={offset}-'
         response = client.get(url.download, headers=headers)
         check_data_response(response, meta, data[offset:limit], offset=offset,
                             total_size=len(data))

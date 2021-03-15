@@ -14,11 +14,11 @@ def get_maxlife(data, underscore):
     try:
         value = int(data.get(value_key, value_default))
     except (ValueError, TypeError):
-        raise BadRequest(description='{} header is incorrect'.format(value_key))
+        raise BadRequest(description=f'{value_key} header is incorrect')
     try:
         return time_unit_to_sec(value, unit)
     except KeyError:
-        raise BadRequest(description='{} header is incorrect'.format(unit_key))
+        raise BadRequest(description=f'{unit_key} header is incorrect')
 
 
 def time_unit_to_sec(value, unit):
@@ -49,7 +49,7 @@ def delete_if_lifetime_over(item, name):
     if 0 < item.meta[TIMESTAMP_MAX_LIFE] < time.time():
         try:
             current_app.storage.remove(name)
-        except (OSError, IOError):
+        except OSError:
             pass
         return True
     return False

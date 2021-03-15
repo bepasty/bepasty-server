@@ -52,7 +52,7 @@ class ModifyView(MethodView):
 
                 return self.response(name)
 
-        except (OSError, IOError) as e:
+        except OSError as e:
             if e.errno == errno.ENOENT:
                 raise NotFound()
             raise

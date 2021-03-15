@@ -31,7 +31,7 @@ class SetKeyValueView(MethodView):
         try:
             with current_app.storage.openwrite(name) as item:
                 if item.meta[self.KEY] == self.NEXT_VALUE:
-                    error = '%s already is %r.' % (self.KEY, self.NEXT_VALUE)
+                    error = f'{self.KEY} already is {self.NEXT_VALUE!r}.'
                 elif not item.meta[COMPLETE]:
                     error = 'Upload incomplete. Try again later.'
                 else:
@@ -41,7 +41,7 @@ class SetKeyValueView(MethodView):
                 item.meta[self.KEY] = self.NEXT_VALUE
             return self.response(name)
 
-        except (OSError, IOError) as e:
+        except OSError as e:
             if e.errno == errno.ENOENT:
                 raise NotFound()
             raise

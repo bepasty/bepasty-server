@@ -8,7 +8,7 @@ import time
 
 
 @pytest.mark.needs_server
-class TestMaxlifeFeature(object):
+class TestMaxlifeFeature:
     """
     Checks if the maxlife feature is working
     """
