@@ -1,5 +1,15 @@
 import errno
+from io import BytesIO
+import os
 import time
+
+try:
+    import PIL
+except ImportError:
+    # Pillow / PIL is optional
+    PIL = None
+else:
+    from PIL import Image
 
 from flask import Response, current_app, render_template, stream_with_context
 from flask.views import MethodView
@@ -72,3 +82,40 @@ class DownloadView(MethodView):
 
 class InlineView(DownloadView):
     content_disposition = 'inline'  # to trigger viewing in browser, for some types
+
+
+class ThumbnailView(InlineView):
+    thumbnail_size = 192, 108
+    thumbnail_type = 'jpeg'  # png, jpeg
+
+    def err_incomplete(self, item, error):
+        return b'', 409  # conflict
+
+    def response(self, item, name):
+        if PIL is None:
+            # looks like PIL / Pillow is not available
+            return b'', 501  # not implemented
+
+        sz = item.meta[SIZE]
+        fn = item.meta[FILENAME]
+        ct = item.meta[TYPE]
+        if not ct.startswith("image/"):
+            return b'', 405  # method not allowed
+
+        # compute thumbnail data "on the fly"
+        with BytesIO(item.data.read(sz, 0)) as img_bio, BytesIO() as thumbnail_bio:
+            with Image.open(img_bio) as img:
+                img.thumbnail(self.thumbnail_size)
+                img.save(thumbnail_bio, self.thumbnail_type)
+            thumbnail_data = thumbnail_bio.getvalue()
+
+        name, ext = os.path.splitext(fn)
+        thumbnail_fn = '%s-thumb.%s' % (name, self.thumbnail_type)
+
+        ret = Response(thumbnail_data)
+        ret.headers['Content-Disposition'] = '{}; filename="{}"'.format(
+            self.content_disposition, thumbnail_fn)
+        ret.headers['Content-Length'] = len(thumbnail_data)
+        ret.headers['Content-Type'] = 'image/%s' % self.thumbnail_type
+        ret.headers['X-Content-Type-Options'] = 'nosniff'  # yes, we really mean it
+        return ret
