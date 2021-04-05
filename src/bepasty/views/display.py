@@ -39,7 +39,7 @@ def rendering_allowed(item_type, item_size, use_pygments, complete):
 
 
 class DisplayView(MethodView):
-    def get(self, name):
+    def get(self, name, view='normal'):
         if not may(READ):
             raise Forbidden()
         try:
@@ -82,13 +82,23 @@ class DisplayView(MethodView):
                 else:
                     use_pygments = False
 
+            is_list_item = False
             if rendering_allowed(ct, size, use_pygments, complete):
                 if ct.startswith('text/x-bepasty-'):
                     # special bepasty items - must be first, don't feed to pygments
                     if ct == 'text/x-bepasty-list':
+                        is_list_item = True
                         names = read_data(item).decode('utf-8').splitlines()
                         files = sorted(file_infos(names), key=lambda f: f[FILENAME])
-                        rendered_content = Markup(render_template('filelist_tableonly.html', files=files))
+                        if view == 'normal':
+                            rendered_content = Markup(render_template('filelist_tableonly.html', files=files))
+                        elif view == 'carousel':
+                            # this template renders to a complete html page
+                            # we only consider image items for this
+                            files = [f for f in files if f[TYPE].startswith('image/')]
+                            return render_template('carousel.html', files=files)
+                        else:
+                            raise NotImplementedError
                     elif ct == 'text/x-bepasty-redirect':
                         url = read_data(item).decode('utf-8')
                         delay = request.args.get('delay', '3')
@@ -137,4 +147,10 @@ class DisplayView(MethodView):
 
             return render_template('display.html', name=name, item=item,
                                    rendered_content=rendered_content,
-                                   contenttypes=contenttypes_list())
+                                   contenttypes=contenttypes_list(),
+                                   is_list_item=is_list_item)
+
+
+class CarouselView(DisplayView):
+    def get(self, name):
+        return super().get(name, view='carousel')

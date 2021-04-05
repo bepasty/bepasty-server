@@ -10,6 +10,11 @@
         </h1>
         <div class="btn-group flex-wrap flex-md-nowrap" role="group">
             {% if not item.meta['locked'] or may(ADMIN) %}
+                {% if is_list_item %}
+                <a id="carousel-btn" href="{{ url_for('bepasty.carousel', name=name) }}" class="btn btn-info">
+                    <span class="fa fa-play-circle"></span> Carousel
+                </a>
+                {% endif %}
                 <a id="qr-btn" href="{{ url_for('bepasty.qr', name=name) }}" class="btn btn-info">
                     <span class="fa fa-qrcode"></span> QR
                 </a>

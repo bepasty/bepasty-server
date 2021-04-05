@@ -1,0 +1,44 @@
+{% extends "_layout.html" %}
+
+{% block extra_link %}
+<style>
+.carousel .carousel-item {
+  height: 40em;
+}
+.carousel .carousel-item > *:first-child {
+  background-position: 50%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: inherit;
+  background-color: black;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="carousel slide" id="demo-carousel" data-ride="carousel">
+        <ol class="carousel-indicators">
+            {% for file in files %}
+                <li class="{% if loop.index == 1 %}active{% endif %}" data-target="#demo-carousel" data-slide-to="{{ loop.index }}"></li>
+            {% endfor %}
+        </ol>
+        <div class="carousel-inner rounded">
+            {% for file in files %}
+                <div class="carousel-item{% if loop.index == 1 %} active{% endif %}">
+                    <div style="background-image: url('{{ url_for('bepasty.inline', name=file['id']) }}')"></div>
+                    <div class="carousel-caption">
+                        <h3>{{ file['filename'] }}</h3>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <a class="carousel-control-prev" href="#demo-carousel" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#demo-carousel" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+{% endblock content %}

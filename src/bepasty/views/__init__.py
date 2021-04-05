@@ -1,7 +1,7 @@
 from flask import Blueprint
 
 from .delete import DeleteView
-from .display import DisplayView
+from .display import DisplayView, CarouselView
 from .download import DownloadView, InlineView, ThumbnailView
 from .modify import ModifyView
 from .qr import QRView
@@ -22,6 +22,7 @@ blueprint.add_url_rule('/+list', view_func=FileListView.as_view('filelist'))
 blueprint.add_url_rule('/+login', view_func=LoginView.as_view('login'))
 blueprint.add_url_rule('/+logout', view_func=LogoutView.as_view('logout'))
 blueprint.add_url_rule('/<itemname:name>', view_func=DisplayView.as_view('display'))
+blueprint.add_url_rule('/<itemname:name>/+carousel', view_func=CarouselView.as_view('carousel'))
 blueprint.add_url_rule('/<itemname:name>/+delete', view_func=DeleteView.as_view('delete'))
 blueprint.add_url_rule('/<itemname:name>/+download', view_func=DownloadView.as_view('download'))
 blueprint.add_url_rule('/<itemname:name>/+inline', view_func=InlineView.as_view('inline'))
