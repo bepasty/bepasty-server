@@ -87,6 +87,13 @@ class InlineView(DownloadView):
 class ThumbnailView(InlineView):
     thumbnail_size = 192, 108
     thumbnail_type = 'jpeg'  # png, jpeg
+    thumbnail_data = """\
+        <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+        <svg width="108" height="108" viewBox="0 0 108 108" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1" y="1" width="106" height="106" fill="whitesmoke" stroke-width="2" stroke="blue" />
+            <line x1="1" y1="1" x2="106" y2="106" stroke="blue" stroke-width="2" />
+            <line x1="1" y1="106" x2="106" y2="0" stroke="blue" stroke-width="2" />
+        </svg>""".strip().encode()
 
     def err_incomplete(self, item, error):
         return b'', 409  # conflict
@@ -100,7 +107,12 @@ class ThumbnailView(InlineView):
         fn = item.meta[FILENAME]
         ct = item.meta[TYPE]
         if not ct.startswith("image/"):
-            return b'', 405  # method not allowed
+            # return a placeholder thumbnail for unsupported item types
+            ret = Response(self.thumbnail_data)
+            ret.headers['Content-Length'] = len(self.thumbnail_data)
+            ret.headers['Content-Type'] = 'image/svg+xml'
+            ret.headers['X-Content-Type-Options'] = 'nosniff'  # yes, we really mean it
+            return ret
 
         # compute thumbnail data "on the fly"
         with BytesIO(item.data.read(sz, 0)) as img_bio, BytesIO() as thumbnail_bio:
