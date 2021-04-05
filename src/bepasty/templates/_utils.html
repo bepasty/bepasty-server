@@ -2,13 +2,15 @@
     <table class="table table-hover">
         <thead>
         <tr>
-            <th>
+            <th class="text-right">
                 Filename
                 <br />
                 Type
-            </th>
-            <th class="text-right">
+                <br />
                 Size [B]
+            </th>
+            <th>
+                Thumbnail
             </th>
             <th>
                 Upload [UTC]
@@ -23,13 +25,19 @@
         <tbody>
             {% for file in files %}
             <tr>
-                <td>
-                    <a href="{{ url_for('bepasty.display', name=file['id']) }}">{{ file['filename'] }}</a>
+                <td class="text-right">
+                    <a href="{{ url_for('bepasty.display', name=file['id']) }}">
+                        {{ file['filename'] }}
+                    </a>
                     <br />
                     {{ file['type'] }}
-                </td>
-                <td class="text-right">
+                    <br />
                     {{ file['size'] }}
+                </td>
+                <td>
+                    <a href="{{ url_for('bepasty.display', name=file['id']) }}">
+                        <img src="{{ url_for('bepasty.thumbnail', name=file['id']) }}">
+                    </a>
                 </td>
                 <td>
                     {{ file['timestamp-upload'] | datetime }}
