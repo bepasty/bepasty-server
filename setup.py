@@ -54,6 +54,9 @@ setup(
         "magic": [
             'python-magic',
         ],
+        "pillow": [
+            'Pillow',
+        ],
     },
     python_requires=">=3.6",
     classifiers=[
