@@ -20,7 +20,7 @@ Currently the REST API provides the following API Endpoints::
 
 Authentication
 ==============
-For endpoints that require non-default permissions authentication can be done through the http basic authentication, with the user ``user`` and the password for the intended permissions.
+For endpoints that require non-default permissions, authentication can be done through http basic authentication. The user is ignored and the password is the key for the intended permissions.
 
 Errors
 ======
