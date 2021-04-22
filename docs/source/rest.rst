@@ -18,6 +18,9 @@ Currently the REST API provides the following API Endpoints::
     POST /apis/rest/items/<itemname>/unlock
 
 
+Authentication
+==============
+For endpoints that require non-default permissions, authentication can be done through http basic authentication. The user is ignored and the password is the key for the intended permissions.
 
 Errors
 ======
