@@ -15,7 +15,7 @@ with open(readme_path) as f:
 setup(
     name='bepasty',
     use_scm_version={
-        'write_to': 'src/bepasty/_version.py',
+        'write_to': 'bepasty/_version.py',
     },
     license='BSD 2-clause',
     author='The Bepasty Team (see AUTHORS file)',
@@ -26,8 +26,7 @@ setup(
     long_description=long_description,
     url='https://github.com/bepasty/bepasty-server/',
     keywords="text image audio video binary pastebin upload download service wsgi flask",
-    packages=find_packages('src'),
-    package_dir={'': 'src'},
+    packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
     entry_points={
