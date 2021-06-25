@@ -27,18 +27,16 @@ especially when setting up the ``DEFAULT_PERMISSIONS`` (which apply to not-logge
 
 Here is the documentation straight from its config:
 
-.. autoclass:: bepasty.config.Config
+.. automodule:: bepasty.settings
    :members:
 
 
-To create a local and non-default configuration, copy ``bepasty/config.py`` to e.g. ``/srv/bepasty/bepasty.conf``
-first, remove the ``class Config`` and remove all indents in the file.
-The comments can be removed too, if you feel the need to.
+To create a local and non-default configuration, copy ``bepasty/settings.py`` to e.g. ``/srv/bepasty/bepasty.conf``.
+The comments can be removed, if you feel the need to.
 At last modify these two configs variables: then modify it:
 
 ::
 
-    # Note: no Config class required, just simple KEY = value lines:
     SECRET_KEY = '........................'
     STORAGE = 'filesystem'
     STORAGE_FILESYSTEM_DIRECTORY = '/srv/bepasty/storage/'
@@ -47,11 +45,6 @@ At last modify these two configs variables: then modify it:
 
 Important notes:
 
-* if you copied the file from the ``bepasty/config.py`` it will have
-  a "class Config" in it and all the settings are inside that class. This is
-  **not** what you need. Due to how flask config files work, you need to
-  remove the class statement and outdent all the settings, so you just have
-  global KEY = VALUE statements left on the top level of the config file.
 * if you run over http (like for trying it locally / for development), you
   need to change the configuration to use SESSION_SECURE_COOKIE = False
   (otherwise you can not login as it won't transmit the cookie over unsecure
@@ -61,16 +54,16 @@ Important notes:
 Starting bepasty server
 -----------------------
 
-You can run the bepasty server with your local configuration by pointing to it via the BEPASTY_CONFIG
+You can run the bepasty server with your local configuration by pointing to it via the BEPASTY_SETTINGS
 environment variable like this:
 
 ::
 
-    BEPASTY_CONFIG=/srv/bepasty/bepasty.conf bepasty-server
+    BEPASTY_SETTINGS=/srv/bepasty/bepasty.conf bepasty-server
 
 Important note:
 
-* Use an absolute path as value for BEPASTY_CONFIG.
+* Use an absolute path as value for BEPASTY_SETTINGS.
 
 
 The builtin WSGI server is recommended only for development and non-production use.
@@ -85,7 +78,7 @@ For production, you should use a WSGI server like gunicorn, apache+mod-wsgi, ngi
 Invoking CLI commands
 ---------------------
 
-All bepasty commands expect either a --config <configfilename> argument or that the BEPASTY_CONFIG environment
+All bepasty commands expect either a --config <configfilename> argument or that the BEPASTY_SETTINGS environment
 variable points to your configuration file.
 
 The "object" command operates on objects stored in the storage. You can get infos about them ("info" subcommand),

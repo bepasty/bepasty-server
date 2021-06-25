@@ -196,9 +196,9 @@ class Main:
 
         # Setup minimal application
         app = Flask(__name__)
-        app.config.from_object('bepasty.config.Config')
-        if os.environ.get('BEPASTY_CONFIG'):
-            app.config.from_envvar('BEPASTY_CONFIG')
+        app.config.from_object('bepasty.settings')
+        if os.environ.get('BEPASTY_SETTINGS'):
+            app.config.from_envvar('BEPASTY_SETTINGS')
         if args.config is not None:
             cfg_path = os.path.abspath(args.config)
             app.config.from_pyfile(cfg_path)

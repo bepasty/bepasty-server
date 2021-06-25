@@ -14,8 +14,8 @@ from flask import current_app, url_for, json
 
 import pytest
 
-from ..app import create_app
-from ..config import Config
+from bepasty.app import create_app
+from bepasty import settings
 from ..constants import FILENAME, TYPE, LOCKED, SIZE, COMPLETE, HASH, \
     TIMESTAMP_DOWNLOAD, TIMESTAMP_UPLOAD, TIMESTAMP_MAX_LIFE, TRANSACTION_ID
 from ..utils.date_funcs import get_maxlife
@@ -64,12 +64,12 @@ def wait_background():
 @pytest.fixture
 def client_fixture(tmp_path):
     with FakeTime() as faketime:
-        Config.PERMISSIONS = {
+        settings.PERMISSIONS = {
             'admin': 'admin,list,create,modify,read,delete',
             'full': 'list,create,modify,read,delete',
             'none': '',
         }
-        Config.STORAGE_FILESYSTEM_DIRECTORY = str(tmp_path)
+        settings.STORAGE_FILESYSTEM_DIRECTORY = str(tmp_path)
 
         app = create_app()
         app.config['TESTING'] = True

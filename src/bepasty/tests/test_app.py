@@ -5,23 +5,23 @@
 from flask import request, url_for
 from flask.views import MethodView
 
-from ..app import create_app
-from ..config import Config
+from bepasty.app import create_app
+from bepasty import settings
 
 
 def test_secret_key(monkeypatch):
-    monkeypatch.setattr(Config, 'PERMISSIONS', {
+    monkeypatch.setattr(settings, 'PERMISSIONS', {
         'admin': 'admin,list,create,read,delete',
         'full': 'list,create,read,delete',
         'none': '',
     })
-    monkeypatch.setattr(Config, 'SECRET_KEY', 'secret')
+    monkeypatch.setattr(settings, 'SECRET_KEY', 'secret')
 
     app = create_app()
     secret_key = app.config['SECRET_KEY']
-    assert len(secret_key) > len(Config.SECRET_KEY)
+    assert len(secret_key) > len(settings.SECRET_KEY)
 
-    Config.PERMISSIONS = {
+    settings.PERMISSIONS = {
         'admin': 'admin,list,create,read,delete',
         'none': '',
     }
@@ -44,13 +44,13 @@ def prepare(callback):
     TestView.callback = staticmethod(callback)
     client = app.test_client()
 
-    assert app.config['APP_BASE_PATH'] == Config.APP_BASE_PATH
+    assert app.config['APP_BASE_PATH'] == settings.APP_BASE_PATH
 
     return app, client
 
 
 def test_none(monkeypatch):
-    monkeypatch.setattr(Config, 'APP_BASE_PATH', None)
+    monkeypatch.setattr(settings, 'APP_BASE_PATH', None)
 
     def none_callback():
         url = url_for('test.test_call')
@@ -67,11 +67,11 @@ def test_none(monkeypatch):
 
 
 def test_prefix(monkeypatch):
-    monkeypatch.setattr(Config, 'APP_BASE_PATH', '/bepasty')
+    monkeypatch.setattr(settings, 'APP_BASE_PATH', '/bepasty')
 
     def prefix_callback():
         url = url_for('test.test_call')
-        assert url == Config.APP_BASE_PATH + request.path
+        assert url == settings.APP_BASE_PATH + request.path
 
     app, client = prepare(prefix_callback)
 
