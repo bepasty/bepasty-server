@@ -36,7 +36,7 @@ commands to run
 
 config file for bepasty -- ``/home/bepasty/bepasty.conf``:
 
-Copy ``src/bepasty/settings.py`` to ``/home/bepasty/bepasty.conf``.
+Copy ``bepasty/settings.py`` to ``/home/bepasty/bepasty.conf``.
 The comments can be removed, if you feel the need to.
 At last modify these two configs variables:
 
