@@ -69,9 +69,9 @@ def setup_secret_key(app):
 def create_app():
     app = Flask(__name__)
 
-    app.config.from_object('bepasty.config.Config')
-    if os.environ.get('BEPASTY_CONFIG'):
-        app.config.from_envvar('BEPASTY_CONFIG')
+    app.config.from_object('bepasty.settings')
+    if os.environ.get('BEPASTY_SETTINGS'):
+        app.config.from_envvar('BEPASTY_SETTINGS')
 
     setup_secret_key(app)
 
