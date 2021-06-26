@@ -17,7 +17,7 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 
 # on rtfd, the project gets installed via pip and scm_version generates _version:
-from bepasty._version import version
+from bepasty import __version__ as version
 
 # General information about the project.
 project = 'bepasty'
