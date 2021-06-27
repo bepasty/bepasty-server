@@ -27,11 +27,11 @@ especially when setting up the ``DEFAULT_PERMISSIONS`` (which apply to not-logge
 
 Here is the documentation straight from its config:
 
-.. automodule:: bepasty.settings
+.. automodule:: bepasty.config
    :members:
 
 
-To create a local and non-default configuration, copy ``bepasty/settings.py`` to e.g. ``/srv/bepasty/bepasty.conf``.
+To create a local and non-default configuration, copy ``bepasty/config.py`` to e.g. ``/srv/bepasty/bepasty.conf``.
 The comments can be removed, if you feel the need to.
 At last modify these two configs variables: then modify it:
 
@@ -54,16 +54,16 @@ Important notes:
 Starting bepasty server
 -----------------------
 
-You can run the bepasty server with your local configuration by pointing to it via the BEPASTY_SETTINGS
+You can run the bepasty server with your local configuration by pointing to it via the BEPASTY_CONFIG
 environment variable like this:
 
 ::
 
-    BEPASTY_SETTINGS=/srv/bepasty/bepasty.conf bepasty-server
+    BEPASTY_CONFIG=/srv/bepasty/bepasty.conf bepasty-server
 
 Important note:
 
-* Use an absolute path as value for BEPASTY_SETTINGS.
+* Use an absolute path as value for BEPASTY_CONFIG.
 
 
 The builtin WSGI server is recommended only for development and non-production use.
@@ -78,7 +78,7 @@ For production, you should use a WSGI server like gunicorn, apache+mod-wsgi, ngi
 Invoking CLI commands
 ---------------------
 
-All bepasty commands expect either a --config <configfilename> argument or that the BEPASTY_SETTINGS environment
+All bepasty commands expect either a --config <configfilename> argument or that the BEPASTY_CONFIG environment
 variable points to your configuration file.
 
 The "object" command operates on objects stored in the storage. You can get infos about them ("info" subcommand),

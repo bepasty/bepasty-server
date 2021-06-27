@@ -36,7 +36,7 @@ commands to run
 
 config file for bepasty -- ``/home/bepasty/bepasty.conf``:
 
-Copy ``src/bepasty/settings.py`` to ``/home/bepasty/bepasty.conf``.
+Copy ``src/bepasty/config.py`` to ``/home/bepasty/bepasty.conf``.
 The comments can be removed, if you feel the need to.
 At last modify these two configs variables:
 
@@ -57,7 +57,7 @@ add this content to ``/home/bepasty/bin/gunicorn_bepasty``:
   SOCKFILE=$HOME/gunicorn.sock  # we will communicate using this unix socket
   PIDFILE=$HOME/gunicorn.pid
   NUM_WORKERS=3                 # how many worker processes should Gunicorn spawn
-  export BEPASTY_SETTINGS=$HOME/bepasty.conf
+  export BEPASTY_CONFIG=$HOME/bepasty.conf
 
   source $HOME/bin/activate
 
