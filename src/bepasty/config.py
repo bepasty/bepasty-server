@@ -125,7 +125,7 @@ PERMANENT_SESSION_LIFETIME = 31 * 24 * 3600
 #:         'joe_doe_89359299887711335537': 'create,read,delete',
 #:     }
 PERMISSIONS = {
-    # 'foo': 'admin,list,create,modify,read,delete'
+    # 'foo': 'admin,list,create,modify,read,delete',
 }
 
 #: not-logged-in users get these permissions -
