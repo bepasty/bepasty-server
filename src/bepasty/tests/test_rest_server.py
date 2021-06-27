@@ -14,8 +14,8 @@ from flask import current_app, url_for, json
 
 import pytest
 
-from bepasty.app import create_app
-from bepasty import config
+from ..app import create_app
+from .. import config
 from ..constants import FILENAME, TYPE, LOCKED, SIZE, COMPLETE, HASH, \
     TIMESTAMP_DOWNLOAD, TIMESTAMP_UPLOAD, TIMESTAMP_MAX_LIFE, TRANSACTION_ID
 from ..utils.date_funcs import get_maxlife

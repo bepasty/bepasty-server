@@ -5,8 +5,8 @@
 from flask import request, url_for
 from flask.views import MethodView
 
-from bepasty.app import create_app
-from bepasty import config
+from ..app import create_app
+from .. import config
 
 
 def test_secret_key(monkeypatch):
