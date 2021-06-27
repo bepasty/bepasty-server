@@ -1,4 +1,6 @@
 """
+This is a basic configuration for bepasty.
+
 IMPORTANT:
 
 The config is only loaded at startup time of the app, so if you change it,
