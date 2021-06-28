@@ -1,13 +1,3 @@
-"""
-This is a basic configuration for bepasty.
-
-IMPORTANT:
-
-The config is only loaded at startup time of the app, so if you change it,
-you need to restart the wsgi app process(es) to make it load the updated
-config.
-"""
-
 #: name of this site (put YOUR bepasty fqdn here)
 SITENAME = 'bepasty.example.org'
 

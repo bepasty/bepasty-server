@@ -25,7 +25,7 @@ the configuration settings need your attention).
 When setting up permissions and giving out login secrets, carefully think about whom you give which permissions,
 especially when setting up the ``DEFAULT_PERMISSIONS`` (which apply to not-logged-in users).
 
-Here is the documentation straight from its config:
+Here are the default configurations and their supporting details:
 
 .. automodule:: bepasty.config
    :members:
@@ -44,6 +44,10 @@ At last modify these two configs variables: then modify it:
 
 
 Important notes:
+
+* The config is only loaded at startup time of the app, so if you change it,
+  you need to restart the wsgi app process(es) to make it load the updated
+  config.
 
 * if you run over http (like for trying it locally / for development), you
   need to change the configuration to use SESSION_SECURE_COOKIE = False
