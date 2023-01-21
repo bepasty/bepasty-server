@@ -86,7 +86,6 @@ class InlineView(DownloadView):
 
 class ThumbnailView(InlineView):
     thumbnail_size = 192, 108
-    thumbnail_type = 'jpeg'  # png, jpeg
     thumbnail_data = """\
         <?xml version="1.0" encoding="UTF-8" standalone="no"?>
         <svg width="108" height="108" viewBox="0 0 108 108" xmlns="http://www.w3.org/2000/svg">
@@ -114,20 +113,27 @@ class ThumbnailView(InlineView):
             ret.headers['X-Content-Type-Options'] = 'nosniff'  # yes, we really mean it
             return ret
 
+        if ct in ('image/jpeg', ):
+            thumbnail_type = 'jpeg'
+        elif ct in ('image/png', ):
+            thumbnail_type = 'png'
+        else:
+            raise ValueError('unrecognized image content type')
+
         # compute thumbnail data "on the fly"
         with BytesIO(item.data.read(sz, 0)) as img_bio, BytesIO() as thumbnail_bio:
             with Image.open(img_bio) as img:
                 img.thumbnail(self.thumbnail_size)
-                img.save(thumbnail_bio, self.thumbnail_type)
+                img.save(thumbnail_bio, thumbnail_type)
             thumbnail_data = thumbnail_bio.getvalue()
 
         name, ext = os.path.splitext(fn)
-        thumbnail_fn = '{}-thumb.{}'.format(name, self.thumbnail_type)
+        thumbnail_fn = '{}-thumb.{}'.format(name, thumbnail_type)
 
         ret = Response(thumbnail_data)
         ret.headers['Content-Disposition'] = '{}; filename="{}"'.format(
             self.content_disposition, thumbnail_fn)
         ret.headers['Content-Length'] = len(thumbnail_data)
-        ret.headers['Content-Type'] = 'image/%s' % self.thumbnail_type
+        ret.headers['Content-Type'] = 'image/%s' % thumbnail_type
         ret.headers['X-Content-Type-Options'] = 'nosniff'  # yes, we really mean it
         return ret
