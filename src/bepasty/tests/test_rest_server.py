@@ -261,7 +261,7 @@ def _upload(client, data, token=None, filename=None, ftype=None, lifetime=None,
     }
     if set_range:
         if range_str is None:
-            range_str = 'bytes 0-{}/{}'.format(payload_len - 1, payload_len)
+            range_str = f'bytes 0-{payload_len - 1}/{payload_len}'
         headers['Content-Range'] = range_str
     if filename is not None:
         headers['Content-Filename'] = filename
@@ -488,37 +488,37 @@ def test_upload_range(client_fixture):
     check_err_response(response, 400)
 
     # Content-Range: other 0-<sep - 1>/<len(data)> (invalid unit)
-    range_str = 'other {}-{}/{}'.format(0, sep - 1, len(UPLOAD_DATA))
+    range_str = f'other {0}-{sep - 1}/{len(UPLOAD_DATA)}'
     response = _upload(client, data, token='full', filename=filename,
                        ftype=ftype, range_str=range_str)
     check_err_response(response, 400)
 
     # Content-Range: bytes invalid-<sep - 1>/<len(data)> (invalid first)
-    range_str = 'bytes invalid-{}/{}'.format(sep - 1, len(UPLOAD_DATA))
+    range_str = f'bytes invalid-{sep - 1}/{len(UPLOAD_DATA)}'
     response = _upload(client, data, token='full', filename=filename,
                        ftype=ftype, range_str=range_str)
     check_err_response(response, 400)
 
     # Content-Range: bytes 0-invalid/<len(data)> (invalid last)
-    range_str = 'bytes {}-invalid/{}'.format(0, len(UPLOAD_DATA))
+    range_str = f'bytes {0}-invalid/{len(UPLOAD_DATA)}'
     response = _upload(client, data, token='full', filename=filename,
                        ftype=ftype, range_str=range_str)
     check_err_response(response, 400)
 
     # Content-Range: bytes <sep - 1>-0/<len(data)> (invalid first > last)
-    range_str = 'bytes {}-{}/{}'.format(sep - 1, 0, len(UPLOAD_DATA))
+    range_str = f'bytes {sep - 1}-{0}/{len(UPLOAD_DATA)}'
     response = _upload(client, data, token='full', filename=filename,
                        ftype=ftype, range_str=range_str)
     check_err_response(response, 400)
 
     # Content-Range: bytes 0-<sep - 1>/* (not supported)
-    range_str = 'bytes {}-{}/*'.format(0, sep - 1)
+    range_str = f'bytes {0}-{sep - 1}/*'
     response = _upload(client, data, token='full', filename=filename,
                        ftype=ftype, range_str=range_str)
     check_err_response(response, 400)
 
     # Content-Range: bytes */<len(data)> (not supported)
-    range_str = 'bytes */{}'.format(len(UPLOAD_DATA))
+    range_str = f'bytes */{len(UPLOAD_DATA)}'
     response = _upload(client, data, token='full', filename=filename,
                        ftype=ftype, range_str=range_str)
     check_err_response(response, 400)
@@ -530,7 +530,7 @@ def test_upload_range(client_fixture):
     check_err_response(response, 400)
 
     # upload first part of data
-    range_str = 'bytes {}-{}/{}'.format(0, sep - 1, len(UPLOAD_DATA))
+    range_str = f'bytes {0}-{sep - 1}/{len(UPLOAD_DATA)}'
     response = _upload(client, data, token='full', filename=filename,
                        ftype=ftype, range_str=range_str)
     check_upload_response(response, 200)
@@ -566,13 +566,13 @@ def test_bad_data(client_fixture):
     ftype = 'text/x-python'
 
     # upload without Content-Length
-    range_str = 'bytes 0-{}/{}'.format(len(UPLOAD_DATA) - 1, len(UPLOAD_DATA))
+    range_str = f'bytes 0-{len(UPLOAD_DATA) - 1}/{len(UPLOAD_DATA)}'
     response = _upload(client, None, token='full', filename=filename,
                        ftype=ftype, range_str=range_str, encode=False)
     check_err_response(response, 400)
 
     # upload invalid base64 encode
-    range_str = 'bytes 0-{}/{}'.format(len(UPLOAD_DATA) - 1, len(UPLOAD_DATA))
+    range_str = f'bytes 0-{len(UPLOAD_DATA) - 1}/{len(UPLOAD_DATA)}'
     response = _upload(client, UPLOAD_DATA, token='full', filename=filename,
                        ftype=ftype, range_str=range_str, encode=False)
     check_err_response(response, 400)
@@ -744,14 +744,14 @@ def test_download_range(client_fixture):
         # Range: other=0-10 (invalid unit)
         offset = 0
         limit = 10
-        headers['Range'] = 'other={}-{}'.format(offset, limit - 1)
+        headers['Range'] = f'other={offset}-{limit - 1}'
         response = client.get(url.download, headers=headers)
         check_err_response(response, 400)
 
         # Range: bytes=invalid-10 (invalid first)
         offset = 0
         limit = 10
-        headers['Range'] = 'bytes=invalid-{}'.format(limit - 1)
+        headers['Range'] = f'bytes=invalid-{limit - 1}'
         response = client.get(url.download, headers=headers)
         check_err_response(response, 400)
 
@@ -765,21 +765,21 @@ def test_download_range(client_fixture):
         # Range: bytes=10-0 (invalid first > last)
         offset = 0
         limit = 10
-        headers['Range'] = 'bytes={}-{}'.format(limit - 1, offset)
+        headers['Range'] = f'bytes={limit - 1}-{offset}'
         response = client.get(url.download, headers=headers)
         check_err_response(response, 400)
 
         # Range: bytes=0-9,10-<limit - 1> (not supported for now)
         offset = 0
         limit = len(data)
-        headers['Range'] = 'bytes={}-9,10-{}'.format(offset, limit - 1)
+        headers['Range'] = f'bytes={offset}-9,10-{limit - 1}'
         response = client.get(url.download, headers=headers)
         check_err_response(response, 400)
 
         # Range: bytes=0-10
         offset = 0
         limit = 10
-        headers['Range'] = 'bytes={}-{}'.format(offset, limit - 1)
+        headers['Range'] = f'bytes={offset}-{limit - 1}'
         response = client.get(url.download, headers=headers)
         check_data_response(response, meta, data[offset:limit], offset=offset,
                             total_size=len(data))
@@ -788,14 +788,14 @@ def test_download_range(client_fixture):
         # FIXME: suffix-byte-range-spec is not supported for now
         offset = 0
         limit = 10
-        headers['Range'] = 'bytes=-{}'.format(limit - 1)
+        headers['Range'] = f'bytes=-{limit - 1}'
         response = client.get(url.download, headers=headers)
         check_err_response(response, 400)
 
         # Range: bytes=10-<limit - 1>
         offset = 10
         limit = len(data)
-        headers['Range'] = 'bytes={}-{}'.format(offset, limit - 1)
+        headers['Range'] = f'bytes={offset}-{limit - 1}'
         response = client.get(url.download, headers=headers)
         check_data_response(response, meta, data[offset:limit], offset=offset,
                             total_size=len(data))
@@ -962,7 +962,7 @@ def test_incomplete(client_fixture):
     # upload a half of data to make incomplete
     sep = 10
     data = UPLOAD_DATA[:sep]
-    range_str = 'bytes {}-{}/{}'.format(0, sep - 1, len(UPLOAD_DATA))
+    range_str = f'bytes {0}-{sep - 1}/{len(UPLOAD_DATA)}'
     response = _upload(client, data, token='full', filename=filename,
                        ftype=ftype, range_str=range_str)
     check_upload_response(response, 200)
@@ -1026,7 +1026,7 @@ def test_magic(client_fixture):
             # detection (meta has 'type-hint' internally)
             sep = 10
             data = UPLOAD_DATA[:sep]
-            range_str = 'bytes {}-{}/{}'.format(0, sep - 1, len(UPLOAD_DATA))
+            range_str = f'bytes {0}-{sep - 1}/{len(UPLOAD_DATA)}'
             response = _upload(client, data, token='full', filename=filename,
                                ftype=ftype, range_str=range_str)
             check_upload_response(response, 200)

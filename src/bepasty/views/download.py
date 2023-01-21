@@ -122,7 +122,7 @@ class ThumbnailView(InlineView):
             thumbnail_data = thumbnail_bio.getvalue()
 
         name, ext = os.path.splitext(fn)
-        thumbnail_fn = '%s-thumb.%s' % (name, self.thumbnail_type)
+        thumbnail_fn = '{}-thumb.{}'.format(name, self.thumbnail_type)
 
         ret = Response(thumbnail_data)
         ret.headers['Content-Disposition'] = '{}; filename="{}"'.format(
