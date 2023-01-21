@@ -1,6 +1,28 @@
 ChangeLog
 =========
 
+Release 1.1.0 (not yet released)
+--------------------------------
+
+Fixes:
+
+- adapt to Pygments >= 2.12.0 (and also require it), #281
+
+New features:
+
+- for unsupported item types, return a placeholder svg thumbnail
+- list item view: add thumbnail columns (needs "Pillow" extra)
+
+Other changes:
+
+- remove Python 3.5 and 3.6 support, add support for Python 3.10 and 3.11
+- use setup.cfg for most metadata, #276
+- github actions CI: fixes and updates
+- fix rest_server testing failures: use old Flask, Jinja2, markupsafe for now
+- docs: how to authenticate with http basic auth / for the REST api, #273
+- source: pyupgrade --py37-plus *.py
+
+
 Release 1.0.0 (2021-03-14)
 --------------------------
 
