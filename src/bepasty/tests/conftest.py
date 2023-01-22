@@ -7,7 +7,7 @@ import pytest
 from bepasty.app import create_app
 
 
-@pytest.yield_fixture(scope='module')
+@pytest.fixture(scope='module')
 def app(request):
     """
     creates a bepasty App-Instance
@@ -17,7 +17,7 @@ def app(request):
     unlink(app.config['DATABASE'])
 
 
-@pytest.yield_fixture(scope='module')
+@pytest.fixture(scope='module')
 def testclient(request, app):
     """
     creates a Flask-testclient instance for bepasty
