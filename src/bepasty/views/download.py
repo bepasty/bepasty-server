@@ -98,14 +98,11 @@ class ThumbnailView(InlineView):
         return b'', 409  # conflict
 
     def response(self, item, name):
-        if PIL is None:
-            # looks like PIL / Pillow is not available
-            return b'', 501  # not implemented
-
         sz = item.meta[SIZE]
         fn = item.meta[FILENAME]
         ct = item.meta[TYPE]
-        if not ct.startswith("image/"):
+        unsupported = PIL is None or ct not in {'image/jpeg', 'image/png', }
+        if unsupported:
             # return a placeholder thumbnail for unsupported item types
             ret = Response(self.thumbnail_data)
             ret.headers['Content-Length'] = len(self.thumbnail_data)
