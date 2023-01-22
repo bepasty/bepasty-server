@@ -30,6 +30,8 @@ Features
 * Image files:
 
   - we show the image (format support depends on browser)
+  - for image list items, we can show a slide show ("carousel" view)
+  - in the items list, a thumbnail of images is shown
 
 * Audio and video files:
 
