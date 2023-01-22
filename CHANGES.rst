@@ -7,18 +7,21 @@ Release 1.1.0 (not yet released)
 Fixes:
 
 - adapt to Pygments >= 2.12.0 (and also require it), #281
+- adapt to recent Flask/Werkzeug releases
 
 New features:
 
-- for unsupported item types, return a placeholder svg thumbnail
+- add a carousel view for lists of images, #148
 - list item view: add thumbnail columns (needs "Pillow" extra)
+- add a thumbnail view that dynamically computes thumbnails for image items
+  (for unsupported item types, return a placeholder svg thumbnail)
 
 Other changes:
 
 - remove Python 3.5 and 3.6 support, add support for Python 3.10 and 3.11
 - use setup.cfg for most metadata, #276
 - github actions CI: fixes and updates
-- fix rest_server testing failures: use old Flask, Jinja2, markupsafe for now
+- fix rest_server testing failures / adapt to recent Flask/Werkzeug
 - docs: how to authenticate with http basic auth / for the REST api, #273
 - source: pyupgrade --py37-plus *.py
 
