@@ -101,7 +101,7 @@ class ThumbnailView(InlineView):
         sz = item.meta[SIZE]
         fn = item.meta[FILENAME]
         ct = item.meta[TYPE]
-        unsupported = PIL is None or ct not in {'image/jpeg', 'image/png', 'image/gif'}
+        unsupported = PIL is None or ct not in {'image/jpeg', 'image/png', 'image/gif', 'image/webp'}
         if unsupported:
             # return a placeholder thumbnail for unsupported item types
             ret = Response(self.thumbnail_data)
@@ -114,6 +114,8 @@ class ThumbnailView(InlineView):
             thumbnail_type = 'jpeg'
         elif ct in ('image/png', 'image/gif'):
             thumbnail_type = 'png'
+        elif ct in ('image/webp', ):
+            thumbnail_type = 'webp'
         else:
             raise ValueError('unrecognized image content type')
 
