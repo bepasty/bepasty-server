@@ -8,11 +8,11 @@ if [ "$R" = "" ]; then
 fi
 
 if [ "$2" = "test" ]; then
-    export TWINE_REPOSITORY_URL=https://test.pypi.org/legacy/
+    export TWINE_REPOSITORY=testpypi
 else
-    export TWINE_REPOSITORY_URL=
+    export TWINE_REPOSITORY=pypi
 fi
 
 D=dist/bepasty-$R.tar.gz
 
-twine upload $D.asc $D
+twine upload "$D.asc" "$D"
