@@ -142,7 +142,7 @@ POST Response by the server:
     *Transaction-ID*
         Transaction-ID provided for continued upload in a chunked upload
         process.
-    *Content-Disposition*
+    *Content-Location*
         The URI of the newly uploaded file on the server. Will only be
         provided when upload is finished and successful.
 
