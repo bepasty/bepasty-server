@@ -1,6 +1,8 @@
 import re
 import time
 import mimetypes
+from pygments.lexers import get_lexer_for_filename
+from pygments.util import ClassNotFound as NoPygmentsLexer
 from werkzeug.exceptions import BadRequest, RequestEntityTooLarge
 
 from flask import current_app
@@ -87,6 +89,15 @@ class Upload:
         """
         if not ct and filename:
             ct, encoding = mimetypes.guess_type(filename)
+
+            if not ct:
+                try:
+                    lexer = get_lexer_for_filename(filename)
+                except NoPygmentsLexer:
+                    pass
+                else:
+                    if len(lexer.mimetypes) > 0:
+                        ct = lexer.mimetypes[0]
         if not ct:
             return ct_hint, True
         return cls._type_re.sub('', ct)[:50], False
