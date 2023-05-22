@@ -612,7 +612,7 @@ def test_upload_transaction_id(client_fixture):
         check_err_response(response, 400)
 
     # upload with Transaction-ID for invalid filename
-    trans_id = base64.b64encode(b'invalid')
+    trans_id = base64.b64encode(b'invalid').decode()
     with _upload(client, data, token='full', range_str=range_str,
                  trans_id=trans_id) as response:
         check_err_response(response, 400)
