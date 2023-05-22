@@ -834,7 +834,7 @@ def test_modify(client_fixture):
 
     # invalid Content-Type
     with client.post(url.modify, headers=add_auth('user', 'full'), data='{}') as response:
-        check_err_response(response, 400)
+        check_err_response(response, 415)
 
     # invalid json
     with client.post(url.modify, headers=headers, data='') as response:
