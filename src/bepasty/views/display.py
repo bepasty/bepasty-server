@@ -1,8 +1,9 @@
 import errno
 import time
 
-from flask import current_app, render_template, Markup, url_for, request
+from flask import current_app, render_template, url_for, request
 from flask.views import MethodView
+from markupsafe import Markup
 from werkzeug.exceptions import NotFound, Forbidden
 from pygments import highlight
 from pygments.lexers import get_lexer_for_mimetype

@@ -4,12 +4,12 @@ import hashlib
 
 from flask import (
     Flask,
-    Markup,
     current_app,
     g as flaskg,  # searching for 1 letter name "g" isn't nice, thus we use flaskg
     render_template,
     session,
 )
+from markupsafe import Markup
 
 from .apis import blueprint as blueprint_apis
 from .storage import create_storage
