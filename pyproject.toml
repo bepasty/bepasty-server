@@ -1,0 +1,67 @@
+[build-system]
+requires = ["setuptools>=45", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+write_to = "src/bepasty/_version.py"
+
+[project]
+name = "bepasty"
+dynamic = ["version"]
+license = {text="BSD 2-clause"}
+authors = [{name="The Bepasty Team (see AUTHORS file)"}]
+maintainers = [{name="Thomas Waldmann", email="tw@waldmann-edv.de"}]
+description = "a binary pastebin / file upload service"
+readme = "README.rst"
+keywords = ["text", "image", "audio", "video", "binary", "pastebin", "upload", "download", "service", "wsgi", "flask"]
+requires-python = ">=3.8"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Web Environment",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Framework :: Flask",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+dependencies = [
+    "Flask",
+    "markupsafe",
+    "Pygments>=2.12.0",
+    "xstatic",
+    "XStatic-asciinema-player",
+    "xstatic-bootbox>=5.4.0",
+    "xstatic-bootstrap>=4.0.0.0,<5.0.0.0",
+    "xstatic-font-awesome<5.0",
+    "xstatic-jquery",
+    "xstatic-jquery-ui",
+    "xstatic-jquery-file-upload",
+    "xstatic-pygments",
+]
+
+[project.scripts]
+bepasty-server = "bepasty.cli.server:main"
+bepasty-object = "bepasty.cli.object:main"
+
+[project.optional-dependencies]
+magic = ["python-magic"]
+pillow = ["Pillow"]
+
+[project.urls]
+Homepage = "https://github.com/bepasty/bepasty-server/"
+Documentation = "https://bepasty-server.readthedocs.org/"
+Changelog = "https://github.com/bepasty/bepasty-server/blob/master/CHANGES.rst"
+
+[tool.pytest.ini_options]
+norecursedirs = [".eggs", ".git", ".tox", "build", ]
+markers = [
+    "slow",
+    "needs_server",
+]
+
+[tool.flake8]
+max-line-length = 120
