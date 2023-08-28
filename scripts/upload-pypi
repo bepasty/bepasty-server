@@ -15,4 +15,4 @@ fi
 
 D=dist/bepasty-$R.tar.gz
 
-twine upload "$D.asc" "$D"
+twine upload $D"
