@@ -1,6 +1,28 @@
 ChangeLog
 =========
 
+Release 1.2.0 (2023-08-28)
+--------------------------
+
+Fixes:
+
+- use xstatic-fontawesome < 5, minimal workaround for #305
+
+New features:
+
+- upload: guess file content type also using pygments, #303
+
+Other changes:
+
+- drop support for python 3.7
+- use pyproject.toml file, remove setup.*
+- fix readthedocs build, #298
+- misc code cleanups related to deprecations in flask and werkzeug
+- adapt http response code in test for werkzeug >= 2.3
+- docs: REST POST response returns file URI in Content-Location
+- CI: run tests on Ubuntu 22.04
+
+
 Release 1.1.0 (2023-01-22)
 --------------------------
 
