@@ -1,4 +1,6 @@
+build
 tox
+flake8-pyproject
 flake8
 pytest
 pytest-cov
