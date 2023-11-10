@@ -60,6 +60,9 @@ jobs:
             - os: ubuntu-22.04
               python-version: '3.11'
               toxenv: py311
+            - os: ubuntu-22.04
+              python-version: '3.12'
+              toxenv: py312
 
     env:
       TOXENV: ${{ matrix.toxenv }}
