@@ -25,20 +25,18 @@ the configuration settings need your attention).
 When setting up permissions and giving out login secrets, carefully think about whom you give which permissions,
 especially when setting up the ``DEFAULT_PERMISSIONS`` (which apply to not-logged-in users).
 
-Here is the documentation straight from its config:
+Here are the configuration defaults:
 
-.. autoclass:: bepasty.config.Config
+.. automodule:: bepasty.config
    :members:
 
 
-To create a local and non-default configuration, copy ``bepasty/config.py`` to e.g. ``/srv/bepasty/bepasty.conf``
-first, remove the ``class Config`` and remove all indents in the file.
-The comments can be removed too, if you feel the need to.
+To create a local and non-default configuration, copy ``bepasty/config.py`` to e.g. ``/srv/bepasty/bepasty.conf``.
+The comments can be removed, if you feel the need to.
 At last modify these two configs variables: then modify it:
 
 ::
 
-    # Note: no Config class required, just simple KEY = value lines:
     SECRET_KEY = '........................'
     STORAGE = 'filesystem'
     STORAGE_FILESYSTEM_DIRECTORY = '/srv/bepasty/storage/'
@@ -47,11 +45,6 @@ At last modify these two configs variables: then modify it:
 
 Important notes:
 
-* if you copied the file from the ``bepasty/config.py`` it will have
-  a "class Config" in it and all the settings are inside that class. This is
-  **not** what you need. Due to how flask config files work, you need to
-  remove the class statement and outdent all the settings, so you just have
-  global KEY = VALUE statements left on the top level of the config file.
 * if you run over http (like for trying it locally / for development), you
   need to change the configuration to use SESSION_SECURE_COOKIE = False
   (otherwise you can not login as it won't transmit the cookie over unsecure
