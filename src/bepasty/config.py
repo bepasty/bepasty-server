@@ -60,7 +60,7 @@ class Config:
         'application/pdf': 10 * 1000 * 1000,
         'application/x-pdf': 10 * 1000 * 1000,
         # images / audio / video can be rather big, we do not process them:
-        'image/': 10 * 1000 * 1000,
+        'image/': 20 * 1000 * 1000,
         'audio/': 1 * 1000 * 1000 * 1000,
         'video/': 5 * 1000 * 1000 * 1000,
         # DEFAULT - matches everything not matched otherwise.
