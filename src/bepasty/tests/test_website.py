@@ -1,6 +1,10 @@
 from selenium.webdriver import Firefox
+from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver import Chrome
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import (
+    NoSuchDriverException, NoSuchElementException
+)
 
 import pytest
 
@@ -17,7 +21,11 @@ class TestMaxlifeFeature:
         """
         Setup: Open a mozilla browser, login
         """
-        self.browser = Firefox()
+        try:
+            self.browser = Firefox()
+        except NoSuchDriverException:
+            service = ChromeService(executable_path="/usr/bin/chromedriver")
+            self.browser = Chrome(service=service)
         self.browser.get('http://localhost:5000/')
         token = self.browser.find_element_by_name("token")
         password = "foo"
