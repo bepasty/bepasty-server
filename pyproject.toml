@@ -30,7 +30,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
-    "werkzeug<3",
+    "werkzeug",
     "Flask",
     "markupsafe",
     "Pygments>=2.12.0",
