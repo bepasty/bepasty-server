@@ -1,6 +1,22 @@
 ChangeLog
 =========
 
+Release 1.2.1 (not released yet)
+--------------------------------
+
+Fixes:
+
+- fix compatibility to werkzeug 3 (url quoting), #312
+
+Other changes:
+
+- allow rendering previews for larger image-files (up to 20MB) by default
+- tests:
+
+  - fallback to Chrom(e|ium) if the Firefox driver for selenium isn't available
+  - test on Python 3.12 also
+
+
 Release 1.2.0 (2023-08-28)
 --------------------------
 
