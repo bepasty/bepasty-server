@@ -2,11 +2,11 @@ import os
 import errno
 from io import BytesIO
 import time
+import urllib
 
 from flask import abort, current_app, jsonify, request, url_for
 from flask.views import MethodView
 from werkzeug.exceptions import NotFound, Forbidden
-from werkzeug.urls import url_quote
 
 from ..constants import COMPLETE, FILENAME, SIZE
 from ..utils.date_funcs import get_maxlife
@@ -56,7 +56,7 @@ class UploadView(MethodView):
         maxlife_timestamp = int(time.time()) + maxtime if maxtime > 0 else maxtime
         name = create_item(f, filename, size, content_type, content_type_hint, maxlife_stamp=maxlife_timestamp)
         kw = {}
-        kw['_anchor'] = url_quote(filename)
+        kw['_anchor'] = urllib.parse.quote(filename)
         if content_type == 'text/x-bepasty-redirect':
             # after creating a redirect, we want to stay on the bepasty
             # redirect display, so the user can copy the URL.
