@@ -87,6 +87,12 @@ class Config:
     #: Filesystem storage path
     STORAGE_FILESYSTEM_DIRECTORY = '/tmp/'
 
+    #: Default lifetime for uploads
+    #: Supported units: 
+    #: 'MINUTES', 'HOURS', 'DAYS', 'WEEKS', 'MONTHS', 'YEARS', 'FOREVER'
+    DEFAULT_MAXLIFE_VALUE = 1
+    DEFAULT_MAXLIFE_UNIT = 'MONTHS'
+    
     #: server secret key needed for safe session cookies.
     #: you must set a very long, very random, very secret string here,
     #: otherwise bepasty will not work (and crash when trying to log in)!
