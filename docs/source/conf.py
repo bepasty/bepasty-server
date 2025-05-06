@@ -22,7 +22,7 @@ from bepasty._version import version
 # General information about the project.
 project = 'bepasty'
 author = 'The %s Team' % project
-copyright = '2020-2024, %s' % author
+copyright = '2020-2025, %s' % author
 description = 'a binary pastebin / file upload service'
 
 # -- General configuration ------------------------------------------------
