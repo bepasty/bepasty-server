@@ -1,6 +1,23 @@
 ChangeLog
 =========
 
+Release 1.2.2 (not released yet)
+--------------------------------
+
+Fixes:
+
+None.
+
+Other changes:
+
+- pin xstatic dependencies to legacy versions (this is to avoid any problems
+  that could potentially arise from modernized xstatic packages)
+- support Python 3.13 (testing / metadata)
+- rtd: remove system_packages config line, use Ubuntu 24.04, Python 3.12
+- fix typo in upload script, use TWINE_REPOSITORY=bepasty for pypi upload
+- config: clarify "very long" requirement for SECRET_KEY, #310
+
+
 Release 1.2.1 (2024-03-06)
 --------------------------
 
