@@ -15,7 +15,7 @@
         <!-- jQuery UI styles -->
         <link rel="stylesheet" href="{{ url_for('bepasty.xstatic', name='jquery_ui', filename='themes/smoothness/jquery-ui.css') }}" type="text/css">
         <!-- Font Awesome -->
-        <link rel="stylesheet" href="{{ url_for('bepasty.xstatic', name='font_awesome', filename='css/font-awesome.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('bepasty.xstatic', name='font_awesome', filename='css/all.min.css') }}">
         <!-- Bepasty styles -->
         <link rel="stylesheet" href="{{ url_for('static', filename='app/css/style.css' ) }}" type="text/css">
         {% block extra_link %}{% endblock %}
@@ -31,7 +31,7 @@
                         <a class="navbar-brand" href="{{ url_for('bepasty.index') }}">
                             {{ config.SITENAME }}
                             <span class="navbar-text small">
-                                (Permissions:{% for permission, permission_icon in flaskg.icon_permissions %} <i class="fa fa-{{ permission_icon }}" title="{{ permission }}"></i>{% endfor %})
+                                (Permissions:{% for permission, permission_icon in flaskg.icon_permissions %} <i class="fas fa-{{ permission_icon }}" title="{{ permission }}"></i>{% endfor %})
                             </span>
                         </a>
                         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
