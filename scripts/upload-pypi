@@ -10,7 +10,7 @@ fi
 if [ "$2" = "test" ]; then
     export TWINE_REPOSITORY=testpypi
 else
-    export TWINE_REPOSITORY=pypi
+    export TWINE_REPOSITORY=bepasty
 fi
 
 D=dist/bepasty-$R.tar.gz

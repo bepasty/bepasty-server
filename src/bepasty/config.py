@@ -88,7 +88,7 @@ class Config:
     STORAGE_FILESYSTEM_DIRECTORY = '/tmp/'
 
     #: server secret key needed for safe session cookies.
-    #: you must set a very long, very random, very secret string here,
+    #: you must set a very long (20-100 chars), very random, very secret string here,
     #: otherwise bepasty will not work (and crash when trying to log in)!
     SECRET_KEY = ''
 
