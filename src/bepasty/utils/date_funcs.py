@@ -7,9 +7,14 @@ from ..constants import FOREVER, TIMESTAMP_MAX_LIFE
 
 def get_maxlife(data, underscore):
     unit_key = 'maxlife_unit' if underscore else 'maxlife-unit'
-    unit_default = 'MONTHS'
+    unit_default = current_app.config['DEFAULT_MAXLIFE_UNIT']
+    if unit_default == None:
+        unit_default = 'MONTHS'
     unit = data.get(unit_key, unit_default).upper()
     value_key = 'maxlife_value' if underscore else 'maxlife-value'
+    value_default = current_app.config['DEFAULT_MAXLIFE_VALUE']
+    if value_default == None:
+        value_default = 'MONTHS'
     value_default = '1'
     try:
         value = int(data.get(value_key, value_default))
