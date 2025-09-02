@@ -51,18 +51,18 @@
                 <td>
                     <div class="btn-group flex-wrap flex-md-nowrap" role="group">
                         <a href="{{ url_for('bepasty.display', name=file['id']) }}" class="btn btn-sm btn-info" role="button">
-                            display
+                            Display
                         </a>
                         <a href="{{ url_for('bepasty.download', name=file['id']) }}" class="btn btn-sm btn-info" role="button">
-                            download
+                            Download
                         </a>
                         <a href="{{ url_for('bepasty.inline', name=file['id']) }}" class="btn btn-sm btn-info" role="button">
-                            inline
+                            Inline
                         </a>
                         {% if may(DELETE) %}
                             <form action="{{ url_for('bepasty.delete', name=file['id']) }}" method="post" class="btn-group">
                                 <button type="submit" class="btn btn-sm btn-danger">
-                                    delete
+                                    Delete
                                 </button>
                             </form>
                         {% endif %}
@@ -70,13 +70,13 @@
                         {% if not file['locked'] %}
                             <form action="{{ url_for('bepasty.lock', name=file['id']) }}" method="post" class="btn-group">
                                 <button type="submit" class="btn btn-sm btn-danger">
-                                    lock
+                                    Lock
                                 </button>
                             </form>
                         {% else %}
                             <form action="{{ url_for('bepasty.unlock', name=file['id']) }}" method="post" class="btn-group">
                                 <button type="submit" class="btn btn-sm btn-info">
-                                    unlock
+                                    Unlock
                                 </button>
                             </form>
                         {% endif %}
