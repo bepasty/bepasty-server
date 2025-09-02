@@ -3,7 +3,7 @@ import importlib
 
 def create_storage(app):
     """
-    Load specified storage and return the object.
+    Load the specified storage backend and return the storage object.
     """
     if 'STORAGE' not in app.config:
         raise Exception("Missing STORAGE config key")

@@ -1,4 +1,4 @@
-/* base styles
+/* Base styles
 -------------------------------------------------- */
 
 html,
@@ -83,7 +83,7 @@ body {
     color: #959595;
 }
 
-/* if data is too wide, show scrollbars */
+/* If data is too wide, show scrollbars */
 .data {
    width: 100%;
    overflow: auto;
@@ -93,7 +93,7 @@ body {
     background-color: #ffc;
 }
 
-/* override pygments table highlighting style */
+/* Override Pygments table highlighting style */
 table.highlighttable {
     width: 100%;
     border: 1px solid #ccc;
@@ -132,7 +132,7 @@ table.highlighttable {
     width: 1px;
 }
 
-/* autocomplete for modify dialog */
+/* Autocomplete for modify dialog */
 .ui-autocomplete {
     z-index: 1065;
 }

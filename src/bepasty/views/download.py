@@ -40,16 +40,16 @@ class DownloadView(MethodView):
         ct = item.meta[TYPE]
         dispo = self.content_disposition
         if dispo != 'attachment':
-            # no simple download, so we must be careful about XSS
+            # Not a simple download, so we must be careful about XSS
             if ct.startswith("text/"):
-                ct = 'text/plain'  # only send simple plain text
+                ct = 'text/plain'  # Only send simple plain text
 
         ret = Response(stream_with_context(self.stream(item, 0, item.data.size)))
         ret.headers['Content-Disposition'] = '{}; filename="{}"'.format(
             dispo, item.meta[FILENAME])
         ret.headers['Content-Length'] = item.meta[SIZE]
         ret.headers['Content-Type'] = ct
-        ret.headers['X-Content-Type-Options'] = 'nosniff'  # yes, we really mean it
+        ret.headers['X-Content-Type-Options'] = 'nosniff'  # Yes, we really mean it
         return ret
 
     def get(self, name):
@@ -103,11 +103,11 @@ class ThumbnailView(InlineView):
         ct = item.meta[TYPE]
         unsupported = PIL is None or ct not in {'image/jpeg', 'image/png', 'image/gif', 'image/webp'}
         if unsupported:
-            # return a placeholder thumbnail for unsupported item types
+            # Return a placeholder thumbnail for unsupported item types
             ret = Response(self.thumbnail_data)
             ret.headers['Content-Length'] = len(self.thumbnail_data)
             ret.headers['Content-Type'] = 'image/svg+xml'
-            ret.headers['X-Content-Type-Options'] = 'nosniff'  # yes, we really mean it
+            ret.headers['X-Content-Type-Options'] = 'nosniff'  # Yes, we really mean it
             return ret
 
         if ct in ('image/jpeg', ):
@@ -117,9 +117,9 @@ class ThumbnailView(InlineView):
         elif ct in ('image/webp', ):
             thumbnail_type = 'webp'
         else:
-            raise ValueError('unrecognized image content type')
+            raise ValueError('Unrecognized image content type')
 
-        # compute thumbnail data "on the fly"
+        # Compute thumbnail data "on the fly"
         with BytesIO(item.data.read(sz, 0)) as img_bio, BytesIO() as thumbnail_bio:
             with Image.open(img_bio) as img:
                 img.thumbnail(self.thumbnail_size)

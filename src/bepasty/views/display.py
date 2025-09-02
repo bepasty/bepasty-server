@@ -20,22 +20,22 @@ from .filelist import file_infos
 
 def rendering_allowed(item_type, item_size, use_pygments, complete):
     """
-    check if rendering is allowed, checks for:
+    Check whether rendering is allowed. It checks for:
 
     * whether the item is completely uploaded
-    * whether the size is within the configured limits for the content-type
+    * whether the size is within the configured limits for the content type
     """
     if not complete:
         return False
     if use_pygments:
-        # if we use pygments, special restrictions apply
+        # If we use Pygments, special restrictions apply
         item_type = 'HIGHLIGHT_TYPES'
-    # create a tuple list [(content_type_prefix, max_size), ...] with long prefixes first
+    # Create a tuple list [(content_type_prefix, max_size), ...] with long prefixes first
     ct_size = sorted(current_app.config['MAX_RENDER_SIZE'].items(), key=lambda e: len(e[0]), reverse=True)
     for ct, size in ct_size:
         if item_type.startswith(ct):
             return item_size <= size
-    # there should be one entry with ct == '', so we should never get here:
+    # There should be one entry with ct == '', so we should never get here:
     return False
 
 
@@ -63,7 +63,7 @@ class DisplayView(MethodView):
                 raise NotFound()
 
             def read_data(item):
-                # reading the item for rendering is registered like a download
+                # Reading the item for rendering is registered like a download
                 data = item.data.read(item.data.size, 0)
                 item.meta[TIMESTAMP_DOWNLOAD] = int(time.time())
                 return data
@@ -76,8 +76,8 @@ class DisplayView(MethodView):
                 ct_pygments = ct
             except NoPygmentsLexer:
                 if ct.startswith('text/'):
-                    # seems like we found a text type not supported by pygments
-                    # use text/plain so we get a display with line numbers
+                    # It seems we found a text type not supported by Pygments
+                    # Use text/plain so we get a display with line numbers
                     use_pygments = True
                     ct_pygments = 'text/plain'
                 else:
@@ -86,7 +86,7 @@ class DisplayView(MethodView):
             is_list_item = False
             if rendering_allowed(ct, size, use_pygments, complete):
                 if ct.startswith('text/x-bepasty-'):
-                    # special bepasty items - must be first, don't feed to pygments
+                    # Special Bepasty items — must be first; don't feed to Pygments
                     if ct == 'text/x-bepasty-list':
                         is_list_item = True
                         names = read_data(item).decode('utf-8').splitlines()
@@ -94,8 +94,8 @@ class DisplayView(MethodView):
                         if view == 'normal':
                             rendered_content = Markup(render_template('filelist_tableonly.html', files=files))
                         elif view == 'carousel':
-                            # this template renders to a complete html page
-                            # we only consider image items for this
+                            # This template renders a complete HTML page
+                            # We only consider image items for this
                             files = [f for f in files if f[TYPE].startswith('image/')]
                             return render_template('carousel.html', files=files)
                         else:
@@ -111,11 +111,11 @@ class DisplayView(MethodView):
                     rendered_content = Markup('<img src="%s" alt="the image" width="800">' % src)
                 elif ct.startswith('audio/'):
                     src = url_for('bepasty.download', name=name)
-                    alt_msg = 'html5 audio element not supported by your browser.'
+                    alt_msg = 'HTML5 audio element not supported by your browser.'
                     rendered_content = Markup(f'<audio controls src="{src}">{alt_msg}</audio>')
                 elif ct.startswith('video/'):
                     src = url_for('bepasty.download', name=name)
-                    alt_msg = 'html5 video element not supported by your browser.'
+                    alt_msg = 'HTML5 video element not supported by your browser.'
                     rendered_content = Markup(f'<video controls src="{src}">{alt_msg}</video>')
                 elif ct in ['application/pdf', 'application/x-pdf', ]:
                     src = url_for('bepasty.inline', name=name)
@@ -128,11 +128,11 @@ class DisplayView(MethodView):
                                                current_app.config.get('ASCIINEMA_THEME', 'asciinema')))
                 elif use_pygments:
                     text = read_data(item)
-                    # TODO we don't have the coding in metadata
+                    # TODO: We don't have the encoding in metadata
                     try:
                         text = text.decode('utf-8')
                     except UnicodeDecodeError:
-                        # well, it is not utf-8 or ascii, so we can only guess...
+                        # Well, it is not UTF-8 or ASCII, so we can only guess...
                         text = text.decode('iso-8859-1')
                     lexer = get_lexer_for_mimetype(ct_pygments)
                     formatter = CustomHtmlFormatter(linenos='table', lineanchors="L",
@@ -144,7 +144,7 @@ class DisplayView(MethodView):
                 if not complete:
                     rendered_content = "Rendering not allowed (not complete). Is it still being uploaded?"
                 else:
-                    rendered_content = "Rendering not allowed (too big?). Try download"
+                    rendered_content = "Rendering not allowed (too big?). Try downloading."
 
             return render_template('display.html', name=name, item=item,
                                    rendered_content=rendered_content,

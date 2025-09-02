@@ -12,11 +12,11 @@ from ..utils.permissions import LIST, may
 
 def file_infos(names=None):
     """
-    iterates over storage files metadata.
-    note: we put the storage name into the metadata as ID
+    Iterate over storage files' metadata.
 
-    :param names: None means "all items"
-                  otherwise give a list of storage item names
+    Note: we put the storage name into the metadata as ID.
+
+    :param names: None means "all items"; otherwise, provide a list of storage item names
     """
     storage = current_app.storage
     if names is None:
@@ -26,8 +26,8 @@ def file_infos(names=None):
             with storage.open(name) as item:
                 meta = dict(item.meta)
                 if not meta:
-                    # we got empty metadata, this happens for 0-byte .meta files.
-                    # ignore it for now.
+                    # We got empty metadata; this happens for 0-byte .meta files.
+                    # Ignore it for now.
                     continue
                 if delete_if_lifetime_over(item, name):
                     continue
@@ -37,7 +37,7 @@ def file_infos(names=None):
             if e.errno != errno.ENOENT:
                 raise
         except pickle.UnpicklingError:
-            # corrupted meta file, just ignore it for now
+            # Corrupted meta file; just ignore it for now.
             pass
 
 

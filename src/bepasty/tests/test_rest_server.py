@@ -1,5 +1,5 @@
 #
-# REST api tests
+# REST API tests
 #
 
 import os
@@ -28,7 +28,7 @@ print('hello, world')
 
 
 class FakeTime:
-    """Overwrite time.time to control the timestamp that is used in server"""
+    """Override time.time to control the timestamp that is used on the server."""
 
     def __init__(self, now=None):
         self.orig = time.time

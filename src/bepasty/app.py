@@ -44,7 +44,7 @@ class PrefixMiddleware:
             return self.app(environ, start_response)
         else:
             start_response('404', [('Content-Type', 'text/plain')])
-            return [b'This URL does not belong to the bepasty app.']
+            return [b'This URL does not belong to the Bepasty app.']
 
 
 def setup_secret_key(app):
@@ -103,7 +103,7 @@ def create_app():
 
     @app.errorhandler(404)
     def url_not_found(e):
-        heading = 'Not found'
+        heading = 'Not Found'
         body = Markup("""\
             <p>
                 The requested URL was not found on the server.
@@ -117,8 +117,8 @@ def create_app():
     @app.before_request
     def before_request():
         """
-        before the request is handled (by its view function), we compute some
-        stuff here and make it easily available.
+        Before the request is handled (by its view function), we compute some
+        values here and make them easily available.
         """
         flaskg.logged_in = logged_in()
         flaskg.permissions = get_permissions()
@@ -128,9 +128,9 @@ def create_app():
 
     def datetime_format(ts):
         """
-        takes a unix timestamp and outputs a iso8601-like formatted string.
-        times are always UTC, but we don't include the TZ here for brevity.
-        it should be made clear (e.g. in the template) that the date/time is UTC.
+        Takes a Unix timestamp and outputs an ISO 8601–like formatted string.
+        Times are always UTC, but we don't include the TZ here for brevity.
+        It should be made clear (e.g., in the template) that the date/time is UTC.
         """
         if not ts:  # we use 0 to indicate undefined time
             return 'undefined'

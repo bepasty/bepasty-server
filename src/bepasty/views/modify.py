@@ -12,6 +12,7 @@ from ..utils.upload import Upload
 
 
 class ModifyView(MethodView):
+    """Modify an item's filename or content type via a POST form submission."""
     def error(self, item, error):
         return render_template('error.html', heading=item.meta[FILENAME], body=error), 409
 

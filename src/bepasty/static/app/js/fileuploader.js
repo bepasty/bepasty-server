@@ -2,7 +2,7 @@ jqXHR = {};
 $(function () {
     'use strict';
 
-    // Generate human readable file size
+    // Generate human-readable file size
     function humansize (size) {
         var suffix = ["B", "KiB", "MiB", "GiB", "TiB", "PiB"],
             tier = 0;
@@ -64,7 +64,7 @@ $(function () {
 
                     var _jqXHR = $this.fileupload('send', data);
                     _jqXHR.error(function (jqXHR, textStatus, errorThrown) {
-                            //Delete file garbage on server
+                            // Delete file-upload garbage on the server
                             $.ajax({
                                 type: 'GET',
                                 url: data.url+'/abort'

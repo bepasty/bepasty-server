@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 def create_storage(app):
-    # decouple Storage class from flask app
+    # Decouple Storage class from Flask app
     storage_dir = app.config['STORAGE_FILESYSTEM_DIRECTORY']
     return Storage(storage_dir)
 
@@ -78,12 +78,12 @@ class Item:
     """
     Represents an open item.
 
-    :ivar data: Open file-like object to data.
+    :ivar data: Open file-like object for data.
     """
     def __init__(self, file_data, file_meta):
         """
-        :param file_data: Open file-like object to data file.
-        :param file_meta: Open file-like object to meta file.
+        :param file_data: Open file-like object for the data file.
+        :param file_meta: Open file-like object for the meta file.
         """
         self.data = Data(file_data)
         self.meta = Meta(file_meta)
@@ -100,7 +100,7 @@ class Item:
 
 class Data:
     """
-    Data of item.
+    Data of the item.
     """
     def __init__(self, file_data):
         self._file = file_data
@@ -124,7 +124,7 @@ class Data:
 
 class Meta(MutableMapping):
     """
-    Meta-data of item.
+    Metadata of the item.
     """
     def __init__(self, file_meta):
         self._changed = False

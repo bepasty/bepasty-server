@@ -10,7 +10,7 @@ class CustomHtmlFormatter(HtmlFormatter):
     def _wrap_lineparagraphs(self, inner):
         """Wrap lines into <p> tags
 
-        :param inner: iterator of tuples of format (code, text)
+        :param inner: iterator of tuples in the format (code, text)
         :return: iterator of tuples containing updated wrapped lines
         """
         s = self.lineparagraphs

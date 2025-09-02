@@ -22,7 +22,7 @@ class UploadView(MethodView):
             raise Forbidden()
         f = request.files.get('file')
         t = request.form.get('text')
-        # note: "and f.filename" is needed due to missing __bool__ method in
+        # Note: "and f.filename" is needed due to a missing __bool__ method in
         # werkzeug.datastructures.FileStorage, to work around it crashing
         # on Python 3.x.
         if f and f.filename:
@@ -30,7 +30,7 @@ class UploadView(MethodView):
             if ContentRange.from_request():
                 abort(416)
 
-            # Check Content-Type, default to application/octet-stream
+            # Check Content-Type; default to application/octet-stream
             content_type = (
                 f.headers.get('Content-Type') or
                 request.headers.get('Content-Type'))
@@ -42,7 +42,7 @@ class UploadView(MethodView):
             size = f.tell()
             f.seek(0)
         elif t is not None:
-            # t is already unicode, but we want utf-8 for storage
+            # t is already Unicode, but we want UTF-8 for storage
             t = t.encode('utf-8')
             content_type = request.form.get('contenttype')  # TODO: add coding
             content_type_hint = 'text/plain'
@@ -51,15 +51,15 @@ class UploadView(MethodView):
             filename = request.form.get('filename')
         else:
             raise NotImplementedError
-        # set max lifetime
+        # Set the maximum lifetime
         maxtime = get_maxlife(request.form, underscore=False)
         maxlife_timestamp = int(time.time()) + maxtime if maxtime > 0 else maxtime
         name = create_item(f, filename, size, content_type, content_type_hint, maxlife_stamp=maxlife_timestamp)
         kw = {}
         kw['_anchor'] = urllib.parse.quote(filename)
         if content_type == 'text/x-bepasty-redirect':
-            # after creating a redirect, we want to stay on the bepasty
-            # redirect display, so the user can copy the URL.
+            # After creating a redirect, we want to stay on the Bepasty
+            # redirect display so the user can copy the URL.
             kw['delay'] = '9999'
         return redirect_next('bepasty.display', name=name, **kw)
 
@@ -75,13 +75,13 @@ class UploadNewView(MethodView):
         data_size = int(data['size'])
         data_type = data['type']
 
-        # set max lifetime
+        # Set the maximum lifetime
         maxtime = get_maxlife(data, underscore=True)
         maxlife_timestamp = int(time.time()) + maxtime if maxtime > 0 else maxtime
 
         name = ItemName.create(current_app.storage)
         with current_app.storage.create(name, data_size) as item:
-            # Save meta-data
+            # Save metadata
             Upload.meta_new(item, data_size, data_filename, data_type,
                             'application/octet-stream', name, maxlife_stamp=maxlife_timestamp)
 
@@ -103,15 +103,15 @@ class UploadContinueView(MethodView):
 
         with current_app.storage.openwrite(name) as item:
             if content_range:
-                # note: we ignore the hash as it is only for 1 chunk, not for the whole upload.
-                # also, we can not continue computing the hash as we can't save the internal
-                # state of the hash object
+                # Note: we ignore the hash as it is only for one chunk, not for the whole upload.
+                # Also, we cannot continue computing the hash as we can't save the internal
+                # state of the hash object.
                 size_written, _ = Upload.data(item, f, content_range.size, content_range.begin)
                 file_hash = ''
                 is_complete = content_range.is_complete
 
             else:
-                # Get size of temporary file
+                # Get the size of the temporary file
                 f.seek(0, os.SEEK_END)
                 size = f.tell()
                 f.seek(0)
@@ -126,7 +126,7 @@ class UploadContinueView(MethodView):
                 'name': name,
                 'filename': item.meta[FILENAME],
                 'size': item.meta[SIZE],
-                'url': "{}#{}".format(url_for('bepasty.display', name=name), item.meta[FILENAME]),
+                'url': "{}#{}".format(url_for('bepasty.display', name=name), item.meta[FILENAME]),  # Anchor to filename
             }]})
 
         if is_complete and not file_hash:
@@ -148,7 +148,7 @@ class UploadAbortView(MethodView):
             raise
 
         if item.meta[COMPLETE]:
-            error = 'Upload complete. Cannot delete fileupload garbage.'
+            error = 'Upload complete. Cannot delete file-upload garbage.'
         else:
             error = None
         if error:

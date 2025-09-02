@@ -33,8 +33,8 @@ from .name import ItemName
 from .decorators import threaded
 from .hashing import compute_hash, hash_new
 
-# we limit to 250 characters as we do not want to accept arbitrarily long
-# filenames. other than that, there is no specific reason we could not
+# We limit to 250 characters as we do not want to accept arbitrarily long
+# filenames. Other than that, there is no specific reason we could not
 # also take more (or less).
 MAX_FILENAME_LENGTH = 250
 
@@ -61,7 +61,7 @@ class Upload:
     def filter_filename(cls, filename, storage_name, content_type, content_type_hint):
         """
         Filter filename.
-        Only allow some basic characters and shorten to 50 characters.
+        Only allow some basic characters and shorten to 250 characters.
         """
         # Make up filename if we don't have one
         if not filename:
@@ -78,14 +78,14 @@ class Upload:
     @classmethod
     def filter_type(cls, ct, ct_hint, filename=None):
         """
-        Filter Content-Type
+        Filter Content-Type.
         Only allow some basic characters and shorten to 50 characters.
 
         Return value:
-        tuple[0] - content-type string
-        tuple[1] - whether tuple[0] is hint or not
-                   True:  content-type is just a hint
-                   False: content-type is not a hint, was specified by user
+        tuple[0] - content type string
+        tuple[1] - whether tuple[0] is a hint or not
+                   True:  content type is just a hint
+                   False: content type is not a hint, was specified by the user
         """
         if not ct and filename:
             ct, encoding = mimetypes.guess_type(filename)
@@ -132,7 +132,7 @@ class Upload:
     @staticmethod
     def data(item, f, size_input, offset=0):
         """
-        Copy data from temp file into storage.
+        Copy data from a temporary file into storage.
         """
         read_length = 16 * 1024
         size_written = 0
@@ -145,7 +145,7 @@ class Upload:
 
             buf = f.read(read_length)
             if not buf:
-                # Should not happen, we already checked the size
+                # This should not happen; we already checked the size
                 raise RuntimeError
 
             item.data.write(buf, offset + size_written)
@@ -161,7 +161,7 @@ class Upload:
 def create_item(f, filename, size, content_type, content_type_hint,
                 maxlife_stamp=FOREVER):
     """
-    create an item from open file <f> with the given metadata, return the item name.
+    Create an item from an open file <f> with the given metadata and return the item name.
     """
     name = ItemName.create(current_app.storage)
     with current_app.storage.create(name, size) as item:
@@ -174,7 +174,7 @@ def create_item(f, filename, size, content_type, content_type_hint,
 
 def filter_internal(meta):
     """
-    filter internal meta data out.
+    Filter internal metadata out.
     """
     return {k: v for k, v in meta.items() if k not in internal_meta}
 
