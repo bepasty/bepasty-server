@@ -1,16 +1,16 @@
 
 =====================================================
-Installation tutorial with Debian, NGinx and gunicorn
+Installation tutorial with Debian, Nginx and Gunicorn
 =====================================================
 
-preliminary packages:
+Preliminary packages:
 
 ::
 
   apt-get install build-essential nginx supervisor python-dev git-core python-pip python-virtualenv
 
 
-commands to run
+Commands to run
 
 ::
 
@@ -18,7 +18,7 @@ commands to run
   adduser bepasty
   # change to user bepasty
   sudo su - bepasty
-  # clone repository from github
+  # clone repository from GitHub
   git clone https://github.com/bepasty/bepasty-server.git repo
   # create folder for storage
   mkdir storage
@@ -34,12 +34,12 @@ commands to run
   # add gunicorn and gevent for hosting
   pip install gunicorn gevent
 
-config file for bepasty -- ``/home/bepasty/bepasty.conf``:
+Config file for Bepasty — ``/home/bepasty/bepasty.conf``:
 
 Copy ``src/bepasty/config.py`` to ``/home/bepasty/bepasty.conf`` first,
 remove the ``class Config`` and remove all indents in the file.
 The comments can be removed too, if you feel the need to.
-At last modify these two configs variables:
+Finally, modify these two configuration variables:
 
 ::
 
@@ -47,7 +47,7 @@ At last modify these two configs variables:
   STORAGE_FILESYSTEM_DIRECTORY = '/home/bepasty/storage/'
 
 
-add this content to ``/home/bepasty/bin/gunicorn_bepasty``:
+Add this content to ``/home/bepasty/bin/gunicorn_bepasty``:
 
 ::
 
@@ -74,7 +74,7 @@ add this content to ``/home/bepasty/bin/gunicorn_bepasty``:
 
 Make it executable: ``chmod +x ~/bin/gunicorn_bepasty``
 
-A nginx configuration i.e. in ``/etc/nginx/conf.d/bepasty.conf``:
+An Nginx configuration, e.g., in ``/etc/nginx/conf.d/bepasty.conf``:
 
 ::
 
@@ -102,7 +102,7 @@ A nginx configuration i.e. in ``/etc/nginx/conf.d/bepasty.conf``:
     }
   }
 
-Now reload your nginx configuration: `service nginx reload`.  
+Now reload your Nginx configuration: `service nginx reload`.
 
 Supervisord config i.e. in ``/etc/supervisor/conf.d/bepasty.conf``:
 
@@ -114,4 +114,4 @@ Supervisord config i.e. in ``/etc/supervisor/conf.d/bepasty.conf``:
   stdout_logfile = /home/bepasty/logs/gunicorn_supervisor.log   ; Where to write log messages
   redirect_stderr = true                                        ; Save stderr in the same log
 
-Finally reload supervisor: `service supervisor reload`
+Finally, reload supervisor: `service supervisor reload`

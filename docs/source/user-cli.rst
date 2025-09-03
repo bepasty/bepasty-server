@@ -1,12 +1,11 @@
 ==================================
-Using bepasty with non-web clients
+Using Bepasty with non-web clients
 ==================================
 
 pastebinit
 ==========
 
-pastebinit is a popular pastebin client (included in debian, ubuntu and maybe
-elsewhere) that can be configured to work with bepasty:
+pastebinit is a popular pastebin client (included in Debian, Ubuntu and maybe elsewhere) that can be configured to work with Bepasty:
 
 
 Configuration
@@ -21,9 +20,9 @@ Configuration
 
 Notes:
 
-* we set an empty default format so pastebinit will transmit this (and not its
-  internal format default [which is "text" and completely useless for us as it
-  is not a valid contenttype])
+* We set an empty default format so pastebinit will transmit this (and not its
+  internal format default, which is "text" and completely useless for us as it
+  is not a valid content type).
 
 ~/.pastebin.d/bepasty.conf::
 
@@ -59,13 +58,13 @@ More advanced::
 
 Notes:
 
-* we use -t ("title") to transmit the desired filename (we do not have a
+* We use -t ("title") to transmit the desired filename (we do not have a
   "title", but the filename that is used for downloading the pastebin is
-  prominently displayed above the content, so can be considered as title also).
-* bepasty guesses the contenttype from the filename given with -t. if you
-  do not give a filename there or the contenttype is not guessable from it,
-  you may need to give -f also (e.g. -f text/plain).
-* if you give the contenttype, but not the filename, bepasty will make up
+  prominently displayed above the content, so it can be considered a title as well).
+* Bepasty guesses the content type from the filename given with -t. If you
+  do not give a filename there or the content type is not guessable from it,
+  you may need to give -f also (e.g., -f text/plain).
+* If you give the content type, but not the filename, Bepasty will make up
   a filename.
-* you need to use -p if the bepasty instance you use requires you to log in
+* You need to use -p if the Bepasty instance you use requires you to log in
   before you can create pastebins.

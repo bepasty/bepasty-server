@@ -1,9 +1,9 @@
 ========================
-Using bepasty's REST-API
+Using Bepasty’s REST API
 ========================
 
-The Rest-API enables you to upload and download files, as well as
-retrieve informations about the file on the server.
+The REST API enables you to upload and download files, as well as
+retrieve information about the file on the server.
 
 Currently the REST API provides the following API Endpoints::
 
@@ -20,14 +20,14 @@ Currently the REST API provides the following API Endpoints::
 
 Authentication
 ==============
-For endpoints that require non-default permissions, authentication can be done through http basic authentication. The user is ignored and the password is the key for the intended permissions.
+For endpoints that require non-default permissions, authentication can be done through HTTP Basic authentication. The user is ignored and the password is the key for the intended permissions.
 
 Errors
 ======
-The error response from REST-API will set ``Content-Type:
-application/json``, and body as JSON format like the following
-example. (it was previously ``Content-Type: text/html; charset=utf-8``
-and partial HTML page or plain string)
+The error response from the REST API will set ``Content-Type:
+application/json``, and the body as JSON in the following
+format. (It was previously ``Content-Type: text/html; charset=utf-8``
+and a partial HTML page or a plain string.)
 
 Example::
 
@@ -56,20 +56,20 @@ GET Response by the server:
           MAX_BODY_SIZE: 1048576
         }
 
-    This interface will give you important infos for uploading and
-    downloading files to your bepasty server.  By now only the
-    MAX_BODY_SIZE will be delivered to you, as no more info is
+    This interface provides important information for uploading and
+    downloading files to your Bepasty server. For now, only
+    MAX_BODY_SIZE is provided, as no more information is
     available.
 
     MAX_BODY_SIZE
-        The maximum size of a post request's body. This is limited by
-        the webserver and other middleware. See the documentation for
+        The maximum size of a POST request body. This is limited by
+        the web server and other middleware. See the documentation for
         more information. This also gives you the maximum size for the
         chunked upload.
 
     MAX_ALLOWED_FILE_SIZE
-        The maximum allowed filesize that can be stored on the
-        server. Files uploads bigger than this limit will be aborted
+        The maximum allowed file size that can be stored on the
+        server. File uploads bigger than this limit will be aborted
         and the file on the server will be deleted.
 
 Uploading a file
@@ -82,41 +82,41 @@ API Interface:
 
     When uploading a file, chunked upload is mandatory. Check the
     MAX_BODY_SIZE for the maximum chunk size that can be sent to the
-    server. The body of the post request contains the base64 encoded
+    server. The body of the POST request contains the Base64-encoded
     binary of the file to be uploaded. (required permission:
     :ref:`create <permissions>`)
 
 POST Request by the client:
 
     Post Request Body
-        Contains the base64 encoded binary of the file to be uploaded.
+        Contains the Base64-encoded binary of the file to be uploaded.
 
     The following headers *can (cursive)* or **must (bold)** be
-    delivered by every post request to the server:
+    delivered by every POST request to the server:
 
     **Content-Range**
-        The content-range header follows the specification by the w3c
+        The Content-Range header follows the specification by the W3C
         (http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.16).
-        It has to be provided consistently and can resume a aborted
-        file upload, together with the transaction-ID.
+        It must be provided consistently and can resume an aborted
+        file upload, together with the Transaction-ID.
 
     **Transaction-ID**
-        The transaction-ID will be provided by the server after the
-        first upload chunk. After that first chunk, the transaction-id
-        has to be provided by the client, to continue uploading the
+        The Transaction-ID will be provided by the server after the
+        first upload chunk. After that first chunk, the Transaction-ID
+        has to be provided by the client to continue uploading the
         file.
 
     *Content-Type*
-        The content-type of the file uploaded to the server. If the
-        content-type is not given, the server will guess the
-        content-type by the filename. If this fails the content-type
-        will be 'application/octet-stream'
+        The content type of the file uploaded to the server. If the
+        content type is not given, the server will guess the
+        content type by the filename. If this fails, the content type
+        will be 'application/octet-stream'.
 
     *Content-Length*
-        The content-length is mostly ignored by the server. It can be
+        The Content-Length is mostly ignored by the server. It can be
         used to indicate the final file size. If your final file size
         is bigger than the maximum allowed size on the server, the
-        upload will be aborted. The real filesize will be calculated
+        upload will be aborted. The real file size will be calculated
         by the server while uploading.
 
     *Content-Filename*
@@ -199,9 +199,9 @@ GET Response by the server:
         *Locked*
             Whether the file is locked or not.
         *Hash*
-            The sha256 hash of the file uploaded. Calculated by the server.
+            The SHA256 hash of the file uploaded. Calculated by the server.
         *Type*
-            Mimetype of the file uploaded. If no filetype is provided
+            MIME type of the file uploaded. If no file type is provided
             this will be set to 'application/octet-stream'.
 
 Retrieving Item List
@@ -349,7 +349,7 @@ API Interface:
 
         POST /apis/rest/items/<itemname>/unlock
 
-    Lock a file specified by ``<itemname>``. (required permission:
+    Unlock a file specified by ``<itemname>``. (required permission:
     :ref:`admin <permissions>`)
 
 POST Request by the client:

@@ -1,23 +1,23 @@
 Quickstart
 ==========
 
-Installing bepasty
+Installing Bepasty
 ------------------
 
-You can install bepasty either from PyPi (latest release) or from the git repository (latest available code).
+You can install Bepasty either from PyPI (latest release) or from the Git repository (latest available code).
 
 ::
 
-    # from PyPi:
+    # from PyPI:
     pip install bepasty
 
-    # if you'ld like to have python-magic to help determining files' mime types, use:
+    # if you'd like to have python-magic help determine files' MIME types, use:
     pip install bepasty[magic]
 
-    # from git repo
+    # from Git repository
     pip install -e git+https://github.com/bepasty/bepasty-server.git#egg=bepasty-server
 
-Configuring bepasty
+Configuring Bepasty
 -------------------
 Before you can use bepasty, you need to carefully configure it (it won't work in default configuration and most of
 the configuration settings need your attention).
@@ -34,7 +34,7 @@ Here is the documentation straight from its config:
 To create a local and non-default configuration, copy ``bepasty/config.py`` to e.g. ``/srv/bepasty/bepasty.conf``
 first, remove the ``class Config`` and remove all indents in the file.
 The comments can be removed too, if you feel the need to.
-At last modify these two configs variables: then modify it:
+Finally, modify these configuration variables:
 
 ::
 
@@ -58,7 +58,7 @@ Important notes:
   http).
 
 
-Starting bepasty server
+Starting the Bepasty server
 -----------------------
 
 You can run the bepasty server with your local configuration by pointing to it via the BEPASTY_CONFIG
@@ -73,9 +73,9 @@ Important note:
 * Use an absolute path as value for BEPASTY_CONFIG.
 
 
-The builtin WSGI server is recommended only for development and non-production use.
+The built-in WSGI server is recommended only for development and non-production use.
 
-For production, you should use a WSGI server like gunicorn, apache+mod-wsgi, nginx+uwsgi, etc.
+For production, you should use a WSGI server like Gunicorn, Apache + mod_wsgi, Nginx + uWSGI, etc.
 
 ::
 
@@ -85,7 +85,7 @@ For production, you should use a WSGI server like gunicorn, apache+mod-wsgi, ngi
 Invoking CLI commands
 ---------------------
 
-All bepasty commands expect either a --config <configfilename> argument or that the BEPASTY_CONFIG environment
+All Bepasty commands expect either a --config <configfilename> argument or that the BEPASTY_CONFIG environment
 variable points to your configuration file.
 
 The "object" command operates on objects stored in the storage. You can get infos about them ("info" subcommand),
