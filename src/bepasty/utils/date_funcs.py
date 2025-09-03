@@ -10,7 +10,7 @@ def get_maxlife(data, underscore):
     Determine the maximum lifetime in seconds from request-like data.
 
     Reads either dashed or underscored keys depending on the 'underscore' flag.
-    
+
     :param data: mapping containing the headers/fields
     :param underscore: bool; if True, use underscored keys, else dashed keys
     :return: max lifetime in seconds (or FOREVER)
