@@ -1,5 +1,5 @@
 """
-Bepasty object command-line interface.
+bepasty-object command-line interface.
 """
 
 
