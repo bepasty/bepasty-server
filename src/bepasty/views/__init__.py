@@ -1,3 +1,4 @@
+"""Blueprint setup for Bepasty views and URL routes."""
 from flask import Blueprint
 
 from .delete import DeleteView

@@ -18,9 +18,9 @@ class LoginView(MethodView):
 
 class LogoutView(MethodView):
     def post(self):
-        # note: remove all session entries that are not needed for logged-out
+        # Note: Remove all session entries that are not needed for the logged-out
         # state (because the code has defaults for them if they are missing).
-        # if the session is empty. flask will automatically remove the cookie.
+        # If the session is empty, Flask will automatically remove the cookie.
         session.pop(LOGGEDIN, None)
         session.pop(PERMISSIONS, None)
         return redirect_next_referrer('bepasty.index')

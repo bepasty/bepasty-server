@@ -1,9 +1,9 @@
-Welcome to bepasty's documentation!
+Welcome to Bepasty’s documentation!
 ===================================
 
-bepasty is like a pastebin for every kind of file (text, image, audio, video, documents, ...).
+Bepasty is like a pastebin for every kind of file (text, image, audio, video, documents, …).
 
-You can upload multiple files at once, simply by drag and drop.
+You can upload multiple files at once by simply dragging and dropping them.
 
 Contents
 --------

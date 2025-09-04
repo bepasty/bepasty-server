@@ -5,14 +5,14 @@ class Config:
     IMPORTANT:
 
     The config is only loaded at startup time of the app, so if you change it,
-    you need to restart the wsgi app process(es) to make it load the updated
+    you need to restart the WSGI app process(es) to make it load the updated
     config.
     """
 
-    #: name of this site (put YOUR bepasty fqdn here)
+    #: name of this site (put YOUR bepasty FQDN here)
     SITENAME = 'bepasty.example.org'
 
-    #: base URL path of app (if not served on root URL, but e.g. on http://example.org/bepasty ).
+    #: base URL path of the app (if not served on root URL, but e.g. on http://example.org/bepasty).
     #: setting this to a non-None value will activate the PrefixMiddleware that splits PATH_INFO
     #: into SCRIPT_NAME (== APP_BASE_PATH) and the rest of PATH_INFO.
     APP_BASE_PATH = None  # '/bepasty'
@@ -31,17 +31,17 @@ class Config:
     #: accept here. This is the maximum size an uploaded file may have.
     MAX_ALLOWED_FILE_SIZE = 5 * 1000 * 1000 * 1000
 
-    #: The maximum http request body size.
-    #: This is an information given to rest api clients so they can adjust
+    #: The maximum HTTP request body size.
+    #: This information is provided to REST API clients so they can adjust
     #: their chunk size accordingly.
     #:
     #: This needs to be in sync with (or at least not beyond) the web server
     #: settings:
     #: apache:  LimitRequestBody 1048576 # apache default is 0 (unlimited)
     #: nginx:  client_max_body_size 1m; # nginx default (== 1048576)
-    MAX_BODY_SIZE = 1 * 1024 * 1024 - 8192  # 8kiB safety margin, issue #155
+    MAX_BODY_SIZE = 1 * 1024 * 1024 - 8192  # 8 KiB safety margin, issue #155
 
-    #: Setup maximum file sizes for specific content-types. If an item is
+    #: Setup maximum file sizes for specific content types. If an item is
     #: beyond the limit set for its type, it will not be rendered, but just
     #: offered for download. Lookup within MAX_RENDER_SIZE is done by
     #: first-match and it is automatically sorted for longer content-type-
@@ -70,8 +70,8 @@ class Config:
         '': 1 * 1000 * 1000,
     }
 
-    # Whether to use the python-magic module to guess a file's mime
-    # type by looking into its content (if the mime type can not be
+    # Whether to use the python-magic module to guess a file's MIME
+    # type by looking into its content (if the MIME type cannot be
     # determined from the filename extension).
     # NOTE:
     # libmagic may have security issues, so maybe you should only use
@@ -87,12 +87,12 @@ class Config:
     #: Filesystem storage path
     STORAGE_FILESYSTEM_DIRECTORY = '/tmp/'
 
-    #: server secret key needed for safe session cookies.
-    #: you must set a very long (20-100 chars), very random, very secret string here,
-    #: otherwise bepasty will not work (and crash when trying to log in)!
+    #: Server secret key needed for safe session cookies.
+    #: You must set a very long (20–100 chars), very random, very secret string here,
+    #: otherwise bepasty will not work (and will crash when trying to log in)!
     SECRET_KEY = ''
 
-    #: transmit cookie only over https (if you use http, set this to False)
+    #: Transmit cookie only over HTTPS (if you use HTTP, set this to False)
     SESSION_COOKIE_SECURE = True
     #: use a permanent session (True, cookie will expire after the given
     #: time, see below) or not (False, cookie will get removed when browser
@@ -131,6 +131,6 @@ class Config:
         # 'foo': 'admin,list,create,modify,read,delete',
     }
 
-    #: not-logged-in users get these permissions -
+    #: Not logged-in users get these permissions -
     #: usually they are either no permissions ('') or read-only ('read').
     DEFAULT_PERMISSIONS = ''

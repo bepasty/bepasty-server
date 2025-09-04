@@ -21,14 +21,14 @@ class TestScreenShots:
 
     def setup_class(self):
         """
-        Setup: Open a mozilla browser, login
+        Setup: Open a Mozilla Firefox browser and log in.
         """
         self.browser = Firefox()
         self.browser.get(self.url_base + '/invalid')
 
     def teardown_class(self):
         """
-        Tear down: Close the browser
+        Teardown: Close the browser.
         """
         self.browser.quit()
 
@@ -55,13 +55,13 @@ class TestScreenShots:
         self.browser.execute_script('window.scrollTo(0, document.body.scrollHeight);')
 
     def set_smallest_window_size(self):
-        # change smallest screen size
+        # Change to the smallest screen size
         w, h = self.screen_sizes[0]
         self.browser.set_window_size(w, h)
         time.sleep(.1)
 
     def set_largest_window_size(self):
-        # change largest screen size
+        # Change to the largest screen size
         w, h = self.screen_sizes[-1]
         self.browser.set_window_size(w, h)
         time.sleep(.1)
@@ -69,7 +69,7 @@ class TestScreenShots:
     def toggle_hamburger(self):
         self.set_smallest_window_size()
 
-        # toggle hamburger menu
+        # Toggle the hamburger menu
         try:
             self.browser.find_element_by_xpath('//button[@class="navbar-toggler"]').click()
         except ElementNotInteractableException:
@@ -81,12 +81,12 @@ class TestScreenShots:
     def top_screen_shots(self, name):
         self.screen_shots(f'{name}1')
 
-        # open hamburger
+        # Open the hamburger menu
         self.toggle_hamburger()
 
         self.screen_shots(f'{name}2')
 
-        # close hamburger
+        # Close the hamburger menu
         self.toggle_hamburger()
 
     def error_404(self):
@@ -97,29 +97,29 @@ class TestScreenShots:
     def login(self):
         self.browser.get(self.url_base)
 
-        # NOTE: login screen, 1 - close hamburger, 2 - open hamburger
+        # NOTE: login screen, 1 - hamburger closed, 2 - hamburger open
         self.top_screen_shots("top")
         self.screenshot_seq += 1
 
         token = self.browser.find_element_by_name("token")
         password = "foo"
-        # login
+        # Log in
         token.send_keys(password)
         token.submit()
         self.wait_present("//input[@value='Logout']")
 
-        # NOTE: upload screen, 1 - close hamburger, 2 - open hamburger
+        # NOTE: upload screen, 1 - hamburger closed, 2 - hamburger open
         self.top_screen_shots("upload")
         self.screenshot_seq += 1
 
         try:
             self.browser.find_element_by_xpath("//input[@value='Logout']")
         except NoSuchElementException:
-            raise ValueError("Can't login! Please edit your config, go to PERMISSIONS setting "
+            raise ValueError("Can't log in! Please edit your config, go to the PERMISSIONS setting, "
                              "and add a new secret 'foo' with all permissions.")
 
     def upload_file(self, path):
-        # set file path
+        # Set the file path
         fileupload = self.browser.find_element_by_id('fileupload')
         fileupload.send_keys(path)
 
@@ -127,7 +127,7 @@ class TestScreenShots:
         form.click()
 
     def upload_view(self):
-        # small files
+        # Small files
         for i in (1, 2, 3):
             with tempfile.NamedTemporaryFile(suffix=".sh") as fp:
                 fp.write(b"""\
@@ -148,7 +148,7 @@ echo "hello, world!"
         # NOTE: uploaded screen
         self.screen_shots("uploading1")
 
-        # big file
+        # Large file
         with tempfile.NamedTemporaryFile(suffix=".bin") as fp:
             os.truncate(fp.name, 1024 * 1024 * 1024)
             self.upload_file(fp.name)
@@ -159,12 +159,12 @@ echo "hello, world!"
             self.screen_shots("uploading2")
             self.screenshot_seq += 1
 
-            # click abort
+            # Click Abort
             abort = self.browser.find_element_by_id('fileupload-abort')
             abort.click()
             time.sleep(.5)
 
-            # NOTE: abort bootbox
+            # NOTE: Abort Bootbox dialog
             self.screen_shots("abort")
             self.screenshot_seq += 1
 
@@ -173,13 +173,13 @@ echo "hello, world!"
 
             self.scroll_to_bottom()
 
-            # NOTE: aborted upload screen
+            # NOTE: Aborted upload screen
             self.screen_shots("uploading3")
             self.screenshot_seq += 1
 
     def list_view(self):
         self.browser.get(self.url_base + '/+list')
-        # NOTE: list screen
+        # NOTE: List screen
         self.screen_shots("list")
         self.screenshot_seq += 1
 
@@ -188,10 +188,10 @@ echo "hello, world!"
         list_link = self.browser.find_elements_by_xpath('//tr/td/a')
         list_link[0].click()
 
-        # highlight line
+        # Highlight a line
         self.browser.get(self.browser.current_url + '#L-4')
 
-        # NOTE: display screen
+        # NOTE: Display screen
         self.screen_shots("display")
         self.screenshot_seq += 1
 
@@ -199,7 +199,7 @@ echo "hello, world!"
         modify.click()
         time.sleep(.5)
 
-        # NOTE: modify bootbox
+        # NOTE: Modify Bootbox dialog
         self.screen_shots("modify")
         self.screenshot_seq += 1
 
@@ -209,7 +209,7 @@ echo "hello, world!"
 
         lock = self.browser.find_element_by_id('lock-btn')
         lock.click()
-        # NOTE: display with lock screen
+        # NOTE: Display with lock screen
         self.screen_shots("lock")
         self.screenshot_seq += 1
 

@@ -1,5 +1,5 @@
 """
-Set metadata keys to specific values
+Set metadata keys to specific values.
 """
 
 import errno
@@ -14,7 +14,7 @@ from ..utils.permissions import ADMIN, may
 
 
 class SetKeyValueView(MethodView):
-    # overwrite these in subclasses:
+    # Override these in subclasses:
     REQUIRED_PERMISSION = None
     KEY = None
     NEXT_VALUE = None

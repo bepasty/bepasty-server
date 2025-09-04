@@ -5,7 +5,7 @@ from ..bepasty_xstatic import serve_files
 
 
 def xstatic(name, filename):
-    """Route to serve the xstatic files (from serve_files)"""
+    """Route to serve XStatic files (from serve_files)."""
     try:
         base_path = serve_files[name]
     except KeyError:

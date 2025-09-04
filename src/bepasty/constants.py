@@ -11,8 +11,8 @@ TIMESTAMP_MAX_LIFE = 'timestamp-max-life'
 ID = 'id'  # storage name
 FOREVER = -1
 
-# headers
+# Headers
 TRANSACTION_ID = 'Transaction-ID'  # keep in sync with bepasty-cli
 
-# used internally only
+# Used internally only
 internal_meta = [TYPE_HINT]

@@ -1,6 +1,6 @@
 from xstatic.main import XStatic
 
-# names below must be package names
+# The names below must be package names.
 mod_names = [
     'asciinema_player',
     'bootbox',

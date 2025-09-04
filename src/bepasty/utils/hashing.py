@@ -5,7 +5,11 @@ SIZE = 1024 * 1024
 
 def compute_hash(data, size):
     """
-    compute hash of storage item's data file, return hexdigest
+    Compute the SHA-256 hash of a storage item's data file and return the hex digest.
+
+    :param data: storage data object with a read(length, offset) method
+    :param size: total number of bytes to read and hash
+    :return: hexadecimal digest string
     """
     hasher = hash_new()
     offset = 0

@@ -12,7 +12,7 @@ $(function () {
     $("#modify-btn").click(function() {
         var form_name = "modify-frm"
         var hidden_name_id = "#hidden-" + form_name
-        // Read form template from html
+        // Read form template from HTML
         var modal_form = $(hidden_name_id).html();
         var modal_title = $(hidden_name_id).attr('modalTitle');
         var modal_focus = $(hidden_name_id).attr('modalFocus');
@@ -26,7 +26,7 @@ $(function () {
                 if (modal_focus) {
                     $(this).find("#" + modal_focus).trigger('focus');
                 }
-                // Support jquery-ui autocomplete
+                // Support jQuery UI autocomplete
                 contenttype_autocomplete(this)
             },
             callback: function(result) {
@@ -39,7 +39,7 @@ $(function () {
         });
     });
 
-    // Bind on click event to all line number anchor tags
+    // Bind click event to all line number anchor tags
     $('td.linenos a').on('click', function(e) {
         remove_highlights();
         var $this = $(this);
@@ -53,7 +53,7 @@ $(function () {
         highlight_line(line_number);
     }
 
-    // Bind hashchange event
+    // Bind the hashchange event
     $(window).bind('hashchange', function(e){
         remove_highlights();
         var line_number = get_hash_line_number();
@@ -74,7 +74,7 @@ function remove_highlights() {
     $('td.code p').removeClass("line-highlight");
 }
 
-// Get the number line from the hash if there is one, otherwise return null
+// Get the line number from the hash if present; otherwise return null
 function get_hash_line_number() {
     var type = window.location.hash;
         if (type.indexOf("-") > -1) {

@@ -1,5 +1,5 @@
 """
-bepasty-server commandline interface
+bepasty-server command-line interface.
 """
 
 import argparse

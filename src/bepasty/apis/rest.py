@@ -20,11 +20,11 @@ from ..views.modify import ModifyView
 from ..views.setkv import LockView, UnlockView
 
 
-# This wrappper handles exceptions in the REST api implementation.
+# This wrapper handles exceptions in the REST API implementation.
 #
 # The @blueprint.add_errorhandler decorator could do this, but we have
-# "/lodgeit/" in the same blueprint and there is no way to exclude
-# from using the same error handler ("/lodgeit/" is not REST api).
+# "/lodgeit/" in the same blueprint and there is no way to exclude it
+# from using the same error handler ("/lodgeit/" is not a REST API).
 def rest_errorhandler(func):
     def error_message(description, code):
         return jsonify({
@@ -46,7 +46,7 @@ def rest_errorhandler(func):
     return handler
 
 
-# Default handlers for REST api to handle error
+# Default handlers for the REST API to handle errors
 class RestBase(MethodView):
     @rest_errorhandler
     def get(self, *args, **kwargs):
@@ -111,25 +111,25 @@ class ItemUploadView(RestBase):
         """
         Upload file via REST-API. Chunked Upload is supported.
 
-        HTTP Headers that need to be given:
+        HTTP headers that need to be provided:
         * Content-Type: The type of the file that is being uploaded.
-            If this is not given filetype will be 'application/octet-stream'
+            If this is not given, the file type will be 'application/octet-stream'.
         * Content-Length: The total size of the file to be uploaded.
         * Content-Filename: The filename of the file. This will be used when downloading.
-        * Content-Range: The Content-Range of the Chunk that is currently being uploaded.
-            Follows the HTTP-Header Specifications.
-        * Transaction-ID: The Transaction-ID for Chunked Uploads.
-            Needs to be delivered when uploading in chunks (after the first chunk).
+        * Content-Range: The content range of the chunk that is currently being uploaded,
+            following the HTTP header specifications.
+        * Transaction-ID: The transaction ID for chunked uploads,
+            which needs to be provided when uploading in chunks (after the first chunk).
 
-        To start an upload, the HTTP Headers need to be delivered.
-        The body of the request needs to be the base64 encoded file contents.
-        Content-Length is the original file size before base64 encoding.
+        To start an upload, the HTTP headers need to be provided.
+        The body of the request must be the Base64-encoded file contents.
+        Content-Length is the original file size before Base64 encoding.
         Content-Range follows the same logic.
         After the first chunk is uploaded, bepasty will return the Transaction-ID to continue the upload.
-        Deliver the Transaction-ID and the correct Content-Range to continue upload.
-        After the file is completely uploaded, the file will be marked as complete and
-        a 201 HTTP Status will be returned.
-        The Content-Location Header will contain the api url to the uploaded Item.
+        Provide the Transaction-ID and the correct Content-Range to continue the upload.
+        After the file is completely uploaded, it will be marked as complete and
+        a 201 HTTP status will be returned.
+        The Content-Location header will contain the API URL to the uploaded item.
 
         If the file size exceeds the permitted size, the upload will be aborted. This will be checked twice.
         The first check is the provided Content-Length. The second is the actual file size on the server.

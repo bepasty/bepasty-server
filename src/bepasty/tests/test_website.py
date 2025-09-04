@@ -14,12 +14,12 @@ import time
 @pytest.mark.needs_server
 class TestMaxlifeFeature:
     """
-    Checks if the maxlife feature is working
+    Checks if the maxlife feature is working.
     """
 
     def setup_class(self):
         """
-        Setup: Open a mozilla browser, login
+        Setup: Open a web browser and log in.
         """
         try:
             self.browser = Firefox()
@@ -29,19 +29,19 @@ class TestMaxlifeFeature:
         self.browser.get('http://localhost:5000/')
         token = self.browser.find_element_by_name("token")
         password = "foo"
-        # login
+        # Log in
         token.send_keys(password)
         token.send_keys(Keys.ENTER)
         time.sleep(.1)
         try:
             self.browser.find_element_by_xpath("//input[@value='Logout']")
         except NoSuchElementException:
-            raise ValueError("Can't login!!! Create a user 'foo' with the permissions"
+            raise ValueError("Can't log in! Create a user 'foo' with the permissions "
                              "'read' and 'create' in your PERMISSIONS in the config")
 
     def teardown_class(self):
         """
-        Tear down: Close the browser
+        Teardown: Close the browser.
         """
         self.browser.quit()
 
@@ -57,11 +57,11 @@ class TestMaxlifeFeature:
 
     def fill_form(self):
         """
-        Fills test values to the form and submits it
+        Fills test values into the form and submits it.
         :return: tuple(filename, pasted_text)
         """
         filename = "test.txt"
-        text_to_paste = "This is test"
+        text_to_paste = "This is a test"
         paste_input = self.browser.find_element_by_id("formupload")
         paste_input.send_keys(text_to_paste)
         filename_input = self.browser.find_element_by_id("filename")
@@ -69,7 +69,7 @@ class TestMaxlifeFeature:
         contenttype_input = self.browser.find_element_by_id("contenttype")
         contenttype_input.send_keys("text/plain")
         contenttype_input.send_keys(Keys.ENTER)
-        time.sleep(.2)  # give some time to render next view
+        time.sleep(.2)  # give some time to render the next view
         return filename, text_to_paste
 
     def delete_current_file(self):

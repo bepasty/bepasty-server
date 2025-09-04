@@ -10,7 +10,7 @@ from bepasty.app import create_app
 @pytest.fixture(scope='module')
 def app(request):
     """
-    creates a bepasty App-Instance
+    Create a bepasty app instance.
     """
     app = create_app()
     yield app
@@ -20,14 +20,14 @@ def app(request):
 @pytest.fixture(scope='module')
 def testclient(request, app):
     """
-    creates a Flask-testclient instance for bepasty
+    Create a Flask test client instance for bepasty.
     """
     db_file, app.config['DATABASE'] = mkstemp()
     # reset default permissions
     app.config['DEFAULT_PERMISSIONS'] = ''
-    # setup a secret key
+    # set up a secret key
     app.config['SECRET_KEY'] = str(random())
-    # setup permissions
+    # set up permissions
     app.config['PERMISSIONS'] = {
         'l': 'list',
         'c': 'create',

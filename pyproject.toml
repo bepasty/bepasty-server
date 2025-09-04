@@ -12,7 +12,7 @@ license = "BSD-2-Clause"
 license-files = ["LICENSE", "AUTHORS"]
 authors = [{name="The Bepasty Team (see AUTHORS file)"}]
 maintainers = [{name="Thomas Waldmann", email="tw@waldmann-edv.de"}]
-description = "a binary pastebin / file upload service"
+description = "A binary pastebin and file upload service"
 readme = "README.rst"
 keywords = ["text", "image", "audio", "video", "binary", "pastebin", "upload", "download", "service", "wsgi", "flask"]
 requires-python = ">=3.10"
@@ -54,7 +54,7 @@ pillow = ["Pillow"]
 
 [project.urls]
 Homepage = "https://github.com/bepasty/bepasty-server/"
-Documentation = "https://bepasty-server.readthedocs.org/"
+Documentation = "https://bepasty-server.readthedocs.io/"
 Changelog = "https://github.com/bepasty/bepasty-server/blob/master/CHANGES.rst"
 
 [tool.pytest.ini_options]

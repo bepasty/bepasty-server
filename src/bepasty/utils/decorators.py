@@ -3,9 +3,9 @@ from threading import Thread
 
 def threaded(func):
     """
-    decorator to run a function asynchronously (in a thread)
+    Decorator to run a function asynchronously (in a thread).
 
-    be careful: do not access flask threadlocals in f!
+    Be careful: do not access Flask thread-locals in func!
     """
     def wrapper(*args, **kwargs):
         t = Thread(target=func, args=args, kwargs=kwargs)

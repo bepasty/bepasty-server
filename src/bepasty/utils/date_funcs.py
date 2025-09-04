@@ -6,6 +6,16 @@ from ..constants import FOREVER, TIMESTAMP_MAX_LIFE
 
 
 def get_maxlife(data, underscore):
+    """
+    Determine the maximum lifetime in seconds from request-like data.
+
+    Reads either dashed or underscored keys depending on the 'underscore' flag.
+
+    :param data: mapping containing the headers/fields
+    :param underscore: bool; if True, use underscored keys, else dashed keys
+    :return: max lifetime in seconds (or FOREVER)
+    :raises BadRequest: if provided values are invalid
+    """
     unit_key = 'maxlife_unit' if underscore else 'maxlife-unit'
     unit_default = 'MONTHS'
     unit = data.get(unit_key, unit_default).upper()
@@ -23,7 +33,7 @@ def get_maxlife(data, underscore):
 
 def time_unit_to_sec(value, unit):
     """
-    Converts a numeric value and with a string time unit unit to a time in seconds
+    Convert a numeric value with a string time unit to a time in seconds.
 
     :param value: int
     :param unit: str in ['MINUTES', 'HOURS', 'DAYS', 'WEEKS', 'MONTHS', 'YEARS', 'FOREVER']
@@ -44,7 +54,9 @@ def time_unit_to_sec(value, unit):
 
 def delete_if_lifetime_over(item, name):
     """
-    :return: True if file was deleted
+    Delete the file if its maximum lifetime has expired.
+
+    :return: True if the file was deleted, otherwise False
     """
     if 0 < item.meta[TIMESTAMP_MAX_LIFE] < time.time():
         try:
