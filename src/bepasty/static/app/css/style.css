@@ -8,7 +8,9 @@ body {
     margin: 0;
     -webkit-font-smoothing: antialiased;
     font-size: 100%;
-    background-color: #fff;
+    background-color: #f5f5f7; /* macOS light gray background */
+    color: #1d1d1f; /* macOS text color */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
 }
 
 #footer {
@@ -135,4 +137,133 @@ table.highlighttable {
 /* Autocomplete for modify dialog */
 .ui-autocomplete {
     z-index: 1065;
+}
+
+/* Minimal visual enhancements */
+.container {
+    padding-top: 1.25rem;
+    padding-bottom: 2rem;
+}
+
+.navbar {
+    box-shadow: 0 0.25rem 0.5rem rgba(0,0,0,.05);
+}
+
+.navbar-brand {
+    font-weight: 600;
+}
+
+.card {
+    border: 1px solid rgba(0,0,0,.075);
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+    border-radius: .5rem;
+}
+
+.card-header {
+    background-color: #ffffff;
+    border-bottom: 1px solid rgba(0,0,0,.075);
+}
+
+.btn-info,
+.btn-primary,
+.btn-danger,
+.btn-outline-secondary,
+.btn-success {
+    border-radius: .375rem;
+}
+
+.form-control {
+    border-radius: .375rem;
+}
+
+#formupload {
+    border: 1px solid #dee2e6;
+    border-radius: .375rem;
+    background: #fff;
+}
+
+.dropzone {
+    border: 2px dashed #ced4da;
+    background-color: #ffffff;
+    border-radius: .5rem;
+    text-align: center;
+    color: #6c757d;
+}
+
+#fileupload-progress.progress {
+    height: .75rem;
+    background-color: #e9ecef;
+}
+
+.progress-bar {
+    background-color: #0d6efd;
+}
+
+#footer {
+    background-color: transparent;
+}
+
+/* CSS variables consolidated into a single :root block (macOS-inspired palette) */
+:root {
+    --primary: #0A84FF;
+    --secondary: #BF5AF2;
+    --success: #30D158;
+    --info: #64D2FF;
+    --warning: #FFD60A;
+    --danger: #FF453A;
+    --accent-1: #64D2FF;
+    --accent-2: #30D158;
+    --primary-08: rgba(10,132,255,.08);
+    --secondary-08: rgba(191,90,242,.08);
+    --macos-blue: #0A84FF;
+    --macos-blue-20: rgba(10,132,255,.35);
+}
+
+
+
+/* Minimal macOS-inspired tweaks (condensed) */
+
+.navbar.navbar-light.bg-light { background: rgba(255,255,255,.72); border-bottom: 1px solid rgba(0,0,0,.06); -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px); }
+
+.card { border: 1px solid rgba(0,0,0,.08); border-radius: .75rem; box-shadow: 0 1px 3px rgba(0,0,0,.12), 0 8px 24px rgba(0,0,0,.08); }
+.card-header { background: #fff; border-bottom: 1px solid rgba(0,0,0,.06); }
+
+.btn-info, .btn-primary, .btn-danger, .btn-outline-secondary, .btn-success, .form-control { border-radius: .5rem; }
+.form-control { border-color: #d2d2d7; }
+.form-control:focus, .btn:focus { box-shadow: 0 0 0 .2rem var(--macos-blue-20); outline: 0; border-color: var(--macos-blue); }
+
+.progress-bar { background-image: linear-gradient(90deg, var(--macos-blue), #64D2FF); }
+.dropzone:hover { border-color: var(--macos-blue); background-color: rgba(10,132,255,.06); }
+
+a { color: var(--macos-blue); }
+a:hover, a:focus { color: #0060df; }
+
+
+/* Ensure variables are defined with correct selector for macOS theme (override last) */
+
+
+/* macOS link and button color overrides (independent of CSS variables) */
+a { color: #0A84FF; }
+a:hover, a:focus { color: #0060df; }
+
+.btn-primary {
+    background-color: #0A84FF;
+    border-color: #0A84FF;
+}
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: #0060df;
+    border-color: #0060df;
+}
+
+.btn-info {
+    background-color: #64D2FF;
+    border-color: #64D2FF;
+    color: #052039;
+}
+.btn-info:hover,
+.btn-info:focus {
+    background-color: #2bb7ff;
+    border-color: #2bb7ff;
+    color: #03111f;
 }
