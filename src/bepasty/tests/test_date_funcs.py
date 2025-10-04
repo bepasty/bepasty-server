@@ -4,9 +4,11 @@ from bepasty.constants import FOREVER
 from bepasty.utils.date_funcs import get_maxlife, time_unit_to_sec
 
 
-def test_get_maxlife():
-    assert get_maxlife({}, underscore=False) == 60 * 60 * 24 * 30
-    assert get_maxlife({}, underscore=True) == 60 * 60 * 24 * 30
+def test_get_maxlife(testclient):
+    with testclient:
+        testclient.get("/")  # needed for config access via current_app
+        assert get_maxlife({}, underscore=False) == 60 * 60 * 24 * 30
+        assert get_maxlife({}, underscore=True) == 60 * 60 * 24 * 30
 
 
 @pytest.mark.parametrize('unit,expectation', [

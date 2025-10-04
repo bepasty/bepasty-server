@@ -3,19 +3,21 @@
 {%- import '_utils.html' as utils %}
 
 {% macro maximum_lifetime() -%}
+{% set default_maxlife_value = config.DEFAULT_MAXLIFE_VALUE or 1 %}
+{% set default_maxlife_unit = (config.DEFAULT_MAXLIFE_UNIT or 'MONTHS')|lower %}
 <div class="row">
     <div class="col-lg-3 form-group">
-        <input class="form-control" name="maxlife-value" type="number" min="1" value="1" /><br>
+        <input class="form-control" name="maxlife-value" type="number" min="1" value="{{ default_maxlife_value }}" /><br>
     </div>
     <div class="col-lg-9 form-group">
         <select class="form-control" name="maxlife-unit" size="1">
-            <option value="months">Months</option>
-            <option value="weeks">Weeks</option>
-            <option value="days">Days</option>
-            <option value="hours">Hours</option>
-            <option value="minutes">Minutes</option>
-            <option value="years">Years</option>
-            <option value="forever">Keep Forever</option>
+            <option value="months" {{ 'selected' if default_maxlife_unit == 'months' else '' }}>Months</option>
+            <option value="weeks" {{ 'selected' if default_maxlife_unit == 'weeks' else '' }}>Weeks</option>
+            <option value="days" {{ 'selected' if default_maxlife_unit == 'days' else '' }}>Days</option>
+            <option value="hours" {{ 'selected' if default_maxlife_unit == 'hours' else '' }}>Hours</option>
+            <option value="minutes" {{ 'selected' if default_maxlife_unit == 'minutes' else '' }}>Minutes</option>
+            <option value="years" {{ 'selected' if default_maxlife_unit == 'years' else '' }}>Years</option>
+            <option value="forever" {{ 'selected' if default_maxlife_unit == 'forever' else '' }}>Keep Forever</option>
         </select>
     </div>
 </div>

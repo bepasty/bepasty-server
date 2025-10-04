@@ -134,3 +134,10 @@ class Config:
     #: Not logged-in users get these permissions -
     #: usually they are either no permissions ('') or read-only ('read').
     DEFAULT_PERMISSIONS = ''
+
+    #: Default maxlife of newly uploaded items if the client did not specify one.
+    #: These defaults will be also be pre-selected on the web interface.
+    #: Can be overridden here; if unset, bepasty defaults to 1 MONTHS for backward compatibility.
+    #: Allowed units (case-insensitive): MINUTES, HOURS, DAYS, WEEKS, MONTHS, YEARS, FOREVER
+    # DEFAULT_MAXLIFE_VALUE = 1
+    # DEFAULT_MAXLIFE_UNIT = 'MONTHS'
