@@ -17,10 +17,11 @@ def get_maxlife(data, underscore):
     :raises BadRequest: if provided values are invalid
     """
     unit_key = 'maxlife_unit' if underscore else 'maxlife-unit'
-    unit_default = 'MONTHS'
-    unit = data.get(unit_key, unit_default).upper()
+    # Users can set DEFAULT_MAXLIFE_VALUE (int) and DEFAULT_MAXLIFE_UNIT (str).
+    unit_default = current_app.config.get('DEFAULT_MAXLIFE_UNIT', 'MONTHS')
+    unit = str(data.get(unit_key, unit_default)).upper()
     value_key = 'maxlife_value' if underscore else 'maxlife-value'
-    value_default = '1'
+    value_default = str(current_app.config.get('DEFAULT_MAXLIFE_VALUE', 1))
     try:
         value = int(data.get(value_key, value_default))
     except (ValueError, TypeError):
