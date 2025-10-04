@@ -71,7 +71,7 @@ class TestScreenShots:
 
         # Toggle the hamburger menu
         try:
-            self.browser.find_element_by_xpath('//button[@class="navbar-toggler"]').click()
+            self.browser.find_element(By.XPATH, '//button[@class="navbar-toggler"]').click()
         except ElementNotInteractableException:
             pass
         time.sleep(.5)
@@ -101,7 +101,7 @@ class TestScreenShots:
         self.top_screen_shots("top")
         self.screenshot_seq += 1
 
-        token = self.browser.find_element_by_name("token")
+        token = self.browser.find_element(By.NAME, "token")
         password = "foo"
         # Log in
         token.send_keys(password)
@@ -113,17 +113,17 @@ class TestScreenShots:
         self.screenshot_seq += 1
 
         try:
-            self.browser.find_element_by_xpath("//input[@value='Logout']")
+            self.browser.find_element(By.XPATH, "//input[@value='Logout']")
         except NoSuchElementException:
             raise ValueError("Can't log in! Please edit your config, go to the PERMISSIONS setting, "
                              "and add a new secret 'foo' with all permissions.")
 
     def upload_file(self, path):
         # Set the file path
-        fileupload = self.browser.find_element_by_id('fileupload')
+        fileupload = self.browser.find_element(By.ID, 'fileupload')
         fileupload.send_keys(path)
 
-        form = self.browser.find_element_by_xpath('//form[@action="/+upload"]')
+        form = self.browser.find_element(By.XPATH, '//form[@action="/+upload"]')
         form.click()
 
     def upload_view(self):
@@ -160,7 +160,7 @@ echo "hello, world!"
             self.screenshot_seq += 1
 
             # Click Abort
-            abort = self.browser.find_element_by_id('fileupload-abort')
+            abort = self.browser.find_element(By.ID, 'fileupload-abort')
             abort.click()
             time.sleep(.5)
 
@@ -168,7 +168,7 @@ echo "hello, world!"
             self.screen_shots("abort")
             self.screenshot_seq += 1
 
-            ok = self.browser.find_element_by_class_name('bootbox-accept')
+            ok = self.browser.find_element(By.CLASS_NAME, 'bootbox-accept')
             ok.click()
 
             self.scroll_to_bottom()
@@ -185,7 +185,7 @@ echo "hello, world!"
 
     def display_view(self):
         self.browser.get(self.url_base + '/+list')
-        list_link = self.browser.find_elements_by_xpath('//tr/td/a')
+        list_link = self.browser.find_elements(By.XPATH, '//tr/td/a')
         list_link[0].click()
 
         # Highlight a line
@@ -195,7 +195,7 @@ echo "hello, world!"
         self.screen_shots("display")
         self.screenshot_seq += 1
 
-        modify = self.browser.find_element_by_id('modify-btn')
+        modify = self.browser.find_element(By.ID, 'modify-btn')
         modify.click()
         time.sleep(.5)
 
@@ -203,17 +203,17 @@ echo "hello, world!"
         self.screen_shots("modify")
         self.screenshot_seq += 1
 
-        modify_cancel = self.browser.find_element_by_class_name('bootbox-cancel')
+        modify_cancel = self.browser.find_element(By.CLASS_NAME, 'bootbox-cancel')
         modify_cancel.click()
         time.sleep(.5)
 
-        lock = self.browser.find_element_by_id('lock-btn')
+        lock = self.browser.find_element(By.ID, 'lock-btn')
         lock.click()
         # NOTE: Display with lock screen
         self.screen_shots("lock")
         self.screenshot_seq += 1
 
-        qr = self.browser.find_element_by_id('qr-btn')
+        qr = self.browser.find_element(By.ID, 'qr-btn')
         qr.click()
         # NOTE: QR code screen
         self.screen_shots("qr")
