@@ -2,6 +2,8 @@
 
 {%- import '_utils.html' as utils -%}
 
+{% set page_title = item.meta['filename'] or name %}
+
 {% block content %}
 <div class="card">
     <div class="card-header">

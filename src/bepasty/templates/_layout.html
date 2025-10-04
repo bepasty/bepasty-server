@@ -8,7 +8,7 @@
         <!-- Favicon -->
         <link rel="icon" href="{{ url_for('static', filename='app/favicon.ico') }}" type="image/x-icon">
 
-        <title>Bepasty</title>
+        <title>{% if config.SITENAME %}{{ config.SITENAME }}{% else %}Bepasty{% endif %}{% if page_title %} - {{ page_title }}{% endif %}</title>
 
         <!-- Bootstrap styles -->
         <link rel="stylesheet" href="{{ url_for('bepasty.xstatic', name='bootstrap', filename='css/bootstrap.min.css') }}" type="text/css">
