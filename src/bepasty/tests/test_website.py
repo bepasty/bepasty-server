@@ -38,7 +38,7 @@ class TestMaxlifeFeature:
             self.browser.find_element(By.XPATH, "//input[@value='Logout']")
         except NoSuchElementException:
             raise ValueError("Can't log in! Create a user 'foo' with the permissions "
-                             "'read' and 'create' in your PERMISSIONS in the config")
+                             "'read,create,delete' in your PERMISSIONS in the config.")
 
     def teardown_class(self):
         """
