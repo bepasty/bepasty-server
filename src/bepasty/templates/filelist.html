@@ -4,9 +4,5 @@
 {% set page_title = 'All items' %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-12">
-        {{ utils.filelist(files) }}
-    </div>
-</div>
+{{ utils.filelist(files) }}
 {% endblock content %}

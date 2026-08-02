@@ -1,139 +1,169 @@
-jqXHR = {};
-$(function () {
-    'use strict';
+function humansize (size) {
+  const suffix = ["B", "KiB", "MiB", "GiB", "TiB", "PiB"];
+  let tier = 0;
 
-    // Generate human-readable file size
-    function humansize (size) {
-        var suffix = ["B", "KiB", "MiB", "GiB", "TiB", "PiB"],
-            tier = 0;
+  while (size >= 1024) {
+    size = size / 1024;
+    tier++;
+  }
 
-        while (size >= 1024) {
-            size = size / 1024;
-            tier++;
-        }
+  return Math.round(size * 10) / 10 + " " + suffix[tier];
+}
 
-        return Math.round(size * 10) / 10 + " " + suffix[tier];
-    }
+function process(fieldName, file, metadata, load, error, progress, abort, transfer, options) {
+  const state = { aborted: false, xhr: null };
+  let uploadUrl = null;
+  let displayUrl = null;
 
-    $('#fileupload')
-        .fileupload({
-            dataType: 'json',
-            autoUpload: true,
-            singleFileUploads: true,
-            maxChunkSize: MAX_BODY_SIZE,
-            maxFileSize: MAX_ALLOWED_FILE_SIZE
-        })
+  const controller = new AbortController();
 
-        .on('fileuploadadd', function (e, data) { })
+  const doUpload = (url, name, offset) => {
+    if (state.aborted) return;
 
-        .on('fileuploadsubmit', function (e, data) {
-            var $this = $(this);
-            var file = data.files[0]
-            // Create new item
-            $.ajax({
-                type: 'POST',
-                url: UPLOAD_NEW_URL,
-                data: JSON.stringify({
-                    filename: file.name,
-                    size: file.size,
-                    type: file.type,
-                    maxlife_unit: $("select[name=maxlife-unit] option:selected").val(),
-                    maxlife_value: $("input[name=maxlife-value]").val()
-                }),
-                contentType: 'application/json',
-                success: function (result) {
-                    data.url = result.url;
+    const end = Math.min(offset + MAX_BODY_SIZE, file.size);
+    const xhr = new XMLHttpRequest();
+    state.xhr = xhr;
 
-                    data.context = $('<div class="alert alert-processing"/>')
-                        .appendTo('#files');
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-Range", `bytes ${offset}-${end - 1}/${file.size}`);
 
-                    var abortButton = $('<button id="' + result.name + '" class="'
-                        + ' fileupload-abort btn btn-danger"/>').text('abort');
-                    abortButton.appendTo(data.context);
+    xhr.upload.onprogress = (e) => progress(true, offset + e.loaded, file.size);
 
-                    abortButton.click(function (e) {
-                        jqXHR[result.name].abort();
-                        abortButton.css('display', 'none')
-                    });
+    xhr.onload = () => {
+      state.xhr = null;
+      if (xhr.status < 200 || xhr.status >= 300) {
+        error(`Chunk upload failed: ${xhr.status}`);
+        return;
+      }
+      const result = JSON.parse(xhr.responseText);
+      if (result.files?.[0]?.url) displayUrl = result.files[0].url;
 
-                    var fileItem = $('<p/>').text(file.name);
-                    fileItem.append(' <span class="break-word">('
-                        + humansize(file.size)
-                        + ')</span>');
-                    fileItem.appendTo(data.context);
+      if (end < file.size) {
+        doUpload(url, name, end);
+      } else {
+        load(displayUrl ?? url);
+        const filesDiv = document.getElementById("files");
+        const alert = document.createElement("div");
+        alert.className = "notification is-success is-light";
+        alert.dataset.name = name;
+        const a = document.createElement("a");
+        a.href = displayUrl ?? url;
+        a.target = "_blank";
+        a.textContent = `${file.name} (${humansize(file.size)})`;
+        alert.appendChild(a);
+        filesDiv.appendChild(alert);
 
-                    var _jqXHR = $this.fileupload('send', data);
-                    _jqXHR.error(function (jqXHR, textStatus, errorThrown) {
-                            // Delete file-upload garbage on the server
-                            $.ajax({
-                                type: 'GET',
-                                url: data.url+'/abort'
-                            });
-                        });
-                    jqXHR[result.name] = _jqXHR;
-                }
-            });
-            return false;
-        })
+        const fileList = document.getElementById("filelist");
+        fileList.textContent += name + "\n";
+        const fileListForm = document.getElementById("filelist-form");
+        fileListForm.style.display = "";
 
-        .on('fileuploaddone', function (e, data) {
-            $(data.context)
-                .attr('class', 'alert alert-success');
-            $.each(data.result.files, function (index, file) {
-                $(data.context[0].childNodes[1])
-                    .wrapInner($('<a target="_blank" class="alert-link">')
-                        .prop('href', file.url));
-                $('#filelist').append(file.name + "\n");
-                delete jqXHR[file.name];
-                $('#' + file.name).css('display', 'none');
-            });
-            $('#filelist-form').show();
-        })
+        const previewBody = document.getElementById("tab-copy-preview-body");
+        const inlineBody = document.getElementById("tab-copy-inline-body");
+        const urlEl = document.createElement("span");
+        urlEl.dataset.name = name;
+        urlEl.append(window.location + name, document.createElement("br"));
+        previewBody.appendChild(urlEl);
+        const urlInlineEl = document.createElement("span");
+        urlInlineEl.dataset.name = name;
+        urlInlineEl.append(urlEl.innerText + "/+inline", document.createElement("br"));
+        inlineBody.appendChild(urlInlineEl);
+      }
+    };
 
-        .on('fileuploadfail', function (e, data) {
-            $(data.context)
-                .attr('class', 'alert alert-danger')
-                .append('<p><strong>Upload failed!</strong></p>');
-            var name = data.url.split('/').pop();
-            delete jqXHR[name];
-        })
+    xhr.onerror = () => { state.xhr = null; error("Network error"); };
+    xhr.onabort = () => { state.xhr = null; };
 
-        .on('fileuploadprogressall', function (e, data) {
-            var progress = parseInt(data.loaded / data.total * 100, 10);
-            $('#fileupload-progress').find('.progress-bar').css('width', progress + '%');
-        })
+    const formData = new FormData();
+    formData.append("text", "");
+    formData.append("contenttype", file.type || "application/octet-stream");
+    formData.append("filename", file.name);
+    formData.append("maxlife-value", document.querySelector("input[name=maxlife-value]").value);
+    formData.append("maxlife-unit", document.querySelector("select[name=maxlife-unit]").value);
+    formData.append("file", file.slice(offset, end), file.name);
 
-        .on('fileuploadstart', function (e, data) {
-            $('#fileupload-progress').css('visibility', 'visible');
-            $('#fileupload-abort').css('visibility', 'visible')
-        })
+    xhr.send(formData);
+  };
 
-        .on('fileuploadstop', function (e, data) {
-            var progressBar = $('#fileupload-progress')
-            progressBar.css('visibility', 'hidden');
-            progressBar.find('.progress-bar').css('width', 0 + '%');
-            $('#fileupload-abort').css('visibility', 'hidden');
-        })
-
-        .on('fileuploadprocessfail', function (e, data) {
-            $(data.context)
-                .attr('class', 'alert alert-danger');
-            var index = data.index,
-                file = data.files[index];
-            $(data.context.children()[index])
-                .append('<br>')
-                .append('<strong>' + file.error + '</strong>');
-        });
-
-    $('#fileupload-abort').click(function (e) {
-        bootbox.confirm("Are you sure you want to abort the upload?", function(result) {
-            if (result == true && jqXHR != null){
-                for (var key in jqXHR) {
-                    jqXHR[key].abort();
-                    $('#' + key).css('display', 'none');
-                }
-            }
-            $('#fileupload-progress').find('.progress-bar').css('width', 0 + '%');
-        });
+  fetch(UPLOAD_NEW_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    signal: controller.signal,
+    body: JSON.stringify({
+      filename: file.name,
+      size: file.size,
+      type: file.type,
+      maxlife_unit: document.querySelector("select[name=maxlife-unit]").value,
+      maxlife_value: document.querySelector("input[name=maxlife-value]").value
+    })
+  })
+    .then(res => {
+      if (!res.ok) throw new Error("Failed to initialise upload");
+      return res.json();
+    })
+    .then(({ name, url }) => {
+      uploadUrl = url;
+      doUpload(url, name, 0);
+    })
+    .catch(err => {
+      if (err.name !== "AbortError") error(err.message);
     });
+
+  return {
+    abort: () => {
+      state.aborted = true;
+      controller.abort();
+      if (state.xhr) state.xhr.abort();
+      if (uploadUrl) fetch(`${uploadUrl}/abort`).catch(() => {});
+      abort();
+    }
+  };
+}
+
+function revert(uniqueFileId, load, error) {
+  const name = uniqueFileId.split("#")[0].slice(1)
+  fetch(`/${name}/+delete`, { method: "POST" })
+    .then(res => {
+      if (!res.ok) throw new Error(`Delete failed: ${res.status}`);
+
+      document.querySelectorAll(`#right-panel [data-name=${name}]`).forEach(v=>v.remove());
+
+      const fileList = document.getElementById("filelist");
+      fileList.textContent = fileList.textContent
+        .split("\n")
+        .filter(n => n !== name)
+        .join("\n");
+
+      if (!fileList.textContent.trim()) {
+        document.getElementById("filelist-form").style.display = "none";
+      }
+
+      load();
+    })
+    .catch(err => error(err.message));
+}
+
+const fp = FilePond.create(document.getElementById("filepond"), {
+  chunkUploads: true,
+  allowMinimumUploadDuration: false,
+  server: {
+    fetch: null,
+    revert,
+    restore: null,
+    load: null,
+    remove: null,
+    process
+  }
+});
+
+document.querySelectorAll("#tab-copy-body code").forEach(el => {
+  let t;
+  el.addEventListener("click", async _ => {
+    await navigator.clipboard.writeText(el.innerText);
+    el.classList.add("copied");
+    if (t) window.clearTimeout(t);
+    t = setTimeout(() => {
+      el.classList.remove("copied");
+    }, 1500);
+  });
 });

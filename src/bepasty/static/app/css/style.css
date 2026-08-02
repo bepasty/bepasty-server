@@ -8,12 +8,6 @@ body {
     margin: 0;
     -webkit-font-smoothing: antialiased;
     font-size: 100%;
-    background-color: #fff;
-}
-
-#footer {
-    height: 30px;
-    position: relative;
 }
 
 #formupload {
@@ -22,28 +16,14 @@ body {
     font-family: monospace;
 }
 
-#files p {
+#files a {
     word-break: break-all;
-}
-#files p .break-word {
-    word-break: break-word;
-    font-weight: normal !important;
 }
 
 #filelist {
     height: auto;
     width: 100%;
     font-family: monospace;
-}
-
-.fileupload-abort {
-    float: right;
-    margin-left: 10px;
-}
-
-.dropzone {
-    width: 100%;
-    padding: 3em;
 }
 
 #wrapper {
@@ -56,31 +36,9 @@ body {
     padding: 0 15px 60px;
 }
 
-.jumbotron .fa {
-    font-size: 80px;
-}
-
 .jumbotron {
     font-size: 100%;
     text-align: center;
-}
-
-.alert {
-    padding: 5px 10px;
-}
-
-.alert-processing {
-    color: #464646;
-    background-color: #f0f0f0;
-    border-color: #eeeeee;
-}
-
-.alert-processing hr {
-    border-top-color: #e6e6e6;
-}
-
-.alert-processing .alert-link {
-    color: #959595;
 }
 
 /* If data is too wide, show scrollbars */
@@ -127,12 +85,39 @@ table.highlighttable {
     border-left: 1px solid #ccc;
 }
 
+@media (prefers-color-scheme: dark) {
+    .line-highlight {
+        background-color: hsl(var(--bulma-warning-h), var(--bulma-warning-s), 15%);
+    }
+    table.highlighttable {
+        border: 1px solid var(--bulma-dark);
+    }
+    .highlight pre {
+        border-left: 1px solid var(--bulma-dark);
+    }
+}
+
 /* Set minimal width and let the contents push the block width */
 .linenos {
     width: 1px;
 }
 
-/* Autocomplete for modify dialog */
-.ui-autocomplete {
-    z-index: 1065;
+.mr-auto {
+    margin-right: auto;
+}
+
+.is-text-6-5 {
+    font-size: 0.85rem;
+}
+
+#header .navbar {
+    --bulma-navbar-background-color: var(--bulma-light);
+}
+.has-text-deemph {
+    color: hsl(var(--bulma-scheme-h), var(--bulma-scheme-s), var(--bulma-text-l));
+}
+@media (prefers-color-scheme:dark) {
+    #header .navbar {
+        --bulma-navbar-background-color: var(--bulma-dark);
+    }
 }
