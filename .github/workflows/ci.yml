@@ -12,6 +12,8 @@ on:
     - '**.cfg'
     - '**.ini'
     - 'requirements.d/*'
+    - 'docker/**'
+    - '**/Dockerfile'
     - '!docs/**'
   pull_request:
     branches: [ master ]
@@ -22,6 +24,8 @@ on:
     - '**.cfg'
     - '**.ini'
     - 'requirements.d/*'
+    - 'docker/**'
+    - '**/Dockerfile'
     - '!docs/**'
 
 jobs:
@@ -31,15 +35,57 @@ jobs:
     timeout-minutes: 10
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v7
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v7
       with:
         python-version: '3.12'
     - name: Lint with flake8
       run: |
         pip install flake8-pyproject flake8
         flake8 src scripts
+
+  hadolint:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+
+    steps:
+    - uses: actions/checkout@v7
+    - name: Lint Dockerfile with Hadolint
+      uses: hadolint/hadolint-action@v3.4.0
+      with:
+        dockerfile: docker/Dockerfile
+        failure-threshold: warning
+
+  docker-image-test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+
+    steps:
+    - uses: actions/checkout@v7
+    - name: Build Docker image
+      run: |
+        docker build -f docker/Dockerfile -t bepasty-ci:${{ github.sha }} .
+    - name: Smoke test Python package in image
+      run: |
+        docker run --rm bepasty-ci:${{ github.sha }} /app/env/bin/python -c "import bepasty.app; print('bepasty import ok')"
+    - name: Container HTTP smoke test
+      run: |
+        set -euo pipefail
+        cid=$(docker run -d \
+          -e BEPASTY_SITENAME="CI Test Instance" \
+          -e BEPASTY_SECRET_KEY="ci-test-secret-key-change-me" \
+          -p 8000:8000 \
+          bepasty-ci:${{ github.sha }})
+        trap 'docker logs "$cid" || true; docker rm -f "$cid" || true' EXIT
+        for i in $(seq 1 30); do
+          if curl -fsS http://127.0.0.1:8000/ >/dev/null; then
+            exit 0
+          fi
+          sleep 1
+        done
+        echo "Container did not become ready on :8000 in time"
+        exit 1
 
   pytest:
 
@@ -71,12 +117,12 @@ jobs:
     timeout-minutes: 10
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v7
       with:
         # Fetching only the latest commit is not enough for setuptools-scm; fetch full history
         fetch-depth: 0
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v7
       with:
         python-version: ${{ matrix.python-version }}
         allow-prereleases: true
@@ -88,7 +134,7 @@ jobs:
       run: |
         tox --skip-missing-interpreters
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v7
       env:
         OS: ${{ runner.os }}
         python: ${{ matrix.python-version }}
