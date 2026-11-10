@@ -1,5 +1,5 @@
 import collections
-from urllib.parse import urlparse, urljoin
+from urllib.parse import urlparse, urljoin, urlsplit
 
 from flask import request, redirect, url_for
 from werkzeug.exceptions import BadRequest
@@ -15,6 +15,21 @@ def is_safe_url(target):
     ref_url = urlparse(request.host_url)
     test_url = urlparse(urljoin(request.host_url, target))
     return test_url.scheme in ('http', 'https') and ref_url.netloc == test_url.netloc
+
+
+def is_safe_external_url(url):
+    """
+    Check whether url is acceptable as a target for a bepasty redirect item.
+
+    Only absolute http(s) URLs with a host are allowed. This rejects
+    javascript:, data:, vbscript: and other schemes that could execute
+    code in the context of the bepasty site (XSS) when used in a link.
+    """
+    try:
+        parts = urlsplit(url.strip())
+    except ValueError:
+        return False
+    return parts.scheme in ('http', 'https') and bool(parts.netloc)
 
 
 def _redirect_target_url(d, use_referrer, endpoint, **values):

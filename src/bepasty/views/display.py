@@ -12,10 +12,29 @@ from pygments.util import ClassNotFound as NoPygmentsLexer
 from ..constants import COMPLETE, FILENAME, LOCKED, SIZE, TIMESTAMP_DOWNLOAD, TYPE
 from ..utils.date_funcs import delete_if_lifetime_over
 from ..utils.formatters import CustomHtmlFormatter
+from ..utils.http import is_safe_external_url
 from ..utils.permissions import ADMIN, READ, may
 
 from .index import contenttypes_list
 from .filelist import file_infos
+
+
+DEFAULT_REDIRECT_DELAY = 3
+
+
+def parse_delay(value):
+    """
+    Parse the redirect delay (in seconds) given as url argument.
+
+    Only non-negative integers are accepted, anything else gives the default.
+    This value ends up in a meta refresh header, so it must never contain
+    anything else (e.g. "0;url=https://evil.example/" would hijack the redirect).
+    """
+    try:
+        delay = int(value)
+    except (TypeError, ValueError):
+        return DEFAULT_REDIRECT_DELAY
+    return delay if delay >= 0 else DEFAULT_REDIRECT_DELAY
 
 
 def rendering_allowed(item_type, item_size, use_pygments, complete):
@@ -101,9 +120,11 @@ class DisplayView(MethodView):
                         else:
                             raise NotImplementedError
                     elif ct == 'text/x-bepasty-redirect':
-                        url = read_data(item).decode('utf-8')
-                        delay = request.args.get('delay', '3')
-                        return render_template('redirect.html', url=url, delay=delay)
+                        url = read_data(item).decode('utf-8').strip()
+                        if is_safe_external_url(url):
+                            delay = parse_delay(request.args.get('delay'))
+                            return render_template('redirect.html', url=url, delay=delay)
+                        rendered_content = "Invalid redirect URL (only http and https URLs are supported)."
                     else:
                         rendered_content = "Can't render this content type."
                 elif ct.startswith('image/'):
