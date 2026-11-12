@@ -1,6 +1,26 @@
 ChangeLog
 =========
 
+Release 1.3.0 (not released yet)
+--------------------------------
+
+Fixes:
+
+- ...
+
+New features:
+
+- add object name to html title, #316
+- add support for customizable default maxlife values and units, #322
+
+Other changes:
+
+- drop support for Python 3.8, 3.9 and 3.10
+- add support for Python 3.14 and 3.15
+- upgrade to FontAwesome v6
+- use SPDX license expression, #330
+
+
 Release 1.2.2 (2025-05-06)
 --------------------------
 
