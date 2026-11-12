@@ -1,5 +1,5 @@
 import re
-import random
+import secrets
 
 from werkzeug.routing import BaseConverter
 
@@ -59,10 +59,11 @@ def make_id(length, x=None, alphabet=all_chars):
     """
     base = len(alphabet)  # e.g. 10
     if x is None:
-        x = random.randint(
-            0,                  # 000 (length == 3) ...
-            base ** length - 1  # 999 (length == 3)
-        )
+        # Item names are the only secret protecting items if users may read, but
+        # not list items, so they must not be predictable: use a CSPRNG here.
+        # Python's "random" module (Mersenne Twister) is predictable: its internal
+        # state can be reconstructed from enough observed outputs (item names).
+        x = secrets.randbelow(base ** length)  # 000 ... 999 (length == 3)
     return ''.join(encode(x, length, alphabet))
 
 

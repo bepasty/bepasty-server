@@ -47,6 +47,31 @@ def test_make_id_unique():
     assert len(ids) == count
 
 
+def test_make_id_not_from_random_module():
+    # names must come from a CSPRNG, not from the (predictable) random module:
+    # with the same random module state, we must still get different names.
+    import random
+    random.seed(42)
+    first = [make_id(8) for i in range(10)]
+    random.seed(42)
+    second = [make_id(8) for i in range(10)]
+    assert first != second
+
+
+def test_make_id_uses_secrets(monkeypatch):
+    from bepasty.utils import name
+    calls = []
+
+    def fake_randbelow(n):
+        calls.append(n)
+        return n - 1
+
+    monkeypatch.setattr(name.secrets, 'randbelow', fake_randbelow)
+    base = len(name.all_chars)
+    assert make_id(3) == name.all_chars[-1] * 3  # highest possible value
+    assert calls == [base ** 3]
+
+
 def test_encode_length():
     length = 42
     assert len(encode(12345, length)) == length
