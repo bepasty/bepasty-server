@@ -3,12 +3,7 @@ from xstatic.main import XStatic
 # The names below must be package names.
 mod_names = [
     'asciinema_player',
-    'bootbox',
-    'bootstrap',
     'font_awesome',
-    'jquery',
-    'jquery_ui',
-    'jquery_file_upload',
     'pygments',
 ]
 

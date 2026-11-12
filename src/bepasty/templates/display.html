@@ -6,77 +6,72 @@
 
 {% block content %}
 <div class="card">
-    <div class="card-header">
-        <h1>
+    <div class="card-header is-flex-direction-column">
+        <h1 class="card-header-title is-size-4">
             {{ item.meta['filename'] }}
         </h1>
-        <div class="btn-group flex-wrap flex-md-nowrap" role="group">
+        <div class="card-header-icon field has-addons pt-0">
             {% if not item.meta['locked'] or may(ADMIN) %}
                 {% if is_list_item %}
-                <a id="carousel-btn" href="{{ url_for('bepasty.carousel', name=name) }}" class="btn btn-info">
-                    <span class="fas fa-play-circle"></span> Carousel
-                </a>
+                <p class="control">
+                    <a id="carousel-btn" href="{{ url_for('bepasty.carousel', name=name) }}" class="button is-info">
+                        <span class="icon">
+                            <i class="fas fa-play-circle"></i>
+                        </span>
+                        <span>Carousel</span>
+                    </a>
+                </p>
                 {% endif %}
-                <a id="qr-btn" href="{{ url_for('bepasty.qr', name=name) }}" class="btn btn-info">
-                    <span class="fas fa-qrcode"></span> QR
-                </a>
-                <a id="download-btn" href="{{ url_for('bepasty.download', name=name) }}" class="btn btn-info" role="button">
-                    <span class="fas fa-download"></span> Download
-                </a>
-                <a id="inline-btn" href="{{ url_for('bepasty.inline', name=name) }}" class="btn btn-info" role="button">
-                    <span class="fas fa-asterisk"></span> Inline
-                </a>
+                <p class="control">
+                    <a id="qr-btn" href="{{ url_for('bepasty.qr', name=name) }}" class="button is-info">
+                        <span class="icon"><i class="fas fa-qrcode"></i></span> <span>QR</span>
+                    </a>
+                </p>
+                <p class="control">
+                    <a id="download-btn" href="{{ url_for('bepasty.download', name=name) }}" class="button is-info" role="button">
+                        <span class="icon"><i class="fas fa-download"></i></span> <span>Download</span>
+                    </a>
+                </p>
+                <p class="control">
+                    <a id="inline-btn" href="{{ url_for('bepasty.inline', name=name) }}" class="button is-info" role="button">
+                        <span class="icon"><i class="fas fa-asterisk"></i></span> <span>Inline</span>
+                    </a>
+                </p>
             {% endif %}
             {% if may(MODIFY) %}
-                <div id="hidden-modify-frm" class="d-none" modalTitle="Modify Metadata" modalFocus="filename">
-                    <!-- Modify form used by utils.js -->
-                    <form id="modify-frm" action="{{ url_for('bepasty.modify', name=name) }}" method="post">
-                        <div class="form-group row">
-                            <label for="filename" class="col-2 form-label">Filename</label>
-                            <div class="col-10">
-                                {{ utils.input_filename(item.meta['filename']) }}
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="contenttype" class="col-2 form-label">Type</label>
-                            <div class="col-10">
-                                {{ utils.input_contenttype(item.meta['type']) }}
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary d-none">Submit</button>
-                    </form>
-                </div>
-                <button id="modify-btn" type="button" class="btn btn-info">
-                    <span class="fas fa-edit"></span> Modify
-                </button>
+                <p class="control">
+                    <button type="button" class="button is-info js-modal-trigger" data-target="modify-modal">
+                        <span class="icon"><i class="fas fa-edit"></i></span> <span>Modify</span>
+                    </button>
+                </p>
             {% endif %}
             {% if may(DELETE) %}
-                <form id="del-frm" action="{{ url_for('bepasty.delete', name=name) }}" method="post" class="btn-group">
+                <form id="del-frm" action="{{ url_for('bepasty.delete', name=name) }}" method="post" class="control">
                     <input type="hidden" name="next" value="{{ url_for('bepasty.index') }}">
-                    <button id="del-btn" type="button" class="btn btn-danger">
-                        <span class="fas fa-times"></span> Delete
+                    <button id="del-btn" type="button" class="button is-danger">
+                        <span class="icon"><i class="fas fa-times"></i></span> <span>Delete</span>
                     </button>
                 </form>
             {% endif %}
             {% if may(ADMIN) %}
             {% if not item.meta['locked'] %}
-                <form id="lock-frm" action="{{ url_for('bepasty.lock', name=name) }}" method="post" class="btn-group">
-                    <button id="lock-btn" type="submit" class="btn btn-danger">
-                        <span class="fas fa-lock"></span> Lock
+                <form id="lock-frm" action="{{ url_for('bepasty.lock', name=name) }}" method="post" class="control">
+                    <button id="lock-btn" type="submit" class="button is-danger">
+                        <span class="icon"><i class="fas fa-lock"></i></span> <span>Lock</span>
                     </button>
                 </form>
             {% else %}
-                <form id="unlock-frm" action="{{ url_for('bepasty.unlock', name=name) }}" method="post" class="btn-group">
-                    <button id="unlock-btn" type="submit" class="btn btn-info">
-                        <span class="fas fa-unlock"></span> Unlock
+                <form id="unlock-frm" action="{{ url_for('bepasty.unlock', name=name) }}" method="post" class="control">
+                    <button id="unlock-btn" type="submit" class="button is-info">
+                        <span class="icon"><i class="fas fa-unlock"></i></span> <span>Unlock</span>
                     </button>
                 </form>
             {% endif %}
             {% endif %}
         </div>
     </div>
-    <div class="card-body">
-        <p>
+    <div class="card-content">
+        <p class="mb-3 has-text-deemph is-text-6-5">
         Type: {{ item.meta['type'] }},
         Size: {{ item.meta['size'] }} bytes,
         SHA256: <code>{{ item.meta['hash'] }}</code>.
@@ -95,25 +90,47 @@
         </div>
     </div>
 </div>
+
+{% if may(MODIFY) %}
+<div id="modify-modal" class="modal">
+    <div class="modal-background"></div>
+    <form class="modal-card" id="modify-frm" action="{{ url_for('bepasty.modify', name=name) }}" method="post">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Modify metadata</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="field">
+                <label for="filename" class="label">Filename</label>
+                <div class="control">
+                    {{ utils.input_filename(item.meta['filename']) }}
+                </div>
+            </div>
+            <div class="field">
+                <label for="contenttype" class="label">Type</label>
+                <div class="control">
+                    {{ utils.input_contenttype(contenttypes, item.meta['type']) }}
+                </div>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button type="submit" class="button is-primary">Submit</button>
+        </footer>
+    </form>
+</div>
+{% endif %}
+
 {% endblock content %}
 
 {% block extra_link %}
 <!-- Pygments styles -->
-<link rel="stylesheet" href="{{ url_for('bepasty.xstatic', name='pygments', filename='css/colorful.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ url_for('bepasty.xstatic', name='pygments', filename='css/monokai.css') }}" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="{{ url_for('bepasty.xstatic', name='pygments', filename='css/colorful.css') }}" media="not (prefers-color-scheme: dark)">
 <!-- asciinema styles -->
 <link rel="stylesheet" href="{{ url_for('bepasty.xstatic', name='asciinema_player', filename='asciinema-player.css') }}" type="text/css">
 {% endblock %}
 
 {% block extra_script %}
-<script src="{{ url_for('bepasty.xstatic', name='bootbox', filename='bootbox.min.js') }}" type="text/javascript"></script>
 <script src="{{ url_for('bepasty.xstatic', name='asciinema_player', filename='asciinema-player.js') }}" type="text/javascript"></script>
 <script src="{{ url_for('static', filename='app/js/utils.js') }}" type="text/javascript"></script>
-{% if may(MODIFY) %}
-<script>
-    <!-- Function used by utils.js -->
-    function contenttype_autocomplete(modal_box) {
-        {{ utils.contenttype_autocomplete('$(modal_box).find("#contenttype")', contenttypes) }}
-    };
-</script>
-{% endif %}
 {% endblock extra_script %}

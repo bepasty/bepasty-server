@@ -1,8 +1,8 @@
 {% macro filelist(files) %}
-    <table class="table table-hover">
+    <table class="table is-hoverable">
         <thead>
         <tr>
-            <th class="text-right">
+            <th class="has-text-right">
                 Filename
                 <br />
                 Type
@@ -25,7 +25,7 @@
         <tbody>
             {% for file in files %}
             <tr>
-                <td class="text-right">
+                <td class="has-text-right">
                     <a href="{{ url_for('bepasty.display', name=file['id']) }}">
                         {{ file['filename'] }}
                     </a>
@@ -49,33 +49,41 @@
                     {% endif %}
                 </td>
                 <td>
-                    <div class="btn-group flex-wrap flex-md-nowrap" role="group">
-                        <a href="{{ url_for('bepasty.display', name=file['id']) }}" class="btn btn-sm btn-info" role="button">
-                            Display
-                        </a>
-                        <a href="{{ url_for('bepasty.download', name=file['id']) }}" class="btn btn-sm btn-info" role="button">
-                            Download
-                        </a>
-                        <a href="{{ url_for('bepasty.inline', name=file['id']) }}" class="btn btn-sm btn-info" role="button">
-                            Inline
-                        </a>
+                    <div class="field has-addons">
+                        <p class="control">
+                            <a href="{{ url_for('bepasty.display', name=file['id']) }}" class="button is-small is-info" role="button">
+                                Display
+                            </a>
+                        </p>
+                        <p class="control">
+                            <a href="{{ url_for('bepasty.download', name=file['id']) }}" class="button is-small is-info" role="button">
+                                Download
+                            </a>
+                        </p>
+                        <p class="control">
+                            <a href="{{ url_for('bepasty.inline', name=file['id']) }}" class="button is-small is-info" role="button">
+                                Inline
+                            </a>
+                        </p>
+                    </div>
+                    <div class="field has-addons">
                         {% if may(DELETE) %}
-                            <form action="{{ url_for('bepasty.delete', name=file['id']) }}" method="post" class="btn-group">
-                                <button type="submit" class="btn btn-sm btn-danger">
+                            <form class="control" action="{{ url_for('bepasty.delete', name=file['id']) }}" method="post">
+                                <button type="submit" class="button is-small is-danger">
                                     Delete
                                 </button>
                             </form>
                         {% endif %}
                         {% if may(ADMIN) %}
                         {% if not file['locked'] %}
-                            <form action="{{ url_for('bepasty.lock', name=file['id']) }}" method="post" class="btn-group">
-                                <button type="submit" class="btn btn-sm btn-danger">
+                            <form action="{{ url_for('bepasty.lock', name=file['id']) }}" method="post" class="control">
+                                <button type="submit" class="button is-small is-danger">
                                     Lock
                                 </button>
                             </form>
                         {% else %}
-                            <form action="{{ url_for('bepasty.unlock', name=file['id']) }}" method="post" class="btn-group">
-                                <button type="submit" class="btn btn-sm btn-info">
+                            <form action="{{ url_for('bepasty.unlock', name=file['id']) }}" method="post" class="control">
+                                <button type="submit" class="button is-small is-info">
                                     Unlock
                                 </button>
                             </form>
@@ -90,14 +98,14 @@
 {% endmacro %}
 
 {% macro input_filename(value) -%}
-    <input class="form-control" type="text" id="filename" name="filename" size="40" placeholder="optional download-filename"{% if value is defined %} value="{{ value }}"{% endif %}>
+    <input class="input" type="text" id="filename" name="filename" size="40" placeholder="optional download filename"{% if value is defined %} value="{{ value }}"{% endif %}>
 {%- endmacro %}
 
-{% macro input_contenttype(value) -%}
-    <input class="form-control" type="text" id="contenttype" name="contenttype" size="30" placeholder="Content-Type"{% if value is defined %} value="{{ value }}"{% endif %}>
-{%- endmacro %}
-
-{% macro contenttype_autocomplete(selector, contenttypes) -%}
-    var availableTypes = ["{{ contenttypes | join('","') | safe}}"];
-    {{ selector|safe }}.autocomplete({source: availableTypes});
+{% macro input_contenttype(contenttypes, value) -%}
+    <input class="input" type="text" id="contenttype" list="content-types" name="contenttype" size="30" placeholder="Content-Type"{% if value is defined %} value="{{ value }}"{% endif %}>
+    <datalist id="content-types">
+        {% for contenttype in contenttypes %}
+            <option value="{{ contenttype }}"></option>
+        {% endfor %}
+    </datalist>
 {%- endmacro %}

@@ -36,13 +36,8 @@ dependencies = [
     "Pygments >= 2.12.0",
     "xstatic < 2.0.0",
     "XStatic-asciinema-player <= 2.6.1.1",
-    "xstatic-bootbox >= 5.4.0, <= 5.5.1.1",
-    "xstatic-bootstrap >=4.0.0.0, <= 4.5.3.1",
     "xstatic-font-awesome >= 6.0.0, <= 6.2.1.1",
-    "xstatic-jquery <= 3.5.1.1",
-    "xstatic-jquery-ui <= 1.13.0.1",
-    "xstatic-jquery-file-upload <= 10.31.0.1",
-    "xstatic-pygments <= 2.9.0.1",
+    "xstatic-pygments <= 2.9.0.1"
 ]
 
 [project.scripts]
