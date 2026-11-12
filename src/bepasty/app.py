@@ -14,6 +14,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 from .apis import blueprint as blueprint_apis
 from .storage import create_storage
+from .utils.csrf import check_csrf
 from .utils.date_funcs import allowed_maxlife_units
 from .utils.name import setup_werkzeug_routing
 from .utils.permissions import (
@@ -132,6 +133,10 @@ def create_app():
         flaskg.icon_permissions = get_permission_icons()
         if flaskg.logged_in:
             session.permanent = current_app.config['PERMANENT_SESSION']
+
+    # Reject cross-origin requests before any view function runs.
+    # This comes after before_request (above), because the error page needs flaskg.
+    app.before_request(check_csrf)
 
     def datetime_format(ts):
         """

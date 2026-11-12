@@ -66,7 +66,7 @@ $(function () {
                     _jqXHR.fail(function (jqXHR, textStatus, errorThrown) {
                             // Delete file-upload garbage on the server
                             $.ajax({
-                                type: 'GET',
+                                type: 'POST',
                                 url: data.url+'/abort'
                             });
                         });

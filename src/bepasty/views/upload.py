@@ -137,7 +137,8 @@ class UploadContinueView(MethodView):
 
 
 class UploadAbortView(MethodView):
-    def get(self, name):
+    # This deletes data, so it must be POST: GET requests are not checked for CSRF.
+    def post(self, name):
         if not may(CREATE):
             raise Forbidden()
 

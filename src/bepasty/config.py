@@ -110,6 +110,11 @@ class Config:
 
     #: Transmit cookie only over HTTPS (if you use HTTP, set this to False)
     SESSION_COOKIE_SECURE = True
+    #: Do not send the session cookie with requests triggered by other sites
+    #: (except for top-level navigation), as protection against cross-site
+    #: request forgery (CSRF). 'Strict' is even stricter: after following a link
+    #: to bepasty from another site, the user then is not logged in.
+    SESSION_COOKIE_SAMESITE = 'Lax'
     #: use a permanent session (True, cookie will expire after the given
     #: time, see below) or not (False, cookie will get removed when browser
     #: is closed)
