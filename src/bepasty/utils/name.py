@@ -109,6 +109,15 @@ class ItemNameConverter(BaseConverter):
     ) % dict(valid=re.escape(all_chars), length=ID_LENGTH)
     weight = 200
 
+    @classmethod
+    def is_valid(cls, name):
+        """
+        Check whether <name> is an item name as accepted in URLs.
+
+        Use this for item names that do not come from URL routing (e.g. from headers).
+        """
+        return isinstance(name, str) and re.fullmatch(cls.regex, name) is not None
+
 
 def setup_werkzeug_routing(app):
     app.url_map.converters['itemname'] = ItemNameConverter

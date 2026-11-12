@@ -6,7 +6,7 @@ import urllib
 
 from flask import abort, current_app, jsonify, request, url_for
 from flask.views import MethodView
-from werkzeug.exceptions import NotFound, Forbidden
+from werkzeug.exceptions import BadRequest, Conflict, NotFound, Forbidden
 
 from ..constants import COMPLETE, FILENAME, SIZE
 from ..utils.date_funcs import get_maxlife
@@ -102,8 +102,27 @@ class UploadContinueView(MethodView):
         # Check Content-Range
         content_range = ContentRange.from_request()
 
-        with current_app.storage.openwrite(name) as item:
+        try:
+            item = current_app.storage.openwrite(name)
+        except OSError as e:
+            if e.errno == errno.ENOENT:
+                raise NotFound()
+            raise
+
+        with item:
+            # Only an upload in progress (created by UploadNewView) may receive data.
+            # Otherwise, anybody with "create" permission could overwrite the content
+            # of any existing (complete, maybe even locked) item.
+            if item.meta[COMPLETE]:
+                raise Conflict(description='Upload already complete.')
+
+            # Writes must stay within the size declared when the upload was created
+            # (that size was checked against MAX_ALLOWED_FILE_SIZE).
+            declared_size = item.meta[SIZE]
+
             if content_range:
+                if content_range.complete != declared_size:
+                    raise BadRequest(description='Content-Range length does not match the declared size.')
                 # Note: we ignore the hash as it is only for one chunk, not for the whole upload.
                 # Also, we cannot continue computing the hash as we can't save the internal
                 # state of the hash object.
@@ -116,6 +135,8 @@ class UploadContinueView(MethodView):
                 f.seek(0, os.SEEK_END)
                 size = f.tell()
                 f.seek(0)
+                if size != declared_size:
+                    raise BadRequest(description='Upload size does not match the declared size.')
 
                 size_written, file_hash = Upload.data(item, f, size)
                 is_complete = True
