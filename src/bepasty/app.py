@@ -136,7 +136,19 @@ def create_app():
             return 'undefined'
         return time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(ts))
 
+    def size_format(size):
+        """
+        Takes a size in bytes and outputs it with grouped digits, e.g. 123 456 789,
+        so big numbers are easier to read while staying precise.
+
+        The separator is a narrow no-break space (U+202F), as recommended by SI:
+        unlike "," or "." it is not ambiguous across locales, and unlike a normal
+        thin space (U+2009) it does not allow a line break within the number.
+        """
+        return f'{size:,}'.replace(',', '\u202f')
+
     app.jinja_env.filters['datetime'] = datetime_format
+    app.jinja_env.filters['size'] = size_format
 
     app.jinja_env.globals['flaskg'] = flaskg
     app.jinja_env.globals['may'] = may
