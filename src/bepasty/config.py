@@ -141,3 +141,9 @@ class Config:
     #: Allowed units (case-insensitive): MINUTES, HOURS, DAYS, WEEKS, MONTHS, YEARS, FOREVER
     # DEFAULT_MAXLIFE_VALUE = 1
     # DEFAULT_MAXLIFE_UNIT = 'MONTHS'
+
+    #: Maximum lifetime [s] of newly uploaded items, e.g. 4 * 7 * 24 * 3600 (4 weeks).
+    #: Uploads asking for a longer lifetime (or for keeping them forever) get this one.
+    #: The web interface only offers time units that fit into it.
+    #: None means "no limit".
+    MAX_LIFETIME = None

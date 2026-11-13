@@ -13,6 +13,7 @@ from markupsafe import Markup
 
 from .apis import blueprint as blueprint_apis
 from .storage import create_storage
+from .utils.date_funcs import allowed_maxlife_units
 from .utils.name import setup_werkzeug_routing
 from .utils.permissions import (
     ADMIN,
@@ -152,6 +153,7 @@ def create_app():
 
     app.jinja_env.globals['flaskg'] = flaskg
     app.jinja_env.globals['may'] = may
+    app.jinja_env.globals['allowed_maxlife_units'] = allowed_maxlife_units
     app.jinja_env.globals['ADMIN'] = ADMIN
     app.jinja_env.globals['LIST'] = LIST
     app.jinja_env.globals['CREATE'] = CREATE

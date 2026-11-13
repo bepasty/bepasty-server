@@ -10,15 +10,18 @@
         <input class="form-control" name="maxlife-value" type="number" min="1" value="{{ default_maxlife_value }}" /><br>
     </div>
     <div class="col-lg-9 form-group">
+        {% set allowed_units = allowed_maxlife_units() %}
         <select class="form-control" name="maxlife-unit" size="1">
-            <option value="months" {{ 'selected' if default_maxlife_unit == 'months' else '' }}>Months</option>
-            <option value="weeks" {{ 'selected' if default_maxlife_unit == 'weeks' else '' }}>Weeks</option>
-            <option value="days" {{ 'selected' if default_maxlife_unit == 'days' else '' }}>Days</option>
-            <option value="hours" {{ 'selected' if default_maxlife_unit == 'hours' else '' }}>Hours</option>
-            <option value="minutes" {{ 'selected' if default_maxlife_unit == 'minutes' else '' }}>Minutes</option>
-            <option value="years" {{ 'selected' if default_maxlife_unit == 'years' else '' }}>Years</option>
-            <option value="forever" {{ 'selected' if default_maxlife_unit == 'forever' else '' }}>Keep Forever</option>
+            {% for unit, label in [('months', 'Months'), ('weeks', 'Weeks'), ('days', 'Days'), ('hours', 'Hours'),
+                                   ('minutes', 'Minutes'), ('years', 'Years'), ('forever', 'Keep Forever')] %}
+            {% if unit in allowed_units %}
+            <option value="{{ unit }}" {{ 'selected' if default_maxlife_unit == unit else '' }}>{{ label }}</option>
+            {% endif %}
+            {% endfor %}
         </select>
+        {% if config.MAX_LIFETIME %}
+        <small class="form-text text-muted">Longer lifetimes will be limited to the maximum allowed by this site.</small>
+        {% endif %}
     </div>
 </div>
 {% endmacro %}

@@ -1,3 +1,4 @@
+import time
 from io import BytesIO
 import urllib
 
@@ -7,6 +8,7 @@ from pygments.lexers import get_all_lexers
 from werkzeug.exceptions import Forbidden
 
 from ..constants import FOREVER
+from ..utils.date_funcs import limit_maxlife
 from ..utils.http import redirect_next
 from ..utils.permissions import CREATE, may
 from ..utils.upload import create_item
@@ -50,7 +52,8 @@ class LodgeitUpload(MethodView):
         t = t.encode('utf-8')
         size = len(t)
         f = BytesIO(t)
-        maxlife_timestamp = FOREVER
+        maxtime = limit_maxlife(FOREVER)  # lodgeit clients can't choose, keep as long as allowed
+        maxlife_timestamp = int(time.time()) + maxtime if maxtime > 0 else maxtime
         name = create_item(f, filename, size, content_type, content_type_hint,
                            maxlife_stamp=maxlife_timestamp)
         return redirect_next('bepasty.display', name=name, _anchor=urllib.parse.quote(filename))

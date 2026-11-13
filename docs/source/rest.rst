@@ -132,10 +132,16 @@ POST Request by the client:
 
             ['MINUTES', 'HOURS', 'DAYS', 'WEEKS', 'MONTHS', 'YEARS', 'FOREVER']
 
-        If this header is omitted the unit will be forever
+        If this header is omitted, DEFAULT_MAXLIFE_UNIT from the server
+        configuration is used (default: MONTHS).
 
     *Maxlife-Value*
         The maxlife-value header defines the value of the maxlife-unit.
+        If this header is omitted, DEFAULT_MAXLIFE_VALUE from the server
+        configuration is used (default: 1).
+
+        If the server configuration sets MAX_LIFETIME, longer lifetimes
+        (including FOREVER) are reduced to MAX_LIFETIME.
 
 POST Response by the server:
 
