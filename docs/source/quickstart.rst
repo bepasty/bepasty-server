@@ -110,6 +110,15 @@ use something like:
 
     bepasty-object purge --dry-run --size 10 --age 14 '*'
 
+The given criteria are combined (AND), at least one criterion is required.
+
+bepasty removes items whose maximum lifetime is over when they get accessed or when the file list is shown.
+To also remove expired items nobody accessed, run this regularly (e.g. as a cron job):
+
+::
+
+    bepasty-object purge --expired '*'
+
 
 If you upgraded bepasty, you might need to upgrade the stored metadata to the current bepasty metadata schema:
 

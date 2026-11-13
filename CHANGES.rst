@@ -6,7 +6,13 @@ Release 1.3.0 (not released yet)
 
 Fixes:
 
-- ...
+- bepasty-object purge: criteria like --age or --size only ever matched items
+  whose maximum lifetime was already over, so items with a longer (or no)
+  maximum lifetime never got purged. Purging expired items is now a separate
+  criterion, use --expired for it, #181.
+  Note: purge now refuses to run without any criterion. If you ran
+  ``bepasty-object purge '*'`` (e.g. from cron) to remove expired items,
+  change that to ``bepasty-object purge --expired '*'``.
 
 New features:
 
