@@ -3,98 +3,138 @@
 Installation tutorial with Debian, Nginx and Gunicorn
 =====================================================
 
-Preliminary packages:
+This tutorial sets up bepasty on a Debian 13 ("trixie") server: Gunicorn runs
+the bepasty WSGI app, Supervisor keeps Gunicorn running and Nginx is the
+web server in front of it.
+
+Replace ``bepasty.example.org`` with the DNS name of your server everywhere below.
+
+Some steps are done as root, others as the user ``bepasty``. Each section says which.
+
+
+Packages and system user (as root)
+==================================
 
 ::
 
-  apt-get install build-essential nginx supervisor python-dev git-core python-pip python-virtualenv
+  apt install git python3-venv nginx supervisor
+
+  # add the user bepasty (without a password, we will use "su - bepasty" as root)
+  adduser --disabled-password --comment bepasty bepasty
+
+  # Nginx (user www-data) needs to reach the Gunicorn socket and the static
+  # files in /home/bepasty, which is only accessible by its owner by default.
+  # Allow others to access paths in it, but not to list its content:
+  chmod 711 /home/bepasty
 
 
-Commands to run
+Install bepasty (as user bepasty)
+=================================
 
 ::
 
-  # add user bepasty to system
-  adduser bepasty
   # change to user bepasty
-  sudo su - bepasty
+  su - bepasty
   # clone repository from GitHub
   git clone https://github.com/bepasty/bepasty-server.git repo
   # create folder for storage
-  mkdir storage
-  # create folder for logs
-  mkdir logs
-  # create virtualenv
-  virtualenv .
-  # activate virtualenv
-  . bin/activate
-  cd repo
-  # install bepasty and requirements
-  pip install -e .
-  # add gunicorn and gevent for hosting
-  pip install gunicorn gevent
+  mkdir -m 700 storage
+  # create a virtual environment
+  python3 -m venv venv
+  # install bepasty (with Pillow for image thumbnails) and Gunicorn (with gevent) into it
+  venv/bin/pip install -e './repo[pillow]' 'gunicorn[gevent]'
 
-Config file for Bepasty — ``/home/bepasty/bepasty.conf``:
+Create the config file ``/home/bepasty/bepasty.conf``.
 
-Copy ``src/bepasty/config.py`` to ``/home/bepasty/bepasty.conf`` first,
-remove the ``class Config`` and remove all indents in the file.
-The comments can be removed too, if you feel the need to.
-Finally, modify these two configuration variables:
+bepasty first loads its built-in defaults (see ``repo/src/bepasty/config.py``
+or the :doc:`quickstart` section) and then the settings from this file, so it only
+needs to contain the settings you want to change. Note that it uses plain
+top-level ``KEY = value`` lines, there is no ``class Config`` in it:
 
 ::
+
+  SITENAME = 'bepasty.example.org'
+
+  # a long, random, secret string - you never need to type it in anywhere
+  SECRET_KEY = 'replace this with a long random string'
 
   STORAGE = 'filesystem'
   STORAGE_FILESYSTEM_DIRECTORY = '/home/bepasty/storage/'
 
+  # we use plain HTTP in this tutorial, see the HTTPS section below.
+  SESSION_COOKIE_SECURE = False
 
-Add this content to ``/home/bepasty/bin/gunicorn_bepasty``:
+  # the secret you use to log in at the web UI and what you may do then
+  PERMISSIONS = {
+      'replace this with your admin secret': 'admin,list,create,modify,read,delete',
+  }
+  # what users that are not logged in may do ('' = nothing, 'read' = read-only)
+  DEFAULT_PERMISSIONS = ''
 
-::
+If you need a random string, you can use e.g.
+``python3 -c 'import secrets; print(secrets.token_urlsafe(32))'``.
 
-  #!/bin/bash
-
-  NAME="bepasty"
-  HOME=/home/bepasty
-  SOCKFILE=$HOME/gunicorn.sock  # we will communicate using this unix socket
-  PIDFILE=$HOME/gunicorn.pid
-  NUM_WORKERS=3                 # how many worker processes should Gunicorn spawn
-  export BEPASTY_CONFIG=$HOME/bepasty.conf
-
-  source $HOME/bin/activate
-
-  cd $HOME/repo
-
-  exec gunicorn bepasty.wsgi \
-    --name $NAME \
-    --workers $NUM_WORKERS \
-    --log-level=info \
-    --bind=unix:$SOCKFILE \
-    --pid $PIDFILE \
-    -k gevent
-
-Make it executable: ``chmod +x ~/bin/gunicorn_bepasty``
-
-An Nginx configuration, e.g., in ``/etc/nginx/conf.d/bepasty.conf``:
+The config file contains secrets, so make it only readable for the bepasty user
+and then go back to root:
 
 ::
 
-  upstream pasty_server {
+  chmod 600 bepasty.conf
+  exit
+
+
+Supervisor and Gunicorn (as root)
+=================================
+
+Create ``/etc/supervisor/conf.d/bepasty.conf``:
+
+::
+
+  [program:bepasty]
+  command = /home/bepasty/venv/bin/gunicorn bepasty.wsgi
+      --name bepasty
+      --workers 3
+      --worker-class gevent
+      --bind unix:/home/bepasty/gunicorn.sock
+  environment = BEPASTY_CONFIG="/home/bepasty/bepasty.conf"
+  directory = /home/bepasty
+  user = bepasty
+  stdout_logfile = /var/log/supervisor/bepasty.log
+  redirect_stderr = true
+
+Load it and check that bepasty is ``RUNNING``:
+
+::
+
+  supervisorctl update
+  supervisorctl status bepasty
+
+
+Nginx (as root)
+===============
+
+Create ``/etc/nginx/conf.d/bepasty.conf``:
+
+::
+
+  upstream bepasty_server {
     server unix:/home/bepasty/gunicorn.sock fail_timeout=0;
   }
 
   server {
     listen 80;
-    #listen [::]:80; #uncomment this if your server supports IPv6
-    server_name paste.example.org;  # <-- add your domainname here
+    listen [::]:80;
+    server_name bepasty.example.org;  # <-- add your domain name here
 
-    access_log /home/bepasty/logs/nginx-access.log;
-    error_log /home/bepasty/logs/nginx-error.log;
+    access_log /var/log/nginx/bepasty-access.log;
+    error_log /var/log/nginx/bepasty-error.log;
 
+    # must be bigger than MAX_BODY_SIZE in the bepasty config
     client_max_body_size 32M;
 
     location / {
         proxy_set_header Host $http_host;
-        proxy_pass http://pasty_server;
+        proxy_pass http://bepasty_server;
     }
 
     location /static/ {
@@ -102,16 +142,62 @@ An Nginx configuration, e.g., in ``/etc/nginx/conf.d/bepasty.conf``:
     }
   }
 
-Now reload your Nginx configuration: `service nginx reload`.
-
-Supervisord config i.e. in ``/etc/supervisor/conf.d/bepasty.conf``:
+If this server only runs bepasty, also disable the Debian default site, which
+otherwise answers all requests that do not use your domain name:
 
 ::
 
-  [program:bepasty]
-  command = /home/bepasty/bin/gunicorn_bepasty                  ; Command to start app
-  user = bepasty                                                ; User to run as
-  stdout_logfile = /home/bepasty/logs/gunicorn_supervisor.log   ; Where to write log messages
-  redirect_stderr = true                                        ; Save stderr in the same log
+  rm /etc/nginx/sites-enabled/default
 
-Finally, reload supervisor: `service supervisor reload`
+Check the configuration and reload Nginx:
+
+::
+
+  nginx -t
+  systemctl reload nginx
+
+Now open ``http://bepasty.example.org`` in your browser, log in with your admin
+secret and upload a file.
+
+
+HTTPS
+=====
+
+This tutorial uses plain HTTP to keep it short. For a server reachable from the
+internet, you should use HTTPS, for example with a Let's Encrypt certificate
+(Debian package ``python3-certbot-nginx``).
+
+When bepasty is only reachable via HTTPS, set ``SESSION_COOKIE_SECURE = True``
+in ``/home/bepasty/bepasty.conf`` and restart bepasty:
+``supervisorctl restart bepasty``.
+
+
+Updating bepasty
+================
+
+::
+
+  su - bepasty
+  git -C repo pull
+  venv/bin/pip install -e './repo[pillow]'
+  exit
+  supervisorctl restart bepasty
+
+
+Troubleshooting
+===============
+
+::
+
+  supervisorctl status bepasty
+  less /var/log/supervisor/bepasty.log
+  less /var/log/nginx/bepasty-error.log
+  less /var/log/nginx/bepasty-access.log
+
+* ``502 Bad Gateway`` from Nginx: Gunicorn is not running (check the bepasty log)
+  or Nginx can not access ``/home/bepasty/gunicorn.sock`` (check the permissions
+  set up at the beginning).
+* You can not log in: check ``SECRET_KEY`` (must not be empty) and
+  ``SESSION_COOKIE_SECURE`` (must be ``False`` if you use HTTP).
+* bepasty only reads its config at startup, so restart it after changing
+  the config: ``supervisorctl restart bepasty``.

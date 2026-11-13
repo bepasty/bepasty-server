@@ -31,10 +31,9 @@ Here is the documentation straight from its config:
    :members:
 
 
-To create a local and non-default configuration, copy ``bepasty/config.py`` to e.g. ``/srv/bepasty/bepasty.conf``
-first, remove the ``class Config`` and remove all indents in the file.
-The comments can be removed too, if you feel the need to.
-Finally, modify these configuration variables:
+To create a local configuration, create a file, e.g. ``/srv/bepasty/bepasty.conf``.
+bepasty first loads the defaults shown above and then the settings from that file,
+so it only needs to contain the settings you want to change:
 
 ::
 
@@ -47,19 +46,17 @@ Finally, modify these configuration variables:
 
 Important notes:
 
-* if you copied the file from the ``bepasty/config.py`` it will have
-  a "class Config" in it and all the settings are inside that class. This is
-  **not** what you need. Due to how flask config files work, you need to
-  remove the class statement and outdent all the settings, so you just have
-  global KEY = VALUE statements left on the top level of the config file.
+* if you copy settings from ``bepasty/config.py``, do not copy the
+  "class Config" line and outdent the settings: due to how flask config files
+  work, you need global KEY = VALUE statements on the top level of the config file.
 * if you run over http (like for trying it locally / for development), you
-  need to change the configuration to use SESSION_SECURE_COOKIE = False
+  need to change the configuration to use SESSION_COOKIE_SECURE = False
   (otherwise you can not login as it won't transmit the cookie over unsecure
   http).
 
 
 Starting the Bepasty server
------------------------
+---------------------------
 
 You can run the bepasty server with your local configuration by pointing to it via the BEPASTY_CONFIG
 environment variable like this:
