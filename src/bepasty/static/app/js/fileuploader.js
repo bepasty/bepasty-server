@@ -63,7 +63,7 @@ $(function () {
                     fileItem.appendTo(data.context);
 
                     var _jqXHR = $this.fileupload('send', data);
-                    _jqXHR.error(function (jqXHR, textStatus, errorThrown) {
+                    _jqXHR.fail(function (jqXHR, textStatus, errorThrown) {
                             // Delete file-upload garbage on the server
                             $.ajax({
                                 type: 'GET',

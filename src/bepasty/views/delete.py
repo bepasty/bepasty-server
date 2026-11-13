@@ -23,7 +23,7 @@ class DeleteView(MethodView):
             with current_app.storage.open(name) as item:
                 if not item.meta[COMPLETE] and not may(ADMIN):
                     error = 'Upload incomplete. Try again later.'
-                    self.error(item, error)
+                    return self.error(item, error)
 
                 if item.meta[LOCKED] and not may(ADMIN):
                     raise Forbidden()

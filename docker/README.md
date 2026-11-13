@@ -19,11 +19,15 @@ docker build -f docker/Dockerfile -t bepasty .
 mkdir data
 sudo chown 17357:0 data
 
+# generate a secret once and keep this file private; reuse it for future runs
+umask 077
+printf 'BEPASTY_SECRET_KEY=%s\n' "$(openssl rand -hex 16)" > bepasty.env
+
 # run
 docker run -it \
    -p 8000:8000 \
    -v $PWD/data:/app/data \
-   -e BEPASTY_SECRET_KEY=$(openssl rand -hex 16) \
+   --env-file bepasty.env \
    -e BEPASTY_SITENAME=localhost \
    bepasty
 
