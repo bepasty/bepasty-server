@@ -23,6 +23,9 @@ New features:
 - show item sizes with grouped digits (e.g. 123 456 789 bytes, separated by
   narrow no-break spaces) on the item page and in the file list, so they are
   easier to read but still precise, #123
+- add MAX_LIFETIME config option [s] to limit the maximum lifetime of newly
+  uploaded items, e.g. to 4 weeks. Longer lifetimes (including "forever") are
+  reduced to it and the web interface only offers time units that fit, #345
 
 Other changes:
 

@@ -4,6 +4,16 @@ from werkzeug.exceptions import BadRequest
 
 from ..constants import FOREVER, TIMESTAMP_MAX_LIFE
 
+UNITS = {
+    'MINUTES': 60,
+    'HOURS': 60 * 60,
+    'DAYS': 60 * 60 * 24,
+    'WEEKS': 60 * 60 * 24 * 7,
+    'MONTHS': 60 * 60 * 24 * 30,
+    'YEARS': 60 * 60 * 24 * 365,
+    'FOREVER': FOREVER,
+}
+
 
 def get_maxlife(data, underscore):
     """
@@ -27,9 +37,38 @@ def get_maxlife(data, underscore):
     except (ValueError, TypeError):
         raise BadRequest(description=f'{value_key} header is incorrect')
     try:
-        return time_unit_to_sec(value, unit)
+        secs = time_unit_to_sec(value, unit)
     except KeyError:
         raise BadRequest(description=f'{unit_key} header is incorrect')
+    return limit_maxlife(secs)
+
+
+def limit_maxlife(secs):
+    """
+    Limit a maximum lifetime to the configured MAX_LIFETIME.
+
+    :param secs: max lifetime in seconds (or FOREVER)
+    :return: max lifetime in seconds (or FOREVER), at most MAX_LIFETIME (if configured)
+    """
+    if secs <= 0:
+        # FOREVER, but also 0 or negative values, which never expired either.
+        secs = FOREVER
+    max_lifetime = current_app.config.get('MAX_LIFETIME')
+    if max_lifetime and (secs == FOREVER or secs > max_lifetime):
+        secs = max_lifetime
+    return secs
+
+
+def allowed_maxlife_units():
+    """
+    Return the time units (lowercase) a user may choose for the maximum lifetime.
+
+    If MAX_LIFETIME is configured, units of which even 1 exceeds it are not allowed,
+    and neither is FOREVER.
+    """
+    max_lifetime = current_app.config.get('MAX_LIFETIME')
+    return [unit.lower() for unit, secs in UNITS.items()
+            if not max_lifetime or 0 < secs <= max_lifetime]
 
 
 def time_unit_to_sec(value, unit):
@@ -40,16 +79,7 @@ def time_unit_to_sec(value, unit):
     :param unit: str in ['MINUTES', 'HOURS', 'DAYS', 'WEEKS', 'MONTHS', 'YEARS', 'FOREVER']
     :return: time in seconds
     """
-    units = {
-        'MINUTES': 60,
-        'HOURS': 60 * 60,
-        'DAYS': 60 * 60 * 24,
-        'WEEKS': 60 * 60 * 24 * 7,
-        'MONTHS': 60 * 60 * 24 * 30,
-        'YEARS': 60 * 60 * 24 * 365,
-        'FOREVER': FOREVER,
-    }
-    secs = units[unit] * value if units[unit] > 0 else units[unit]
+    secs = UNITS[unit] * value if UNITS[unit] > 0 else UNITS[unit]
     return secs
 
 
