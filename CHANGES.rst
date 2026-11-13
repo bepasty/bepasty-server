@@ -33,6 +33,7 @@ Other changes:
 - add support for Python 3.14 and 3.15
 - upgrade to FontAwesome v6
 - use SPDX license expression, #330
+- docs: add examples for uploading / downloading with curl, #125
 
 
 Release 1.2.2 (2025-05-06)
