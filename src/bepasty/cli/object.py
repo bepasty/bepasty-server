@@ -88,8 +88,8 @@ class Main:
             purge = purge and file_size > max_size
         if args.purge_type is not None:
             purge = purge and file_type.startswith(args.purge_type)
-        if max_lifetime is not None:
-            purge = purge and tnow > max_lifetime > 0
+        if args.purge_expired:
+            purge = purge and tnow > max_lifetime > 0  # FOREVER (-1) never expires
         if purge:
             print('removing: %s (%s %dB %s)' % (name, file_name, file_size, file_type))
             if not args.purge_dry_run:
@@ -107,6 +107,17 @@ class Main:
                          help='only remove if file size > PURGE_SIZE MiB')
     _parser.add_argument('-T', '--type', dest='purge_type', default=None,
                          help='only remove if file mimetype starts with PURGE_TYPE')
+    _parser.add_argument('-E', '--expired', dest='purge_expired', action='store_true',
+                         help='only remove if the maximum lifetime of the item is over')
+
+    @staticmethod
+    def check_purge_args(args):
+        # do_purge starts from "purge everything" and only narrows that down by the given
+        # criteria, so refuse to run without any criterion to avoid accidental data loss.
+        criteria = (args.purge_age, args.purge_inactivity, args.purge_size, args.purge_type)
+        if all(c is None for c in criteria) and not args.purge_expired:
+            Main.argparser.error('purge: give at least one criterion (e.g. --expired), '
+                                 'use --age 0 to remove everything')
 
     def do_consistency(self, storage, name, args):
         with storage.openwrite(name) as item:
@@ -193,6 +204,8 @@ class Main:
 
     def __call__(self):
         args = Main.argparser.parse_args()
+        if getattr(args, 'func', None) is Main.do_purge:
+            Main.check_purge_args(args)
 
         # Setup minimal application
         app = Flask(__name__)
