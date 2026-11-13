@@ -78,7 +78,7 @@
     <div class="card-body">
         <p>
         Type: {{ item.meta['type'] }},
-        Size: {{ item.meta['size'] }} bytes,
+        Size: {{ item.meta['size'] | size }} bytes,
         SHA256: <code>{{ item.meta['hash'] }}</code>.
         <br/>
         UTC timestamps:

@@ -12,6 +12,9 @@ New features:
 
 - add object name to html title, #316
 - add support for customizable default maxlife values and units, #322
+- show item sizes with grouped digits (e.g. 123 456 789 bytes, separated by
+  narrow no-break spaces) on the item page and in the file list, so they are
+  easier to read but still precise, #123
 
 Other changes:
 

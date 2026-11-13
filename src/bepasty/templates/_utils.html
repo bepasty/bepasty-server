@@ -32,7 +32,7 @@
                     <br />
                     {{ file['type'] }}
                     <br />
-                    {{ file['size'] }}
+                    {{ file['size'] | size }}
                 </td>
                 <td>
                     <a href="{{ url_for('bepasty.display', name=file['id']) }}">
