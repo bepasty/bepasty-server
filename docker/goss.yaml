@@ -1,0 +1,11 @@
+command:
+  app-import:
+    exec: /app/env/bin/python -c "import bepasty.app; print('bepasty import ok')"
+    exit-status: 0
+    stdout:
+      - /bepasty import ok/
+
+http:
+  http://127.0.0.1:8000/:
+    status: 200
+    timeout: 10000
