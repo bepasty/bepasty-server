@@ -56,7 +56,8 @@ class UploadView(MethodView):
         maxlife_timestamp = int(time.time()) + maxtime if maxtime > 0 else maxtime
         name = create_item(f, filename, size, content_type, content_type_hint, maxlife_stamp=maxlife_timestamp)
         kw = {}
-        kw['_anchor'] = urllib.parse.quote(filename)
+        if filename:
+            kw['_anchor'] = urllib.parse.quote(filename)
         if content_type == 'text/x-bepasty-redirect':
             # After creating a redirect, we want to stay on the Bepasty
             # redirect display so the user can copy the URL.
