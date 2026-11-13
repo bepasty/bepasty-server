@@ -13,6 +13,8 @@ Fixes:
   Note: purge now refuses to run without any criterion. If you ran
   ``bepasty-object purge '*'`` (e.g. from cron) to remove expired items,
   change that to ``bepasty-object purge --expired '*'``.
+- fix crash (500) when uploading without a filename: via the web form when the
+  client does not send a filename (e.g. curl) and always via the lodgeit API
 
 New features:
 

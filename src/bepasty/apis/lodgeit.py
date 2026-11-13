@@ -1,5 +1,4 @@
 from io import BytesIO
-import urllib
 
 from flask import request
 from flask.views import MethodView
@@ -53,4 +52,4 @@ class LodgeitUpload(MethodView):
         maxlife_timestamp = FOREVER
         name = create_item(f, filename, size, content_type, content_type_hint,
                            maxlife_stamp=maxlife_timestamp)
-        return redirect_next('bepasty.display', name=name, _anchor=urllib.parse.quote(filename))
+        return redirect_next('bepasty.display', name=name)
