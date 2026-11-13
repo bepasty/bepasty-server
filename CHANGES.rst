@@ -26,6 +26,9 @@ New features:
 - add MAX_LIFETIME config option [s] to limit the maximum lifetime of newly
   uploaded items, e.g. to 4 weeks. Longer lifetimes (including "forever") are
   reduced to it and the web interface only offers time units that fit, #345
+- add PROXY_FIX config option to use werkzeug's ProxyFix middleware, so that
+  bepasty generates correct URLs (e.g. https:// for the QR code) when running
+  behind a reverse proxy. The install tutorial now sets X-Forwarded-Proto, #117
 
 Other changes:
 
