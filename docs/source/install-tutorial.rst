@@ -134,6 +134,7 @@ Create ``/etc/nginx/conf.d/bepasty.conf``:
 
     location / {
         proxy_set_header Host $http_host;
+        proxy_set_header X-Forwarded-Proto $scheme;
         proxy_pass http://bepasty_server;
     }
 
@@ -170,6 +171,15 @@ internet, you should use HTTPS, for example with a Let's Encrypt certificate
 When bepasty is only reachable via HTTPS, set ``SESSION_COOKIE_SECURE = True``
 in ``/home/bepasty/bepasty.conf`` and restart bepasty:
 ``supervisorctl restart bepasty``.
+
+Nginx terminates HTTPS and talks plain HTTP to bepasty, so bepasty would generate
+``http://`` URLs (e.g. for the QR code of an item). To use the scheme the client
+used (sent by Nginx in the ``X-Forwarded-Proto`` header, see the Nginx
+configuration above), also add this to ``/home/bepasty/bepasty.conf``:
+
+::
+
+  PROXY_FIX = {'x_proto': 1}
 
 
 Updating bepasty

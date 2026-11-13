@@ -10,6 +10,7 @@ from flask import (
     session,
 )
 from markupsafe import Markup
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from .apis import blueprint as blueprint_apis
 from .storage import create_storage
@@ -79,6 +80,11 @@ def create_app():
     prefix = app.config.get('APP_BASE_PATH')
     if prefix is not None:
         app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix=prefix)
+
+    proxy_fix = app.config.get('PROXY_FIX')
+    if proxy_fix:
+        # outermost middleware, so the others already see the fixed environ
+        app.wsgi_app = ProxyFix(app.wsgi_app, **proxy_fix)
 
     app.storage = create_storage(app)
     setup_werkzeug_routing(app)
