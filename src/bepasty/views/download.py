@@ -43,6 +43,10 @@ class DownloadView(MethodView):
             # Not a simple download, so we must be careful about XSS
             if ct.startswith("text/"):
                 ct = 'text/plain'  # Only send simple plain text
+            elif ct == 'image/svg+xml' or ct.endswith('+xml') or ct in ('application/xml', ):
+                # SVG / XHTML / XML can embed scripts and execute same-origin
+                # when served inline, so neutralize them to plain text.
+                ct = 'text/plain'
 
         ret = Response(stream_with_context(self.stream(item, 0, item.data.size)))
         ret.headers['Content-Disposition'] = '{}; filename="{}"'.format(
