@@ -1,0 +1,17 @@
+# Keep the GitHub actions, which are pinned to commit SHAs, up to date.
+# dependabot also updates the "# vX.Y.Z" comment after each SHA.
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      # default-days also covers patch releases and actions not using semver.
+      default-days: 14
+      semver-minor-days: 30
+      semver-major-days: 90
+    groups:
+      actions:
+        patterns:
+          - "*"
