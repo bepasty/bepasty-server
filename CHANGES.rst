@@ -1,8 +1,8 @@
 ChangeLog
 =========
 
-Release 1.3.0 (not released yet)
---------------------------------
+Release 1.3.0rc1 (2026-11-15)
+-----------------------------
 
 Fixes:
 
@@ -15,6 +15,8 @@ Fixes:
   change that to ``bepasty-object purge --expired '*'``.
 - fix crash (500) when uploading without a filename: via the web form when the
   client does not send a filename (e.g. curl) and always via the lodgeit API
+- fileuploader.js: use .fail() instead of removed jqXHR.error()
+- delete: refuse to delete incomplete uploads for non-admins
 
 New features:
 
@@ -29,6 +31,7 @@ New features:
 - add PROXY_FIX config option to use werkzeug's ProxyFix middleware, so that
   bepasty generates correct URLs (e.g. https:// for the QR code) when running
   behind a reverse proxy. The install tutorial now sets X-Forwarded-Proto, #117
+- optionally pack the service into docker image, #352
 
 Other changes:
 
@@ -36,7 +39,14 @@ Other changes:
 - add support for Python 3.14 and 3.15
 - upgrade to FontAwesome v6
 - use SPDX license expression, #330
-- docs: add examples for uploading / downloading with curl, #125
+- CI:
+
+  - pin all GitHub actions to commit SHAs, add dependabot
+  - add a release workflow: sdist, provenance attestation, GitHub release, PyPI
+- docs:
+
+  - add curl examples for uploading and downloading, #125
+  - update install tutorial for Debian 13
 
 
 Release 1.2.2 (2025-05-06)
