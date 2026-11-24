@@ -6,13 +6,13 @@ import urllib
 
 from flask import abort, current_app, jsonify, request, url_for
 from flask.views import MethodView
-from werkzeug.exceptions import NotFound, Forbidden
+from werkzeug.exceptions import NotFound, Forbidden, Conflict
 
-from ..constants import COMPLETE, FILENAME, SIZE
+from ..constants import COMPLETE, FILENAME, LOCKED, SIZE
 from ..utils.date_funcs import get_maxlife
 from ..utils.http import ContentRange, redirect_next
 from ..utils.name import ItemName
-from ..utils.permissions import CREATE, may
+from ..utils.permissions import ADMIN, CREATE, MODIFY, may
 from ..utils.upload import Upload, create_item, background_compute_hash
 
 
@@ -103,7 +103,20 @@ class UploadContinueView(MethodView):
         content_range = ContentRange.from_request()
 
         with current_app.storage.openwrite(name) as item:
+            # Continuing an upload must not become a way for a create-only user
+            # to rewrite somebody else's item. A finished item may only be
+            # replaced by a caller holding `modify`; a locked one only by admin.
+            if item.meta.get(COMPLETE) and not may(MODIFY):
+                raise Forbidden()
+            if item.meta.get(LOCKED) and not may(ADMIN):
+                raise Forbidden()
+
             if content_range:
+                # The continuation must append exactly at the current end.
+                if content_range.begin != item.data.size:
+                    raise Conflict(
+                        description='Content-Range inconsistent. Last byte on Server: %d'
+                        % item.data.size)
                 # Note: we ignore the hash as it is only for one chunk, not for the whole upload.
                 # Also, we cannot continue computing the hash as we can't save the internal
                 # state of the hash object.
