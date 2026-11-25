@@ -1,4 +1,5 @@
 {% macro filelist(files) %}
+<div class="table-responsive">
     <table class="table table-hover">
         <thead>
         <tr>
@@ -12,7 +13,7 @@
             <th>
                 Thumbnail
             </th>
-            <th>
+            <th class="text-nowrap">
                 Upload [UTC]
                 <br />
                 Download [UTC]
@@ -25,7 +26,7 @@
         <tbody>
             {% for file in files %}
             <tr>
-                <td class="text-right">
+                <td class="text-right filelist-filename-cell">
                     <a href="{{ url_for('bepasty.display', name=file['id']) }}">
                         {{ file['filename'] }}
                     </a>
@@ -39,7 +40,7 @@
                         <img src="{{ url_for('bepasty.thumbnail', name=file['id']) }}">
                     </a>
                 </td>
-                <td>
+                <td class="text-nowrap">
                     {{ file['timestamp-upload'] | datetime }}
                     <br />
                     {% if file['timestamp-download'] %}
@@ -87,6 +88,7 @@
             {% endfor %}
         </tbody>
     </table>
+</div>
 {% endmacro %}
 
 {% macro input_filename(value) -%}
