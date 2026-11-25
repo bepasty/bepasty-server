@@ -19,9 +19,55 @@ from ..constants import COMPLETE, FILENAME, LOCKED, SIZE, TIMESTAMP_DOWNLOAD, TY
 from ..utils.date_funcs import delete_if_lifetime_over
 from ..utils.permissions import ADMIN, READ, may
 
+# Content-Security-Policy for responses the browser renders directly (+inline, +thumbnail).
+# Uploaders choose the content type, so such a response could be an active document
+# (e.g. image/svg+xml or application/xhtml+xml with embedded JavaScript). This policy
+# prevents any scripting, while keeping the browser's built-in viewers for images,
+# audio, video and text working:
+INLINE_CSP = '; '.join([
+    # sandbox without allow-scripts: no script runs, whatever the content type.
+    # allow-same-origin is required for the built-in media player to fetch the item
+    # and is harmless without allow-scripts.
+    'sandbox allow-same-origin',
+    # do not load or connect to anything (this also blocks scripts again) ...
+    "default-src 'none'",
+    # ... except the item itself, which the image/media viewer page loads again ...
+    "img-src 'self'",
+    "media-src 'self'",
+    # ... and inline CSS, used by the browser's viewer pages and by many SVGs.
+    "style-src 'unsafe-inline'",
+])
+
+
+def is_document_type(ct):
+    """
+    Check whether a browser might render content type <ct> as a document (a page).
+
+    This is the case for text (e.g. text/html), for XML (e.g. application/xhtml+xml)
+    and for multipart types (their parts can be documents). We send such items as
+    text/plain for viewing, so the browser shows their source and never renders
+    attacker-controlled content as a page of this site.
+
+    XML based images (image/svg+xml) are not included: they must keep their type
+    to display as an image. The Content-Security-Policy stops their scripts.
+    """
+    ct = ct.lower()  # content types are case-insensitive
+    if ct.startswith(('text/', 'multipart/')):
+        return True
+    if ct.startswith('image/'):
+        return False
+    return ct.endswith(('/xml', '+xml'))
+
 
 class DownloadView(MethodView):
     content_disposition = 'attachment'  # to trigger download
+    content_security_policy = None
+
+    def add_security_headers(self, response):
+        response.headers['X-Content-Type-Options'] = 'nosniff'  # Yes, we really mean it
+        if self.content_security_policy:
+            response.headers['Content-Security-Policy'] = self.content_security_policy
+        return response
 
     def err_incomplete(self, item, error):
         return render_template('error.html', heading=item.meta[FILENAME], body=error), 409
@@ -41,7 +87,7 @@ class DownloadView(MethodView):
         dispo = self.content_disposition
         if dispo != 'attachment':
             # Not a simple download, so we must be careful about XSS
-            if ct.startswith("text/"):
+            if is_document_type(ct):
                 ct = 'text/plain'  # Only send simple plain text
 
         ret = Response(stream_with_context(self.stream(item, 0, item.data.size)))
@@ -49,8 +95,7 @@ class DownloadView(MethodView):
             dispo, item.meta[FILENAME])
         ret.headers['Content-Length'] = item.meta[SIZE]
         ret.headers['Content-Type'] = ct
-        ret.headers['X-Content-Type-Options'] = 'nosniff'  # Yes, we really mean it
-        return ret
+        return self.add_security_headers(ret)
 
     def get(self, name):
         if not may(READ):
@@ -82,6 +127,7 @@ class DownloadView(MethodView):
 
 class InlineView(DownloadView):
     content_disposition = 'inline'  # to trigger viewing in browser, for some types
+    content_security_policy = INLINE_CSP
 
 
 class ThumbnailView(InlineView):
@@ -107,8 +153,7 @@ class ThumbnailView(InlineView):
             ret = Response(self.thumbnail_data)
             ret.headers['Content-Length'] = len(self.thumbnail_data)
             ret.headers['Content-Type'] = 'image/svg+xml'
-            ret.headers['X-Content-Type-Options'] = 'nosniff'  # Yes, we really mean it
-            return ret
+            return self.add_security_headers(ret)
 
         if ct in ('image/jpeg', ):
             thumbnail_type = 'jpeg'
@@ -134,5 +179,4 @@ class ThumbnailView(InlineView):
             self.content_disposition, thumbnail_fn)
         ret.headers['Content-Length'] = len(thumbnail_data)
         ret.headers['Content-Type'] = 'image/%s' % thumbnail_type
-        ret.headers['X-Content-Type-Options'] = 'nosniff'  # yes, we really mean it
-        return ret
+        return self.add_security_headers(ret)
