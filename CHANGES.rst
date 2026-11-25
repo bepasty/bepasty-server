@@ -1,11 +1,51 @@
 ChangeLog
 =========
 
-Release 1.3.0 (not released yet)
---------------------------------
+Release 1.3.0 (2026-11-25)
+--------------------------
+
+Security fixes:
+
+This release fixes the security issues listed below, so please upgrade soon.
+The security advisories with all the details will be published at
+https://github.com/bepasty/bepasty-server/security/advisories some weeks
+after this release, so that everybody has a chance to upgrade first.
+
+- GHSA-fcjf-6ph5-j28j: continued (chunked) uploads are only accepted for
+  uploads that are still in progress and must match the size declared when
+  the upload was started. The REST API also checks the size limit more
+  strictly.
+- GHSA-735p-6ggg-rc3r: redirect items only redirect to http and https URLs
+  and the redirect delay given in the URL is validated.
+- GHSA-p369-q9w8-prx2: +inline and +thumbnail responses have a restrictive
+  Content-Security-Policy now. Also, +inline shows XML and multipart content
+  types as plain text, like it already did for text/* types.
+- GHSA-qp6v-36qf-h792: add protection against cross-site request forgery
+  (CSRF):
+
+  - requests that change something are rejected (403) if the browser marks
+    them as coming from another site. Non-browser clients (e.g. command line
+    clients using the REST API) are not affected.
+    Note: a reverse proxy in front of bepasty should pass the original Host
+    header (or X-Forwarded-Host, together with PROXY_FIX), otherwise requests
+    of some older browsers might get rejected.
+  - the session cookie has SameSite=Lax now, see the new
+    SESSION_COOKIE_SAMESITE config option.
+  - aborting an upload needs a POST request now.
+    Note: clients that use ``GET /+upload/<name>/abort`` need to change that
+    to POST.
+
+- GHSA-rjr3-7f9q-xgp8: item names are generated using a cryptographically
+  secure random number generator now.
+- GHSA-mpfg-7gg3-3p88: modifying an item's filename and content type requires
+  the "modify" permission now (as documented), it was "create" before.
+  Note: users who shall be able to do that need the "modify" permission (see
+  PERMISSIONS in the config).
 
 Fixes:
 
+- REST API: fix handling of unexpected exceptions with Flask >= 2.3: answer
+  with a JSON error response (not Flask's HTML error page) and log them, #376
 - improve layout on small (mobile) screens, #112:
 
   - move the permissions display from the navbar brand into the collapsible
@@ -16,6 +56,7 @@ Fixes:
   - item lists: scroll the table horizontally if it is wider than the screen,
     instead of making the whole page wider, let long filenames and content
     types wrap and keep the dates on one line
+
 
 Release 1.3.0rc1 (2026-11-15)
 -----------------------------
