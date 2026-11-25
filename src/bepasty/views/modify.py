@@ -7,7 +7,7 @@ from werkzeug.exceptions import Forbidden, NotFound
 from ..constants import COMPLETE, FILENAME, LOCKED, TYPE
 from ..utils.date_funcs import delete_if_lifetime_over
 from ..utils.http import redirect_next_referrer
-from ..utils.permissions import ADMIN, CREATE, may
+from ..utils.permissions import ADMIN, MODIFY, may
 from ..utils.upload import Upload
 
 
@@ -26,7 +26,7 @@ class ModifyView(MethodView):
         }
 
     def post(self, name):
-        if not may(CREATE):
+        if not may(MODIFY):
             raise Forbidden()
 
         try:
