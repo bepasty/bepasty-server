@@ -27,7 +27,7 @@
             {% for file in files %}
             <tr>
                 <td class="text-right filelist-filename-cell">
-                    <a class="filelist-filename" href="{{ url_for('bepasty.display', name=file['id']) }}">
+                    <a href="{{ url_for('bepasty.display', name=file['id']) }}">
                         {{ file['filename'] }}
                     </a>
                     <br />

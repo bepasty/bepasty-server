@@ -30,16 +30,13 @@ body {
     font-weight: normal !important;
 }
 
-/* Let long filenames without spaces wrap, so they do not make the
-   filename column (and thus the whole table) very wide. */
-.filelist-filename {
-    overflow-wrap: anywhere;
-}
-
-/* But keep the filename column reasonably wide: if the table is wider than
-   the screen anyway (and scrolls), the column would otherwise shrink to the
-   width of the type / size line and chop the filename into short pieces. */
+/* Let long filenames and content types without spaces wrap, so they do not
+   make the filename column (and thus the whole table) very wide.
+   But keep the column reasonably wide: if the table is wider than the screen
+   anyway (and scrolls), the column would otherwise shrink to its minimum
+   and chop the filename into short pieces. */
 .filelist-filename-cell {
+    overflow-wrap: anywhere;
     min-width: 12em;
 }
 
