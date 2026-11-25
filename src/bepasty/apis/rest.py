@@ -7,10 +7,10 @@ from flask import Response, make_response, url_for, jsonify, stream_with_context
 from flask.views import MethodView
 from werkzeug.exceptions import HTTPException, BadRequest, Conflict, Forbidden, InternalServerError, MethodNotAllowed
 
-from ..constants import FILENAME, ID, SIZE, TYPE, TRANSACTION_ID
+from ..constants import COMPLETE, FILENAME, ID, SIZE, TYPE, TRANSACTION_ID
 from ..utils.date_funcs import get_maxlife
 from ..utils.http import ContentRange, DownloadRange
-from ..utils.name import ItemName
+from ..utils.name import ItemName, ItemNameConverter
 from ..utils.permissions import CREATE, LIST, may
 from ..utils.upload import Upload, filter_internal, background_compute_hash
 from ..views.filelist import file_infos
@@ -76,6 +76,8 @@ class ItemUploadView(RestBase):
 
         # Get Content-Range and check if Range is consistent with server state
         file_range = ContentRange.from_request()
+        # The total size given in Content-Range must be within the limit, too
+        Upload.filter_size(file_range.complete)
         if not item.data.size == file_range.begin:
             raise Conflict(description='Content-Range inconsistent. Last byte on Server: %d' % item.data.size)
 
@@ -85,6 +87,10 @@ class ItemUploadView(RestBase):
             file_data = BytesIO(raw_data)
         except (base64.binascii.Error, TypeError):
             raise BadRequest(description='Could not decode data body')
+
+        # Check the size the item will have after writing this chunk. Content-Range
+        # is not enough for this: the data could be longer than announced there.
+        Upload.filter_size(file_range.begin + len(raw_data))
 
         # Write data chunk to item
         Upload.data(item, file_data, len(raw_data), file_range.begin)
@@ -174,13 +180,24 @@ class ItemUploadView(RestBase):
                 name_b = base64.b64decode(trans_id_b)
             except (base64.binascii.Error, TypeError):
                 raise BadRequest(description=f'Could not decode {TRANSACTION_ID}')
-            name = name_b if isinstance(name_b, str) else name_b.decode()
+            try:
+                name = name_b if isinstance(name_b, str) else name_b.decode()
+            except UnicodeDecodeError:
+                raise BadRequest(description=f'Could not decode {TRANSACTION_ID}')
+            if not ItemNameConverter.is_valid(name):
+                raise BadRequest(description=f'Invalid {TRANSACTION_ID}')
             try:
                 item = current_app.storage.openwrite(name)
             except OSError as e:
                 if e.errno == errno.ENOENT:
                     raise BadRequest(description='Could not find storage item for transaction id')
                 raise
+            # Only an upload in progress may be continued. Otherwise, anybody with
+            # "create" permission could append data to any existing (complete, maybe
+            # even locked) item.
+            if item.meta[COMPLETE]:
+                item.close()
+                raise Conflict(description='Upload already complete.')
             new_item = False
 
         response = None
