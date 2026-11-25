@@ -10,7 +10,7 @@ from werkzeug.exceptions import BadRequest, Conflict, NotFound, Forbidden
 
 from ..constants import COMPLETE, FILENAME, SIZE
 from ..utils.date_funcs import get_maxlife
-from ..utils.http import ContentRange, redirect_next
+from ..utils.http import ContentRange, is_safe_external_url, redirect_next
 from ..utils.name import ItemName
 from ..utils.permissions import CREATE, may
 from ..utils.upload import Upload, create_item, background_compute_hash
@@ -46,6 +46,8 @@ class UploadView(MethodView):
             t = t.encode('utf-8')
             content_type = request.form.get('contenttype')  # TODO: add coding
             content_type_hint = 'text/plain'
+            if content_type == 'text/x-bepasty-redirect' and not is_safe_external_url(t.decode('utf-8')):
+                abort(400, description="Redirect URL must be an absolute http or https URL.")
             size = len(t)
             f = BytesIO(t)
             filename = request.form.get('filename')
