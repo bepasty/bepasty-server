@@ -32,9 +32,6 @@
                         <!-- Brand and toggle get grouped for better mobile display -->
                         <a class="navbar-brand" href="{{ url_for('bepasty.index') }}">
                             {{ config.SITENAME }}
-                            <span class="navbar-text small">
-                                (Permissions:{% for permission, permission_icon in flaskg.icon_permissions %} <i class="fas fa-{{ permission_icon }}" title="{{ permission }}"></i>{% endfor %})
-                            </span>
                         </a>
                         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
                             <span class="navbar-toggler-icon"></span>
@@ -42,6 +39,9 @@
 
                         <!-- Collect the nav links, forms, and other content for toggling -->
                         <div class="collapse navbar-collapse" id="navbarHeader">
+                            <span class="navbar-text small mr-3">
+                                (Permissions:{% for permission, permission_icon in flaskg.icon_permissions %} <i class="fas fa-{{ permission_icon }}" title="{{ permission }}"></i>{% endfor %})
+                            </span>
                             <ul class="navbar-nav mr-auto">
                                 <li class="nav-item">
                                     <a class="nav-link" href="https://bepasty-server.readthedocs.io/en/latest/">Documentation</a>

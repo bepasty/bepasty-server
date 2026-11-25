@@ -1,6 +1,21 @@
 ChangeLog
 =========
 
+Release 1.3.0 (not released yet)
+--------------------------------
+
+Fixes:
+
+- improve layout on small (mobile) screens, #112:
+
+  - move the permissions display from the navbar brand into the collapsible
+    navbar menu, so it no longer makes the page wider than the screen
+  - upload form: stack content type, filename and submit button vertically
+    on extra small screens instead of squeezing them into one row
+  - item lists: scroll the table horizontally if it is wider than the screen,
+    instead of making the whole page wider, let long filenames wrap and keep
+    the dates on one line
+
 Release 1.3.0rc1 (2026-11-15)
 -----------------------------
 

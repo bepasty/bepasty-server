@@ -30,6 +30,12 @@ body {
     font-weight: normal !important;
 }
 
+/* Let long filenames without spaces wrap, so they do not make the
+   filename column (and thus the whole table) very wide. */
+.filelist-filename {
+    overflow-wrap: anywhere;
+}
+
 #filelist {
     height: auto;
     width: 100%;
