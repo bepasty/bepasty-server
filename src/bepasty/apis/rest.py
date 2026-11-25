@@ -37,9 +37,16 @@ def rest_errorhandler(func):
         except HTTPException as exc:
             return error_message(exc.description, exc.code)
         except Exception:
-            if current_app.propagate_exceptions:
+            # Same logic as in Flask.handle_exception (the propagate_exceptions
+            # attribute this code used before was removed in Flask 2.3).
+            propagate = current_app.config['PROPAGATE_EXCEPTIONS']
+            if propagate is None:
+                propagate = current_app.testing or current_app.debug
+            if propagate:
                 # if testing/debug mode, re-raise
                 raise
+            # We answer with a JSON error, so Flask never sees (and logs) this.
+            current_app.logger.exception('Unhandled exception in the REST API')
             exc = InternalServerError()
             return error_message(exc.description, exc.code)
 

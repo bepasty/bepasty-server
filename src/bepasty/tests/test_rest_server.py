@@ -226,6 +226,31 @@ def test_auth(client_fixture):
         check_response(response, 200)
 
 
+def test_internal_error(client_fixture, monkeypatch):
+    app, client, _ = client_fixture
+
+    def fail(*args, **kwargs):
+        raise RuntimeError('unexpected')
+
+    monkeypatch.setattr('bepasty.apis.rest.file_infos', fail)
+    url = RestUrl()
+    headers = add_auth('user', 'full')
+
+    # testing / debug mode: unexpected exceptions are propagated
+    with pytest.raises(RuntimeError):
+        client.get(url.list, headers=headers)
+
+    # production mode: they give a JSON error response (not Flask's HTML page)
+    with TmpConfig(app, {'TESTING': False}):
+        with client.get(url.list, headers=headers) as response:
+            check_err_response(response, 500)
+
+        # unless propagating them was requested explicitly
+        with TmpConfig(app, {'PROPAGATE_EXCEPTIONS': True}):
+            with pytest.raises(RuntimeError):
+                client.get(url.list, headers=headers)
+
+
 def test_config(client_fixture):
     app, client, _ = client_fixture
 
